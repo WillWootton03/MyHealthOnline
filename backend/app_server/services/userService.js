@@ -1,0 +1,192 @@
+const { userRepo } = require('../repositories/userRepo.js');
+const { logger } = require('../utils/logger.js');
+const { transporter } = require('../utils/nodemailer.js');
+
+const jwt = require('jsonwebtoken');
+const argon2 = require('argon2');
+const crypto = require('crypto');
+
+const userService = {
+
+    /*
+    *
+    *
+    * 
+    *  POST METHODS
+    * 
+    * 
+    * 
+    */
+
+    createUser : async ({ name, email, password }) => {
+        const user_id = crypto.randomUUID();                             // generates random UUID for user_id
+        const password_hash = await argon2.hash(password);               // hashes password using built in salting for extra security
+        logger.debug(`USER SERVICE {Name: ${name}, Email: ${email}, User_id: ${user_id}, Password_hash: ${password_hash}}`);
+        logger.info(`Create User on User Service Called: ${user_id}`);
+
+        const res = await userRepo.createUser({
+            user_id,
+            name,
+            email,
+            password_hash,
+        });
+
+        if(res) {
+            try {
+                const mail = await transporter.sendMail({
+                    from: process.env.APP_MAILER,
+                    to: res.email,
+                    subject: 'New User',
+                    text: 'A new user account was created for your email for MyHealthOnline',
+                    html: "<p>A new user account was created for your email for MyHealthOnline</p>"
+                });
+                logger.info(`Successfully sent account creation mail`);
+            } catch (e){
+                console.log(`Failed to send create account mail : ${e}`);
+                logger.error(`Failed to send create account mail : ${e}`)
+            }
+        }
+
+        return { res };
+    },
+
+    emailLogin : async({ email, password }) => {
+        
+        console.log(email, password);
+        // get user_id
+        const user = await userRepo.getUserByEmail({ email });
+        
+        const valid = await argon2.verify(
+          user.password_hash,
+          password  
+        );
+
+        if (!valid) {
+            logger.error(`Failed to verify password on ${user.user_id}`);
+            const err = new Error(`Invalid Login Credentials`);
+            err.status = 401;
+            throw err;
+        };
+
+        // Set auth token for user
+        const token = jwt.sign(
+            {
+                user_id: user.user_id,
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: '7d',
+            }
+        );
+
+
+
+        return {
+            user_id: user.user_id,
+            token
+        };
+    },
+
+
+    /*
+    *
+    *
+    * 
+    *  GET METHODS
+    * 
+    * 
+    * 
+    */
+
+    getUserById : async({ user_id }) => {
+        const user = await userRepo.getUserById({ user_id });
+       
+        return user ;
+    },
+
+    getUserByEmail : async({ email }) => {
+        const user = await userRepo.getUserByEmail({ email });
+
+        return user ;
+    },
+
+    /*
+    *
+    *
+    * PUT METHODS
+    * 
+    * 
+    */
+
+    updateUser : async({ user_id, email, name, password }) => {
+        // Creates a new password hash if an updated password was passed into body
+        let password_hash = undefined;
+        if(password !== undefined) {
+            password_hash = await argon2.hash(password);
+        }
+        
+        const res = await userRepo.updateUser({ user_id, email, name, password_hash });
+
+        return { res };
+    },
+
+    setBodyDetails : async({ user_id, height, weight, age, gender, activity_level }) => {
+        // verifies all required fields are not null or undefined before attempting to calculate tdee
+        if (user_id && height && weight && age && gender && activity_level) {
+            let BMR = (10 * weight) + (6.25 * height) - (5 * age);
+
+            if (gender === 'male') {
+                BMR += 5;
+            } else {
+                BMR -= 161;
+            }
+
+            switch(activity_level) {
+                case 1:
+                    BMR *= 1.2;
+                    break;
+                case 2:
+                    BMR *= 1.375;
+                    break;
+                case 3:
+                    BMR *= 1.55;
+                    break;
+                case 4:
+                    BMR *= 1.725;
+                    break;
+                case 5:
+                    BMR *= 1.9;
+                    break;
+            }
+            
+            const res = await calorieTrackerRepo.setBodyDetails({ 
+                user_id, 
+                height,
+                weight, 
+                age, 
+                gender, 
+                activity_level, 
+                tdee: BMR
+            });
+             
+        } else {
+            console.error('Body details not valid, cannot calculate TDEE');
+            logger.error('Body details not valid, cannot calculate TDEE');
+        }
+    },
+
+    /*
+    *
+    *
+    * DELETE METHODS
+    * 
+    * 
+    */
+
+    deleteUser : async({ user_id }) => {
+        await userRepo.deleteUser({ user_id });
+
+    }
+}
+
+module.exports = { userService };
