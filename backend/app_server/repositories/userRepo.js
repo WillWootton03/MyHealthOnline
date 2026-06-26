@@ -198,6 +198,27 @@ const userRepo = {
         }
     },
 
+    verify_email : async ({ user_id }) => {
+        const query = `
+            UPDATE users
+            SET is_verified = $1
+            WHERE user_id = $2
+        `;
+
+        try {
+            await pool.query(query, [true, user_id]);
+
+            console.log(`REPO User email verified`);
+            logger.info(`REPO User at ${user_id} email verified`);
+        } catch (err) {
+            console.error(`REPO Failed to verify user email : ${err}`);
+            logger.error(`REPO Failed to verify user email at ${user_id}: ${err}`);
+
+            throw err;
+        }
+
+    },
+
     /*
     *
     *

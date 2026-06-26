@@ -8,8 +8,10 @@ router
     .post('/', userController.createUser)
     .post('/login', userController.emailLogin)
     .get('/', authMiddleware, userController.getUser)
+    .get('/send_verify_email', authMiddleware, userController.sendVerificationEmail)
     .put('/', authMiddleware, userController.updateUser)
     .put('/body_details', authMiddleware, userController.setBodyDetails)
+    .put('/verify_email', userController.verify_email)
     .delete('/', authMiddleware, userController.deleteUser);
     ;
 

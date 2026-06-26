@@ -46,12 +46,74 @@ const userController = {
                     data: result,
                 });
             logger.info(`Controller successfully logged in user at email ${email}`)
-        } catch (e) {
-            logger.error(`Controller Failed to login user: ${e}`);
-            next(e);
+        } catch (err) {
+            logger.error(`Controller Failed to login user: ${err}`);
+            next(err);
         }
     },
 
+    sendVerificationEmail : async(req, res, next) => {
+
+        const user_id = req.user.user_id ?? undefined;
+
+        if (user_id === undefined) {
+            logger.error('Not valid token, cannot send verification email');
+            throw new Error('Invalid Token, cannot send verification email');
+        }
+
+        logger.info('Contoller attempting to send email verification email');
+        try {
+            const result = await userService.sendVerificationEmail({ user_id });
+
+            res
+                .status(200)
+                .json({
+                    success: true,
+                    data: result,
+                });
+
+            console.log('Successfully sent verification email');    
+            logger.info('Successfully sent verification email');
+        } catch (err) {
+            logger.error(`Could Not send verification email: ${err}`);
+            console.error(`Could Not send verification email: ${err}`);
+            next(err);
+        }
+    },
+
+    verify_email : async(req, res, next) => {
+        
+        const { token } = req.body;
+
+        console.log(token, req.body);
+
+        if(!token) { return res.status(400).json({ succes: false, message: 'Invalid or Missing Token'});}
+
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+            const user_id = decoded.user_id;
+
+            console.log(decoded);
+            console.log(user_id);
+
+            await userService.verify_email({ user_id });
+
+            res
+                .status(200)
+                .json({
+                    success: true,
+                    data: result,
+                });
+            console.log('Successfully verified email');    
+            logger.info('Successfully verified email');
+        } catch (err) {
+            logger.error(`Could Not verify email: ${err}`);
+            console.error(`Could Not verify email: ${err}`);
+            next(err);
+        }
+        
+    },
 /*
 *
 *
@@ -79,9 +141,9 @@ const userController = {
                         data: result,
                     });
                 logger.info(`Controller Successfully retrieved user from id ${user_id}`);
-            } catch (e) {
-                logger.error(`Controller failed to retrieve user from user_id : ${e}`);
-                next(e);
+            } catch (err) {
+                logger.error(`Controller failed to retrieve user from user_id : ${err}`);
+                next(err);
             }
         } 
         // If no user_id in body attempt to get user using email
@@ -98,9 +160,9 @@ const userController = {
                         data: result,
                     });
                 logger.info(`Contoller succeessfully retrieved user from email ${email}`);
-            } catch (e) {
-                logger.error(`Controller failed to retrieve user from email: ${e}`);
-                next(e);
+            } catch (err) {
+                logger.error(`Controller failed to retrieve user from email: ${err}`);
+                next(err);
             }
         }
     },
@@ -128,9 +190,9 @@ const userController = {
                     data: result,
                 });
             logger.info(`Controller successfully updated user at user_id ${user_id}`);
-        } catch (e) {
-            logger.error(`Controller Failed to update user at user_id : ${e}`);
-            next(e);
+        } catch (err) {
+            logger.error(`Controller Failed to update user at user_id : ${err}`);
+            next(err);
         }
     },
 
@@ -157,9 +219,9 @@ const userController = {
 
             logger.info(`Controller successfully updated body details at user_id : ${user_id}`);
 
-        } catch (e) {
-            logger.error(`Controller failed to set body details : ${e}`)
-            next(e);
+        } catch (err) {
+            logger.error(`Controller failed to set body details : ${err}`)
+            next(err);
         }
     },
 
@@ -185,9 +247,9 @@ const userController = {
                     data: result,
                 });
             logger.info(`Controler successfully deleted user at user_id ${user_id}`);
-        } catch (e) {
-            logger.error(`Controller failed to delete user at user_id : ${e}`);
-            next(e);
+        } catch (err) {
+            logger.error(`Controller failed to delete user at user_id : ${err}`);
+            next(err);
         }
     },
 }

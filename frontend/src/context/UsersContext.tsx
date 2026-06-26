@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_ROUTE;
 
@@ -15,6 +15,7 @@ export type User = {
     gender: string;
     activity_level: number;
     tdee: number;
+    is_verified: boolean;
 };
 
 export type FoodData = {
@@ -51,6 +52,8 @@ type UsersContextType = {
     workoutData: {};
     fetchUser: () => Promise<void>;
     logoutUser: () => Promise<void>;
+    sendVerificationEmail: () => Promise<void>;
+    verifyEmail: () => Promise<void>;
 };
 
 const UsersContext = createContext<UsersContextType | null>(null);
@@ -66,6 +69,8 @@ export function UsersProvider({
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    const [params] = useSearchParams();
 
     const navigate = useNavigate();
 
@@ -95,9 +100,31 @@ export function UsersProvider({
         navigate('/');
     }
 
-    useEffect(() => {
-        fetchUser();
-    }, []);
+    const sendVerificationEmail = async () => {
+        if (!user) throw new Error('Cannot send verification email');
+        try {
+            await axios.get(`${API_BASE_URL}/users/send_verify_email`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
+        } catch (err) {
+            if (axios.isAxiosError(err)) { console.error(`Axios Error: ${err}`); }
+            else { console.error(`Normal Error: ${error}`); }
+        }
+    }
+
+    const verifyEmail = async () => {
+        const token = params.get('token');
+        try {
+            await axios.put(`${API_BASE_URL}/users/verify_email`, {
+                    token,
+                });
+        }catch (err) {
+            if (axios.isAxiosError(err)) { console.error(`Axios Error: ${err}`); }
+            else { console.error(`Normal Error: ${error}`); }
+        }
+    }
 
     return (
         <UsersContext.Provider
@@ -107,6 +134,8 @@ export function UsersProvider({
                 workoutData,
                 fetchUser,
                 logoutUser,
+                sendVerificationEmail,
+                verifyEmail,
             }}
         >
             {children}

@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import SignUp from './pages/SignUp';
 import Layout from './Layout';
 import Landing from './pages/Landing.tsx';
+import VerifyEmail from './pages/VerifyEmail.tsx';
 
 export const router = createBrowserRouter([
     { path: '/', Component: Landing},
@@ -12,8 +13,9 @@ export const router = createBrowserRouter([
         Component: Layout,
         children: [
             { index: true, Component: Dashboard },
+            { path: 'verify_email', Component: VerifyEmail}
         ]
     },
     { path: '/login', Component: Login },
-    { path: 'signUp', Component: SignUp}
+    { path: '/signUp', Component: SignUp},
 ]);

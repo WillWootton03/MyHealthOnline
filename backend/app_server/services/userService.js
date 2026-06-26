@@ -51,8 +51,7 @@ const userService = {
     },
 
     emailLogin : async({ email, password }) => {
-        
-        console.log(email, password);
+    
         // get user_id
         const user = await userRepo.getUserByEmail({ email });
         
@@ -85,6 +84,42 @@ const userService = {
             user_id: user.user_id,
             token
         };
+    },
+
+    sendVerificationEmail : async({ user_id }) => {
+
+        const user = await userRepo.getUserById({ user_id });
+
+        const token = jwt.sign(
+            { user_id: user_id },
+            process.env.JWT_SECRET,
+            { expiresIn: '15m'},
+        );
+
+        if (user){
+            
+            try {
+                const mail = await transporter.sendMail({
+                    from: process.env.APP_MAILER,
+                    to: user.email,
+                    subject: 'Verify Email',
+                    html: 
+                    `
+                        <p>Please click the link below to verify your email for My Health Online</p>
+                        <a href="${process.env.FRONTEND_URL}/app/verify_email?token=${token}"> Verify Email </a>                
+                    `,
+                });
+                logger.info(`Successfully sent email verification mail`);
+            } catch (err){
+                console.log(`Failed to send email verification mail : ${err}`);
+                logger.error(`Failed to send create verification mail : ${err}`);
+                throw new Error(`Failed to send create verification mail : ${err}`);
+            }
+        }
+    },
+
+    verify_email : async({ user_id }) => {
+        await userRepo.verify_email({ user_id });
     },
 
 

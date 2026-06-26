@@ -1,16 +1,16 @@
-import { ChevronDown, Heart, User, Settings, LogOut } from "lucide-react";
+import { ChevronDown, Heart, User, Settings, LogOut, ShieldCheck } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { useUser } from "./context/UsersContext";
 import { useEffect, useRef, useState } from "react";
 
 export default function Navbar() {
-  const { user, fetchUser, logoutUser } = useUser();
+  const { user, fetchUser, logoutUser, sendVerificationEmail } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  fetchUser();
-
   useEffect(() => {
+    fetchUser();
+
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setMenuOpen(false);
@@ -22,7 +22,10 @@ export default function Navbar() {
     return() => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
+
   }, []);
+  
+
   
   return (
     <div className="bg-[#f1f7ff] backdrop-blur-sm border-b border-[#7a9dbd] sticky top-0 z-20">
@@ -46,7 +49,7 @@ export default function Navbar() {
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setMenuOpen(v => !v)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover-light-bg-color transition-colors" >
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover-light-bg-color transition-colors hover:cursor-pointer" >
               <div className="w-7 h-7 rounded-full bg-color-primary flex items-center justify-center">
                 <span className="text-white text-xs font-semibold">
                   {
@@ -79,9 +82,9 @@ export default function Navbar() {
                         !user?.name 
                           ? "User" 
                           // Splices user.name if name too long, else puts the whole name
-                          : user?.name.length <= 30 
+                          : user?.name.length <= 20 
                             ? user?.name 
-                            : `${user?.name.slice(0, 30)}...` 
+                            : `${user?.name.slice(0, 20)}...` 
                       }
                   </div>
                   <div className="text-xs text-black/40 mt-0.5">
@@ -89,29 +92,40 @@ export default function Navbar() {
                       // Verifies user.email
                       !user?.email
                         ? "user@email.com"
-                        : user?.email.length <= 50
+                        : user?.email.length <= 25
                           ? user?.email
-                          : `${user?.email.slice(0, 50)}`
+                          : `${user?.email.slice(0, 25)}...`
                     }
                   </div>
                 </div>
                 <div className="py-1">
                   <button 
-                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-black/70 hover:bg-[#f0f5ff] hover:text-black transition-colors text-left">
+                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-black/70 hover:bg-[#f0f5ff] hover:text-black 
+                               transition-colors text-left hover:cursor-pointer">
                     <User className="w-4 h-4 text-color-primary" />
                       Profile
                   </button>
                   <button 
-                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-black/70 hover:bg-[#f0f5ff] hover:text-black transition-colors text-left">
+                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-black/70 hover:bg-[#f0f5ff] hover:text-black 
+                               transition-colors text-left hover:cursor-pointer">
                     <Settings className="w-4 h-4 text-color-primary" />
                       Settings
                   </button>
+                  {!user?.is_verified && (
+                    <button 
+                      onClick={sendVerificationEmail}
+                      className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-black/70 hover:bg-[#f0f5ff] hover:text-black 
+                                 transition-colors text-left hover:cursor-pointer">
+                      <ShieldCheck className="w-4 h-4 text-color-primary" />
+                        Verify Email
+                    </button>
+                  )}
                 </div>
                 <div className="border-t border-[#eaf1fb] py-1">
                   <button
                     onClick={logoutUser}
                     className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-color-primary hover:bg-[#fda7a7]/20
-                               hover-text-color-primary transistion-colors text-left"
+                               hover-text-color-primary transistion-colors text-left hover:cursor-pointer"
                     >
                     <LogOut className="w-4 h-4" />
                     Sign Out
