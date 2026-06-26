@@ -1,3 +1,35 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
 
 @import "tailwindcss";
+
+@layer utilities{
+    .page-bg-light {
+        background-color: #e1ecfd;
+    }
+
+    .bg-color-primary {
+        background-color: #65a5e0
+    }
+
+    :hover.hover-bg-color-primary {
+        background-color: #355988
+    }
+
+    .light-bg-color {
+        background-color: #f7faff;
+    }
+
+    :hover.hover-light-bg-color {
+        background-color: #e8f0fb;
+    }
+
+    .text-color-primary {
+        color: #4d7cba
+    }
+
+    :hover.hover-text-color-primary {
+        color: #234a7c
+    }
+
+
+}

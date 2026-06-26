@@ -54,7 +54,7 @@ export default function Login() {
 
   return (
       <div
-          className="min-h-screen w-full flex items-center justify-center relative overflow-hidden bg-[#eaf6fd]"
+          className="min-h-screen w-full flex items-center justify-center relative overflow-hidden page-bg-light"
       >
         {/* Card */}
         <div className="relative z-10 w-full max-w-sm mx-4 bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 shadow[0_8px_40px_rgba(0,0,0,0.08)

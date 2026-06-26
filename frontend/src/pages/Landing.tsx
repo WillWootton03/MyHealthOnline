@@ -36,10 +36,10 @@ const features = [
 
 export default function Landing() {
     return (
-        <div className='min-h-screen bg-[#e1ecfd] text-black' style={{ fontFamily: "'Raleway', seriff"}}>
+        <div className='min-h-screen page-bg-light text-black' style={{ fontFamily: "'Raleway', seriff"}}>
             {/* Hero */}
             <section className='max-w-5xl mx-auto px-6 pt-20 pb-16 text-center'>
-                <div className='inline-flex items-center gap-2 bg-[#e8eef9] border border-[#d0daf0] text-[#4d7cba] text-xs font-medium px-3 py-1.5 rounded-full mb-8'>
+                <div className='inline-flex items-center gap-2 page-background-light border border-[#d0daf0] text-color-primary text-xs font-medium px-3 py-1.5 rounded-full mb-8'>
                     <span className='w-1.5 h-1.5 rounded-full bg-[#4d7cba]' />
                     Now in early access
                 </div>
@@ -49,7 +49,7 @@ export default function Landing() {
                     style={{ fontFamily: "'Raleway', seriff"}}
                 >
                     Your health, {" "}
-                    <em className='text-[#4d7cba] not-italic'>simplified</em>
+                    <em className='text-color-primary not-italic'>simplified</em>
                 </h1>
 
                 <p className='text-lg text-black max-w-xl mx-auto leading-relaxed mb-10'>
@@ -60,7 +60,7 @@ export default function Landing() {
                 <div className='flex flex-col sm:flex-row items-center justify-center gap-3'>
                     <Link
                         to='/signUp'
-                        className='flex items-center gap-2 bg-[#2d557a] text-white text-sm font-medium px-6 py-3.5 rounded-xl hover:bg-[#243f63] 
+                        className='flex items-center gap-2 bg-color-primary text-white text-sm font-medium px-6 py-3.5 rounded-xl hover-bg-color-primary
                                    active:scale-[0.99] transition-all'
                     >
                         Start For Free
@@ -85,7 +85,7 @@ export default function Landing() {
             <section className='max-w-5xl mx-auto px-6 py-20'>
                 <div className='grid md:grid-cols-2 gap-12 items-center'>
                     <div>
-                        <p className='text-xs font-medium tracking-[0.15em] uppercase text-[#4d6aba] mb-4'>
+                        <p className='text-xs font-medium tracking-[0.15em] uppercase text-color-primary mb-4'>
                             What is My Health Online
                         </p>
                         <h2 className='text-3xl md:text-4xl font-medium leading-tight mb-5'
@@ -137,7 +137,7 @@ export default function Landing() {
             {/* Features */}
             <section className='max-w-5xl mx-auto px-6 py-20'>
                 <div className='text-center mb-14'>
-                    <p className='text-xs font-medium tracking-[0.15rem] uppercase text-[#4d7cba] mb-4'>
+                    <p className='text-xs font-medium tracking-[0.15rem] uppercase text-color-primary mb-4'>
                         What My Health Online Helps With
                     </p>
                     <h2
@@ -156,7 +156,7 @@ export default function Landing() {
                                 className='bg-white/60 backdrop-blur-sm border border-white/80 rounded-xl p-6 hover:bg-white/80 transition-colors duration-200'
                             >
                                 <div className='w-9 h-9 rounded-lg bg-[#e4eefb] flex items-center justify-center mb-4'>
-                                    <Icon className='w-4.5 h-4.5 text-[#4d7cba]' strokeWidth={1.75} />
+                                    <Icon className='w-4.5 h-4.5 text-color-primary' strokeWidth={1.75} />
                                 </div>
                                 <h3 className='text-sm font-semibold text-black mb-2'>{f.title}</h3>
                                 <p className='text-sm text-black/50 leading-relaxed'>{f.body}</p>

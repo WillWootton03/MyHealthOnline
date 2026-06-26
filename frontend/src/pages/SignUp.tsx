@@ -60,14 +60,14 @@ export default function Login() {
 
   return (
       <div
-          className="min-h-screen w-full flex items-center justify-center relative overflow-hidden bg-[#eaf6fd]"
+          className="min-h-screen w-full flex items-center justify-center relative overflow-hidden page-bg-light"
       >
         {/* Card */}
         <div className="relative z-10 w-full max-w-sm mx-4 bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 shadow[0_8px_40px_rgba(0,0,0,0.08)
                         px-8 py-10 drop-shadow-2xl">
           {/* Logo */}
           <div className="flex flex-col items-center mb-8">
-            <div className="w-11 h-11 rounded-full bg-[#6faaf7] flex items-center justify-center mb-4">
+            <div className="w-11 h-11 rounded-full bg-color-primary flex items-center justify-center mb-4">
               <Heart className="w-5 h-5 text-white fill='white" />
             </div>
             {/* AppTitle */}
@@ -220,7 +220,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-1 py-3.5 bg-[#54a6bb] text-white text-sm font-medium rounded-lg hover:bg-[#0d4c64] active:scale-[0.99] transition-all duration-150
+                className="w-full mt-1 py-3.5 bg-color-primary text-white text-sm font-medium rounded-lg hover-bg-color-primary active:scale-[0.99] transition-all duration-150
                           disabled:opacity-60 flex items-center justify-center gap-2 hover:cursor-pointer"
               >
                 {loading ? (
