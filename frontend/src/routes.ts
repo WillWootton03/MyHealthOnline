@@ -13,7 +13,8 @@ export const router = createBrowserRouter([
         Component: Layout,
         children: [
             { index: true, Component: Dashboard },
-            { path: 'verify_email', Component: VerifyEmail}
+            { path: 'verify_email', Component: VerifyEmail},
+            { path: 'dashboard', Component : Dashboard},
         ]
     },
     { path: '/login', Component: Login },

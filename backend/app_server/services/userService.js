@@ -161,6 +161,12 @@ const userService = {
         return user ;
     },
 
+    getUserDailyCalories : async({ user_id }) => {
+        const res = await userRepo.getUserDailyCalories({ user_id });
+        
+        return res;
+    },
+
     /*
     *
     *

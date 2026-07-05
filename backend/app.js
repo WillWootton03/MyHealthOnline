@@ -5,7 +5,11 @@ const cors = require('cors');
 require('dotenv').config();
 
 // Route connections
-var usersRouter = require('./app_server/routes/userRoutes');
+const usersRouter = require('./app_server/routes/userRoutes');
+const foodTrackerRouter = require('./app_server/routes/foodTrackerRoutes');
+const dailyLogsRouter = require('./app_server/routes/dailyLogsRoutes');
+const mealsRouter = require('./app_server/routes/mealsRoutes');
+const mealItemsRouter = require('./app_server/routes/mealItemsRoutes');
 
 // Set up app init
 var app = express();
@@ -20,6 +24,11 @@ app.use(cors({
 }));
 
 app.use('/api/users', usersRouter);
+app.use('/api/foods', foodTrackerRouter);
+app.use('/api/daily_logs', dailyLogsRouter);
+app.use('/api/meals', mealsRouter);
+app.use('/api/meal_items', mealItemsRouter);
+
 
 // catch 404 and forware to error handler
 app.use(function(req, res, next) {

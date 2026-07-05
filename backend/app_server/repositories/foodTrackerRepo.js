@@ -1,5 +1,5 @@
 const { pool } = require('../db/db_connection.js');
-const { logger } = requrie('../utils/logger.js');
+const { logger } = require('../utils/logger.js');
 
 const foodTrackerRepo = {
 /*
@@ -8,6 +8,14 @@ const foodTrackerRepo = {
 * POST METHODS
 * 
 * 
+*/
+
+/*
+*
+*
+* GET METHODS
+*
+*
 */
     
 }

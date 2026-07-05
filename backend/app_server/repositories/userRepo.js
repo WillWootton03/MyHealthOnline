@@ -1,5 +1,4 @@
 const { pool } = require('../db/db_connection.js');
-const { pg } = require('pg');
 const { logger } = require('../utils/logger.js');
 
 /*
@@ -138,6 +137,17 @@ const userRepo = {
 
             throw err;
         }
+    },
+
+    getUserDailyCalories : async ({ user_id }) => {
+        const query = `
+        SELECT tdee + calorie_change AS daily_cals
+        FROM users
+        WHERE user_id = $1
+        `;
+
+        const res = await pool.query(query, [user_id]);
+        return res.rows[0];
     },
     
     /*

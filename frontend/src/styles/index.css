@@ -4,7 +4,7 @@
 
 @layer utilities{
     .page-bg-light {
-        background-color: #e1ecfd;
+        background-color: #f0f6ff;
     }
 
     .bg-color-primary {
@@ -21,6 +21,10 @@
 
     :hover.hover-light-bg-color {
         background-color: #e8f0fb;
+    }
+
+    .light-card-color {
+        background-color: #ebeff7;
     }
 
     .text-color-primary {

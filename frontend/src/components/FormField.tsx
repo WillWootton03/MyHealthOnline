@@ -32,16 +32,6 @@ export default function FormField ({
  } : FormFieldProps) {
     const [focused, setFocused] = useState(false);
 
-    const setFeet = () => {
-
-    }
-    
-    const setInches = () => {
-
-    }
-
-
-
     return (
         <div>
             <label 

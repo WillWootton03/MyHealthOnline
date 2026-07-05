@@ -3,6 +3,7 @@ import { Eye, EyeOff, Heart } from 'lucide-react';
 import { useNavigate } from "react-router";
 
 import axios from 'axios';
+import WebBackground from "../components/WebBackground";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -54,9 +55,7 @@ export default function Login() {
   }
 
   return (
-      <div
-          className="min-h-screen w-full flex items-center justify-center relative overflow-hidden page-bg-light"
-      >
+        <WebBackground>
         {/* Card */}
         <div className="relative z-10 w-full max-w-sm mx-4 bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 shadow[0_8px_40px_rgba(0,0,0,0.08)
                         px-8 py-10 drop-shadow-2xl">
@@ -178,6 +177,6 @@ export default function Login() {
             </button>
           </p>
         </div>
-      </div>
+      </WebBackground>
   );
 }

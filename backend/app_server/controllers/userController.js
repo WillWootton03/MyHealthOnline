@@ -165,6 +165,24 @@ const userController = {
         }
     },
 
+    getUserDailyCalories : async(req, res, next) => {
+        try {
+            const user_id = req.user.user_id;
+            const result = await userService.getUserDailyCalories({ user_id });
+
+            res
+                .status(200)
+                .json({
+                    success: true,
+                    data: result,
+                });
+            logger.info(`Controller successfully got user calories at user_id ${user_id}`);
+        } catch (err) {
+            logger.error(`Controller Failed to get user calories at user_id : ${err}`);
+            next(err);
+        }
+    },
+
 /*
 *
 *

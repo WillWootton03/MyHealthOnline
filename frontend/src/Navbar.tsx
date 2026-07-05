@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 export default function Navbar() {
   const { user, fetchUser, logoutUser, sendVerificationEmail } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [sentEmail, setSentEmail] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -110,9 +111,9 @@ export default function Navbar() {
                     <Settings className="w-4 h-4 text-color-primary" />
                       Settings
                   </button>
-                  {!user?.is_verified && (
+                  {(!user?.is_verified && !sentEmail) && (
                     <button 
-                      onClick={sendVerificationEmail}
+                      onClick={() => { sendVerificationEmail(); setSentEmail(true); setMenuOpen(false); }}
                       className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-black/70 hover:bg-[#f0f5ff] hover:text-black 
                                  transition-colors text-left hover:cursor-pointer">
                       <ShieldCheck className="w-4 h-4 text-color-primary" />
