@@ -1,8 +1,7 @@
+require('dotenv').config();
 const createError = require('http-errors');
 const express = require('express');
 const cors = require('cors');
-
-require('dotenv').config();
 
 // Route connections
 const usersRouter = require('./app_server/routes/userRoutes');
@@ -10,6 +9,7 @@ const foodTrackerRouter = require('./app_server/routes/foodTrackerRoutes');
 const dailyLogsRouter = require('./app_server/routes/dailyLogsRoutes');
 const mealsRouter = require('./app_server/routes/mealsRoutes');
 const mealItemsRouter = require('./app_server/routes/mealItemsRoutes');
+const exercisesRouter = require('./app_server/routes/exercisesRoutes');
 
 // Set up app init
 var app = express();
@@ -28,6 +28,7 @@ app.use('/api/foods', foodTrackerRouter);
 app.use('/api/daily_logs', dailyLogsRouter);
 app.use('/api/meals', mealsRouter);
 app.use('/api/meal_items', mealItemsRouter);
+app.use('/api/exercises', exercisesRouter);
 
 
 // catch 404 and forware to error handler
@@ -45,7 +46,7 @@ app.use(function(err, req, res, next) {
     .json({
         success: false,
         message: err.message,
-        stack: process.env.ENV === 'development' ? err.stack : undefined,
+        stack: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test' ? err.stack : undefined,
     });
 });
 

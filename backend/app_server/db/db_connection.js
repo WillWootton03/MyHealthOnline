@@ -1,8 +1,14 @@
 const { Pool } = require('pg');
 
 
+let connectionString = null;
+
+if (process.env.NODE_ENV === 'dev') connectionString = process.env.DEV_DATABASE_URL;
+else if (process.env.NODE_ENV === 'test') connectionString = process.env.TEST_DATABASE_URL;
+else if (process.env.NODE_ENV === 'prod') connectionString = process.env.PROD_DATABASE_URL;
+
 // Neon database connection using ENV DATABASE URL
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({connectionString: connectionString });
 
 /*
     : EXAMPLE PSQL command

@@ -1,5 +1,5 @@
 services:
-  web:
+  api:
     build: .
     ports:
       - "3000:3000"
@@ -7,5 +7,14 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=dev
       - PORT=3000
+  api-test:
+    build: .
+    container_name: test_api
+    environment:
+      - NODE_ENV=test
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm test
