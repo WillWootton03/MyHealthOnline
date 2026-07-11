@@ -55,22 +55,26 @@ jobs:
                 registry: ghcr.io
                 username: ${{ github.actor }}
                 password: ${{ secrets.GITHUB_TOKEN }}
+
+              # Allows docker to read repo in lowerase, since images dont accept uppercase
+            - name: Set lowercase image name
+              run: echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
         
             - name: Build backend image
               run: |
                 docker build \
-                -t ghcr.io/${{ github.repository }}/backend:latest \
+                -t ghcr.io/${{ env.IMAGE_NAME }}/backend:latest \
                 backend
             - name: Build frontend image
               run: |
                 docker build  \
-                -t ghcr.io/${{ github.repository }}/frontend:latest  \
+                -t ghcr.io/${{ env.IMAGE_NAME }}/frontend:latest  \
                 frontend
 
             - name: Push backend image
               run: |
-                docker push ghcr.io/${{ github.repository }}/backend:latest
+                docker push ghcr.io/${{ env.IMAGE_NAME }}/backend:latest
             
             - name: Push frontend image
               run: |
-                docker push ghcr.io/${{ github.repository }}/frontend:latest
+                docker push ghcr.io/${{ env.IMAGE_NAME }}/frontend:latest
