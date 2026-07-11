@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --force-exit",
-    "test:watch": "jest-watch",
+    "test": "npm run test::unit && npm run test::integration",
+    "test:unit": "jest --config jest.config.js --testMatch='**/*.unit.test.ts' --force-exit",
+    "test:integration": "jest --config jest.config.js --testMatch='**/*.int.test.js' --force-exit",
+    "test:watch": "jest --config jest.config.js --testMatch='**/*.unit.test.ts' --watchAll",
     "start": "node app.js",
-    "dev": "nodemon -L app.js"
+    "dev": "nodemon -L --exec tsx app.js"
   },
   "jest": {
     "testEnvironment": "node"
@@ -26,13 +28,15 @@
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.11.0",
     "nodemailer": "^9.0.1",
-    "pg": "^8.22.0",
-    "winston": "^3.19.0"
+    "pg": "^8.22.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "jest": "^30.4.2",
     "nodemon": "^3.1.14",
-    "supertest": "^7.2.2"
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.11",
+    "tsx": "^4.23.0",
+    "winston": "^3.19.0"
   }
 }

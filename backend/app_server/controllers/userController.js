@@ -1,6 +1,8 @@
 const { userService } = require('../services/userService.js');
-const { logger } = require('../utils/logger.js');
 const  jwt  = require('jsonwebtoken');
+
+const { sendSuccess, sendError } = require('../utils/response.js'); 
+const { logger } = require('../utils/logger.js');
     
 const userController = { 
     /*
@@ -14,100 +16,153 @@ const userController = {
     */
 
     createUser: async( req, res, next ) => {
-        logger.info(`Controller attempting to create new user`);
         try {
             const { name, email, password } = req.body;
-            logger.debug(`USER CONTROLLER {Name: ${name}, Email: ${email}}`)
-            const result = await userService.createUser({ email, name, password });
-            res
-                .status(201)
-                .json({
-                    success: true,
-                    data: result,
-                });
-            logger.info(`Controller successfully created new user`);
+
+            // Verify values are in body, and correct types
+            if (!name || !email || !password || typeof password !== 'string' || typeof email !== 'string' || typeof name !== 'string') {
+                logger.error('FAILED createUser : invalid inputs for required fields : INVALID_FIELD_INPUT');
+                return sendError(
+                    res,
+                    'Invalid inputs for required fields',
+                    'INVALID_FIELD_INPUT'
+                );
+            }
+
+            const result = await userService.createUser({ name, email, password });
+            if (!result) {
+                logger.error('FAILED createUser : failed to create new user with credentials : POST_FAIL')
+                return sendError(
+                    res,
+                    'Failed to create new user with credentials',
+                    'POST_FAIL'
+                );
+            }
+            
+            logger.info('SUCCESS createUser : successfully created user');
+            return sendSuccess(
+                res,
+                'Successfully created new user row',
+                result
+            );
         } catch (e) {
-            logger.error(`Controller failed to create new user : ${e}`);
             next(e);
         }
     },
     
     emailLogin : async(req, res, next) => {
-        logger.info(`Controller attempting to login user by email`);
+        // Attempt to pull user from req and bypass login if valid token
+        const user_id  = req.user?.user_id ?? null;
+
         try {
             const { email, password } = req.body;
-            logger.debug(`USER CONTROLLER {Email: ${email}`);
+
+            // email or password not present in body or not string
+            if (typeof email !== 'string' && typeof password !== 'string') {
+                logger.error('FAILED emailLogin : invalid email or password : INVALID_CREDENTIALS')
+                return sendError(
+                    res,
+                    'invalid email or password',
+                    'INVALID_CREDENTIALS'
+                );
+            }
+
             const result = await userService.emailLogin({ email, password });
 
-            res
-                .status(200)
-                .json({
-                    success: true,
-                    data: result,
-                });
-            logger.info(`Controller successfully logged in user at email ${email}`)
+            // execution failed in repo
+            if(!result) {
+                logger.error('FAILED emailLogin : unable to process user login attempt : LOGIN_FAILED');
+                return sendError(
+                    res,
+                    'Unable to process user login attempt',
+                    'LOGIN_FAILED'
+                );
+            }
+
+            logger.info('SUCCESS emailLogin : user successfully logged in');
+            return sendSuccess(
+                res,
+                'User successfully logged in',
+                result
+            );
+
         } catch (err) {
-            logger.error(`Controller Failed to login user: ${err}`);
             next(err);
         }
     },
 
     sendVerificationEmail : async(req, res, next) => {
+        const { user_id } = req.user;
 
-        const user_id = req.user.user_id ?? undefined;
-
-        if (user_id === undefined) {
-            logger.error('Not valid token, cannot send verification email');
-            throw new Error('Invalid Token, cannot send verification email');
-        }
-
-        logger.info('Contoller attempting to send email verification email');
         try {
             const result = await userService.sendVerificationEmail({ user_id });
 
-            res
-                .status(200)
-                .json({
-                    success: true,
-                    data: result,
-                });
+            if (!result) {
+                logger.error('FAILED sendVerificationEmail : failed to send verification email : NOT_FOUND');
+                return sendError(
+                    res,
+                    'Failed to send verification email',
+                    'NOT_FOUND',
+                );
+            }
 
-            console.log('Successfully sent verification email');    
-            logger.info('Successfully sent verification email');
+            logger.info('SUCCESS sendVerificationEmail : successfully sent user email verification');
+            return sendSuccess(
+                res,
+                'Successfully sent user email verification',
+                result
+            );
+
         } catch (err) {
-            logger.error(`Could Not send verification email: ${err}`);
-            console.error(`Could Not send verification email: ${err}`);
             next(err);
         }
     },
 
-    verify_email : async(req, res, next) => {
-        
+    verifyEmail : async (req, res, next) => {
         const { token } = req.body;
 
-        if(!token) { return res.status(400).json({ succes: false, message: 'Invalid or Missing Token'});}
+        if(!token) { 
+            logger.error('FAILED verifyEmail : invalid or missing token : UNAUTHORIZED')
+            return sendError(
+                res,
+                'Invalid or missing token',
+                'UNAUTHORIZED'
+            )
+        }
 
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-            const user_id = decoded.user_id;
+            const user_id = decoded.user_id ?? null;
 
-            console.log(decoded);
-            console.log(user_id);
+            if(!user_id) {
+                logger.error('FAILED verifyEmail : invalid user_id in token : UNAUTHORIZED');
+                return sendError(
+                    res,
+                    'Invalid user_id in token',
+                    'UNAUTHORIZED'
+                );
+            }
 
-            await userService.verify_email({ user_id });
+            const result = await userService.verifyEmail({ user_id });
 
-            res
-                .status(200)
-                .json({
-                    success: true,
-                    data: result,
-                });
-            console.log('Successfully verified email');    
-            logger.info('Successfully verified email');
+            if(!result) {
+                logger.error('FAILED verifyEmail : failed to verify user email : NOT_FOUND OR UNAUTHORIZED');
+                return sendError(
+                    res,
+                    'Failed to verify user email',
+                    'NOT_FOUND OR UNAUTHORIZED'
+                );
+            }
+
+            logger.info('SUCCESS verifyEmail : successfully verified user email');
+            return sendSuccess(
+                res,
+                'Successfully verified user email',
+                result
+            );
+
         } catch (err) {
-            logger.error(`Could Not verify email: ${err}`);
-            console.error(`Could Not verify email: ${err}`);
             next(err);
         }
         
@@ -121,65 +176,85 @@ const userController = {
 */
 
     getUser: async(req, res, next) => {
-        // if no email or user_id is passed in body then it will be undefined.
-        const { email } = req.body ?? {};
+        // get user id from token ONLY
+        const { user_id } = req.user;
 
-        const user_id = req.user.user_id ?? undefined;
+        try {
+            const result = await userService.getUserById({ user_id });
 
-        // Attempt to get user by id first
-        if (user_id !== undefined) {
-            logger.info(`Contoller attempting to retrieve user by id`);
-            try {
-                logger.debug(`USER CONTROLLER {User_Id: ${user_id}}`);
-                const result = await userService.getUserById({ user_id });
-                res
-                    .status(200)
-                    .json({
-                        succes: true,
-                        data: result,
-                    });
-                logger.info(`Controller Successfully retrieved user from id ${user_id}`);
-            } catch (err) {
-                logger.error(`Controller failed to retrieve user from user_id : ${err}`);
-                next(err);
+            if (!result) {
+                logger.error('FAILED getUser : no user found at user_id : NOT_FOUND');
+                return sendError(
+                    res,
+                    'No user found at user_id',
+                    'NOT_FOUND'
+                );
             }
-        } 
-        // If no user_id in body attempt to get user using email
-        else if (email !== undefined) {
-            logger.info(`Controller attemtpting to retrieve user by email`);
-            try {
-                logger.debug(`USER CONTROLLER {Email: ${email}`);
-                const result = await userService.getUserByEmail({ email });
 
-                res
-                    .status(200)
-                    .json({
-                        success: true,
-                        data: result,
-                    });
-                logger.info(`Contoller succeessfully retrieved user from email ${email}`);
-            } catch (err) {
-                logger.error(`Controller failed to retrieve user from email: ${err}`);
-                next(err);
-            }
+            logger.info('SUCCESS getUser : retrieved user from user_id');
+            return sendSuccess(
+                res,
+                'Retrieved user from user_id',
+                result
+            );
+
+        } catch (err) {
+            next(err);
         }
     },
 
     getUserDailyCalories : async(req, res, next) => {
+        // get daily calories only for current user in token
+        const { user_id } = req.user;
+
         try {
-            const user_id = req.user.user_id;
             const result = await userService.getUserDailyCalories({ user_id });
 
-            res
-                .status(200)
-                .json({
-                    success: true,
-                    data: result,
-                });
-            logger.info(`Controller successfully got user calories at user_id ${user_id}`);
+            if (!result) {
+                logger.error('FAILED getUserDailyCalories : did not find user daily calories for user');
+                return sendError(
+                    res,
+                    'Failed to retrieve daily calories for user based on user_id',
+                    'NOT_FOUND'
+                );
+            }
+
+            logger.info('SUCCESS getUserDailyCalories : retrieved daily calories for user based on user_id');
+            return sendSuccess(
+                res,
+                'Retrieved daily calories for user based on user_id',
+                result  
+            );
+
         } catch (err) {
-            logger.error(`Controller Failed to get user calories at user_id : ${err}`);
             next(err);
+        }
+    },
+
+    getUserBodyDetails : async (req, res, next) => {
+        const { user_id } = req.user;
+
+        try {
+            const result = await userService.getUserBodyDetails({ user_id });
+
+            if(!result) {
+                logger.error('FAILED getUserBodyDetails : failed to retreive user body details');
+                return sendError(
+                    res,
+                    'Failed to retrieve user body details',
+                    'NOT_FOUND OR UNAUTHORIZED'
+                );
+            }
+
+            logger.info('SUCCESS getUserBodyDetails : successfully retrieved user body details');
+            return sendSuccess(
+                res,
+                'Sucessfully retrieved user body details',
+                result,
+            );
+
+        } catch (err) {   
+            next(err)
         }
     },
 
@@ -192,47 +267,85 @@ const userController = {
 */
 
     updateUser : async(req, res, next) => {
-        logger.info(`Controller attempting to update user`);
+        const { user_id } = req.user;
         try {
-            const user_id = req.user.user_id;
             const { email, name, password } = req.body;
-            logger.debug(`USER CONTROLLER {Email: ${email}, Name: ${name}`);
+
+            // Verify inputs are all valid, and if an input is valid that it is the correct type
+            if (
+                (!email && !name && !password) || 
+                (email && typeof email !== 'string') || (name && typeof name !== 'string') || ( password && typeof password !== 'string')
+            ) {
+                logger.error('FAILED updateUser : invalid inputs : INVALID_FIELD_INPUT');
+                return sendError(
+                    res,
+                    'Invalid inputs',
+                    'INVALID_FIELD_INPUT'
+                );
+            }  
             const result = await userService.updateUser({ user_id, email, name, password });
 
-            res
-                .status(200)
-                .json({
-                    success: true,
-                    data: result,
-                });
-            logger.info(`Controller successfully updated user at user_id ${user_id}`);
+            if(!result) {
+                logger.error('FAILED updateUser : failed to update user at user_id : NOT_FOUND');
+                return sendError(
+                    res,
+                    'Failed to update user at user_id',
+                    'NOT_FOUND',
+                );
+            }
+
+            logger.info('SUCCESS updateUser : successfully updated user at user_id');
+            return sendSuccess(
+                res,
+                'Successfully updated user at user_id',
+                result
+            );
+
         } catch (err) {
-            logger.error(`Controller Failed to update user at user_id : ${err}`);
             next(err);
         }
     },
 
     setBodyDetails : async( req, res, next ) => {
-        logger.info(`Controller attempting to update user body details`);
+        const { user_id } = req.user;
+
         try {
-            const user_id = req.user.user_id;
-            const { height, weight, age, gender, activity_level } = req.body;
-            console.log(gender === 'male');
-            logger.debug(`USER_TRACKER CONTROLLER {HEIGHT: ${height}, WEIGHT: ${weight}, AGE: ${age}, GENDER: ${gender}, ACTIVITY_LEVEL: ${activity_level}`);
+            const { height, weight, age, gender, activity_level, measurement_pref } = req.body;
 
-            const result = await userService.setBodyDetails({ user_id, height, weight, age, gender, activity_level});
+            // Verify at least one new value present, and if present is the right input type 
+            if(
+                (!height && !weight && !age && !gender && !activity_level && !measurement_pref) ||
+                (height && typeof height !== 'string') || (weight && typeof weight !== 'number') 
+                || (age && typeof age !== 'number') || (gender && typeof gender !== 'string') || (activity_level && typeof activity_level !== 'number')
+                || (measurement_pref && typeof measurement_pref !== 'string')
+        ) {
+            logger.error('FAILED setBodyDetails : invalid field inputs for body details');
+            return sendError(
+                res,
+                'Invalid field inputs for body details',
+                'INVALID_FIELD_INPUTS'
+            );
+        }
 
-            res
-                .status(200)
-                .json({
-                    success: true,
-                    data: result,
-                });
+            const result = await userService.setBodyDetails({ user_id, height, weight, age, gender, activity_level, measurement_pref});
 
-            logger.info(`Controller successfully updated body details at user_id : ${user_id}`);
+            if (!result) {
+                logger.error('FAILED setBodyDetails : failed to update user body details');
+                return sendError(
+                    res,
+                    'Failed to update user body details',
+                    'NOT_FOUND'
+                );
+            }
+
+            logger.info(`SUCCESS setBodyDetails : updated body details at user_id`);
+            return sendSuccess(
+                res,
+                'Successfully updated user body details',
+                result
+            );
 
         } catch (err) {
-            logger.error(`Controller failed to set body details : ${err}`)
             next(err);
         }
     },
@@ -246,21 +359,26 @@ const userController = {
 */
 
     deleteUser : async(req, res, next) => {
-        logger.info(`Controller attempting to delete user`);
         try {
-            const user_id = req.user.user_id;
-            logger.debug(`USER CONTROLLER {User_id: ${user_id}`);
+            const { user_id } = req.user;
             const result = await userService.deleteUser({ user_id });
 
-            res
-                .status(200)
-                .json({
-                    succes: true,
-                    data: result,
-                });
-            logger.info(`Controler successfully deleted user at user_id ${user_id}`);
+            if (!result) {
+                logger.error('FAILED deleteUser : user not found or db returned')
+                return sendError(
+                    res,
+                    'Failed to delete user, not found',
+                    'NOT_FOUND'
+                );
+            }
+
+            logger.info(`SUCCESS deleteUser : deleted user at user_id`);
+            return sendSuccess(
+                res,
+                'Successfully deleted user row',
+            )
+
         } catch (err) {
-            logger.error(`Controller failed to delete user at user_id : ${err}`);
             next(err);
         }
     },

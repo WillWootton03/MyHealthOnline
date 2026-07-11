@@ -2,10 +2,10 @@ import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import NutrientDetails from "./NutrientDetails";
 import axios from "axios";
 import type { MealData, MealItem } from "./DailyCalorieDisplay";
-
+import { pluralCheck, titleCase, formatDate } from '@shared/functions/formatting';
 type FoodItemDetailsProps = {
     updatedItem: boolean;
-    date?: Date;
+    date: Date;
     item: any;
     log_id: string;
     meal_id: string | undefined;
@@ -16,11 +16,6 @@ type FoodItemDetailsProps = {
     updateLoggedItem?: (meal_item: MealItem) => void;
 }
 
-type ReturningMacros = {
-    type: string;
-    amount: number;
-    serving_type: string;
-}
 
 export default function FoodItemDetails({
     updatedItem,
@@ -38,21 +33,26 @@ export default function FoodItemDetails({
     const [servingSizeInput, setServingSizeInput] = useState(updatedItem ? String(item.serving_amount) : '1');
     const [servingType, setServingType] = useState(`${item.serving_unit ? item.serving_unit : item.householdServingFullText}`);
     const [adding, setAdding] = useState(false);
-    const [returningMacros, setReturningMacros] = useState<ReturningMacros[]>([]); 
     const [updating, setUpdating] = useState(false);
 
-
     // serving_unit is used for logged food items, householdServingFullText, is used for search items
-    let options = [updatedItem ? item.household_serving : item.householdServingFullText, '1 household', '1 g', `100 g`];
+    let options = [updatedItem 
+        ? item.household_serving 
+        : item.householdServingFullText,
+        updatedItem
+            ? `1 ${pluralCheck(item.household_serving.split(' ')?.at(1)) ?? 'household'}`
+            :   `1 ${pluralCheck(item.householdServingFullText.split(' ')?.at(1)) ?? 'household'}`,
+        '1 g', `100 g`];
 
-    // If item serving is already set at a single serving do not set the option
-    if ((updatedItem ? item.household_serving.charAt(0) : item.householdServingFullText.charAt(0)) === '1') {
+    // If household serving item is already at 1 remove extra 1 household item
+    if (options.at(0)?.at(0) === '1') {
         options = options.filter((opt) =>  opt !== '1 household');
     }
 
     async function newDailyLog() {
         const token = localStorage.getItem('token');
-        const sendDate = date ? date : undefined;
+
+        const sendDate = date ? formatDate(date) : undefined;
         try {
             const result = await axios.post(`${import.meta.env.VITE_API_BASE_ROUTE}/daily_logs`,
                 {
@@ -77,8 +77,6 @@ export default function FoodItemDetails({
 
         try {
             setAdding(true);
-            // Try to find calories in returning macros and add it to cals consumed, if not found add 0 to calsConsumed
-            const addedCals = calsConsumed + (returningMacros.find((m) => m.type === 'calories')?.amount ?? 0);
 
             // Some items do not have brandName's so set to brandOwner if not available else null
             const brandName = item.brandName &&  item.brandName === 'N/A'
@@ -87,35 +85,35 @@ export default function FoodItemDetails({
                                         ? item.brandOwner
                                         : null
 
+            const new_serving_type = servingType !== '1 household' ? servingType : `1 ${item.householdServingFullText.split(' ')[1].slice(0, -1) ?? 'household'}`;
             const res = await axios.post(`${import.meta.env.VITE_API_BASE_ROUTE}/meal_items/`,
                 {
                     meal_id: meal_id,
                     log_id: log_id,
                     meal_type: meal_type.toLocaleLowerCase(),
-                    fdc_id: item.fdcId,                         // When a logged item passed use fdc_id, when a search item use fdcId
+                    date: date,
+                    fdc_id: String(item.fdcId),                         // When a logged item passed use fdc_id, when a search item use fdcId
                     food_name: brandName ? `${brandName} ${item.description}` : item.description,   // Properly format food name to display brandName and food name if possible
                     brand_owner: item.brandOwner,
                     serving_size: item.servingSize,
                     serving_amount: Number(servingSizeInput),
                     household_serving: item.householdServingFullText,
-                    serving_unit: servingType,
-                    macros: returningMacros,
-                    // per_100 holds all calulating data for items and needs to be stored to properly calulate calories
-                    per_100: [
-                        item.foodNutrients.filter((nut : any) => nut.nutrientName === 'Energy')[0]?.value,
-                        item.foodNutrients.filter((nut : any) => nut.nutrientName === 'Protein')[0]?.value,
-                        item.foodNutrients.filter((nut : any) => nut.nutrientName === 'Total lipid (fat)')[0]?.value,
-                        item.foodNutrients.filter((nut : any) => nut.nutrientName === 'Carbohydrate, by difference')[0]?.value,
-                    ]
+                    // serving type normal unless its 1 household then format to fit household serving description
+                    serving_unit: new_serving_type,
+                    macros: {
+                        calories: item.foodNutrients.filter((nut : any) => nut.nutrientName === 'Energy')[0]?.value,
+                        protein: item.foodNutrients.filter((nut : any) => nut.nutrientName === 'Protein')[0]?.value,
+                        fat: item.foodNutrients.filter((nut : any) => nut.nutrientName === 'Total lipid (fat)')[0]?.value,
+                        carbohydrates: item.foodNutrients.filter((nut : any) => nut.nutrientName === 'Carbohydrate, by difference')[0]?.value, 
+                    },
                 }, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 }
             );
-            setCalsConsumed(addedCals);
+            const retItem = res.data.data;
 
-            console.log((returningMacros.find(m => m.type === 'calories')?.amount ?? 0));
 
             // Create a new mealItem based on the new items data and call our parent function to update meal items in the display
             const newItem: MealItem = {
@@ -124,25 +122,24 @@ export default function FoodItemDetails({
                 food_name: brandName ? `${brandName} ${item.description}` : item.description,
 
                 brand_owner: item.brandOwner,
-                serving_unit: servingType,
+                serving_unit: new_serving_type,
                 serving_size: item.servingSize,
                 serving_amount: Number(servingSizeInput),
                 household_serving: item.householdServingFullText,
-                calories: (returningMacros.find(m => m.type === 'calories')?.amount ?? 0),
-                protein: (returningMacros.find(m => m.type === 'protein')?.amount ?? 0),
-                fat: (returningMacros.find(m => m.type === 'fat')?.amount ?? 0),
-                carbohydrates: (returningMacros.find(m => m.type === 'carbohydrates')?.amount ?? 0),
-
-                // Stores the items macros per 100 grams in order to accurately check macro data when changing serving types and sizes
-                per100_calories: item.foodNutrients.filter((nut : any) => nut.nutrientName === 'Energy')[0]?.value,
-                per100_protein: item.foodNutrients.filter((nut : any) => nut.nutrientName === 'Protein')[0]?.value,
-                per100_fat: item.foodNutrients.filter((nut : any) => nut.nutrientName === 'Total lipid (fat)')[0]?.value,
-                per100_carbohydrates: item.foodNutrients.filter((nut : any) => nut.nutrientName === 'Carbohydrate, by difference')[0]?.value, 
-
+                calories: retItem.calories,
+                protein: retItem.protein,
+                fat: retItem.fat,
+                carbohydrates: retItem.carbohydrates, 
+                per100_calories: retItem.per100_calories,
+                per100_protein: retItem.per100_protein,
+                per100_fat: retItem.per100_fat,
+                per100_carbohydrates: retItem.per100_carbohydrates,
             }
-            console.log('newItem', returningMacros);
+            
+            setCalsConsumed(calsConsumed + retItem.calories);
+
             if (onAddMealItem) {
-                onAddMealItem(meal_type.toLocaleLowerCase(), newItem, (res.data.data.meal_id ? res.data.data.meal_id : ''), (log_id ? log_id : ''));
+                onAddMealItem(meal_type.toLocaleLowerCase(), newItem, (res.data?.data?.meal_id ?? ''), (log_id ?? ''));
             }
             setAdding(false);
         } catch (err) {
@@ -150,25 +147,32 @@ export default function FoodItemDetails({
             return err;
         }
     }
-
+    
     async function updateItem() {
         const token = localStorage.getItem('token');
-        // Verfiy the item's values change before sending put request
-        if (servingType === item.serving_unit && servingSizeInput === item.serving_amount) return;
+
+        // Verfiy the serving values change before sending put request 
+        // ex. From 3 Crackers to 1 Cracker type or 1 to 10 servings
+        if (servingType === item.serving_unit && Number(servingSizeInput) === item.serving_amount) return;
+
         try {
-            const res = await axios.put(`${import.meta.env.VITE_API_BASE_ROUTE}/meal_items/`,
+            const res = await axios.put(`${import.meta.env.VITE_API_BASE_ROUTE}/meal_items/${item.meal_item_id}`,
                 {
-                    serving_type : servingType,
-                    serving_amount : servingSizeInput,
-                    macros: returningMacros,
+                    serving_unit : servingType,
+                    serving_amount : Number(servingSizeInput),
+                    serving_size: item.serving_size,
+                    household_serving: item.household_serving,
+                    macros: {
+                        calories: item.per100_calories,
+                        protein: item.per100_protein,
+                        fat: item.per100_fat,
+                        carbohydrates: item.per100_carbohydrates, 
+                    },
                 },
                 {
                     headers: {
                         Authorization : `Bearer ${token}`
                     },
-                    params: {
-                        meal_item_id: item.meal_item_id,
-                    }
                 }
             );
             if (updateLoggedItem) {
@@ -180,15 +184,7 @@ export default function FoodItemDetails({
             return err;
         }
     };
-    function titleCase(str : string) {
-        if (!str) return '';
 
-        const newStrArr = str.split(' ');
-        const newStr = newStrArr.length > 1 
-            ? newStrArr.map((s) => s.charAt(0) + s.slice(1).toLowerCase()).join(' ') 
-            :  newStrArr[0].charAt(0) + newStrArr[0].slice(1).toLowerCase();
-        return newStr;
-    }
     return (
         // DETAILS SECTION
         <div className="flex-col gap-y-2 justify-items-center h-80 w-full">
@@ -222,14 +218,9 @@ export default function FoodItemDetails({
                         servingSize={updatedItem ? item.serving_size : item.servingSize}
                         servingType={servingType}
                         servingInput={servingSizeInput}
-                        householdNum={updatedItem 
-                            ? item.household_serving[0] !== '1'
-                                ? item.household_serving[0]
-                                : ''
-                            : item.householdServingFullText[0] !== '1' 
-                                ? item.householdServingFullText[0] 
-                                : ''}
-                        setReturningMacros={setReturningMacros}
+                        household={updatedItem 
+                            ? item.household_serving
+                            : item.householdServingFullText}
                     />
                     <NutrientDetails 
                         isLoggedItem={updatedItem ? true : false}
@@ -238,14 +229,9 @@ export default function FoodItemDetails({
                         servingSize={updatedItem ? item.serving_size : item.servingSize}
                         servingType={servingType}
                         servingInput={servingSizeInput}
-                        householdNum={updatedItem 
-                            ? item.household_serving[0] !== '1'
-                                ? item.household_serving[0]
-                                : ''
-                            : item.householdServingFullText[0] !== '1' 
-                                ? item.householdServingFullText[0] 
-                                : ''}
-                        setReturningMacros={setReturningMacros}
+                        household={updatedItem 
+                            ? item.household_serving
+                            : item.householdServingFullText}
                     />
                     <NutrientDetails 
                         isLoggedItem={updatedItem ? true : false}
@@ -254,14 +240,9 @@ export default function FoodItemDetails({
                         servingSize={updatedItem ? item.serving_size : item.servingSize}
                         servingType={servingType}
                         servingInput={servingSizeInput}
-                        householdNum={updatedItem 
-                            ? item.household_serving[0] !== '1'
-                                ? item.household_serving[0]
-                                : ''
-                            : item.householdServingFullText[0] !== '1' 
-                                ? item.householdServingFullText[0] 
-                                : ''}
-                        setReturningMacros={setReturningMacros}
+                        household={updatedItem 
+                            ? item.household_serving
+                            : item.householdServingFullText}
                     />
                     <NutrientDetails 
                         isLoggedItem={updatedItem ? true : false}
@@ -270,14 +251,9 @@ export default function FoodItemDetails({
                         servingSize={updatedItem ? item.serving_size : item.servingSize}
                         servingType={servingType}
                         servingInput={servingSizeInput}
-                        householdNum={updatedItem 
-                            ? item.household_serving[0] !== '1'
-                                ? item.household_serving[0]
-                                : ''
-                            : item.householdServingFullText[0] !== '1' 
-                                ? item.householdServingFullText[0] 
-                                : ''}
-                        setReturningMacros={setReturningMacros}
+                        household={updatedItem 
+                            ? item.household_serving
+                            : item.householdServingFullText}
                     />
                     {item.foodNutrients && item.foodNutrients.filter((nut : any) => nut.nutrientName === 'Total Sugars') ? (
                     <NutrientDetails 
@@ -287,8 +263,8 @@ export default function FoodItemDetails({
                         servingSize={item.servingSize}
                         servingType={servingType}
                         servingInput={servingSizeInput}
-                        householdNum={item.householdServingFullText[0] !== '1' ? item.householdServingFullText[0] : ''}
-                        setReturningMacros={setReturningMacros}
+                        household={item.householdServingFullText}
+                        
                     />
                     ) : (
                         <></>
@@ -308,13 +284,7 @@ export default function FoodItemDetails({
                         >
                             {options?.map((opt) => (
                                 <option key={opt} value={opt}>
-                                    {/* If updated item, get the second half of serving unit, else get householdServing. Cut of plural by slicing end of string */}
-                                    {opt === '1 household' 
-                                        ? `1 
-                                            ${item.household_serving ? item.household_serving.split(' ')[1].slice(0, -1) 
-                                            : item.householdServingFullText.split(' ')[1].slice(0, -1)}` 
-                                                : opt
-                                        }
+                                    {opt}
                                 </option>
                             ))}
                         </select>

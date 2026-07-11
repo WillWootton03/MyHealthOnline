@@ -1,5 +1,6 @@
 const { exercisesService } = require('../services/exercisesService.js');
 const { logger } = require('../utils/logger.js');
+const { sendSuccess, sendError } = require('../utils/response.js');
 
 const exercisesController = {
 
@@ -7,16 +8,14 @@ const exercisesController = {
         try {
             const result = await exercisesService.getAllExercises();
 
-            res
-                .status(200)
-                .json({
-                    success: true,
-                    data: result,
-                });
+            logger.info('SUCCESS getAllExercises : successfully retrieved all exercises');
+            return sendSuccess(
+                res,
+                'Sucessfully retrieved all excersizes',
+                result
+            )
 
-            console.log('Successfully retrieved exercise data');
         } catch (err) {
-            logger.error(`Failed to retrieve all exercises ${err}`);
             next(err);
         }
     },
@@ -24,28 +23,28 @@ const exercisesController = {
     getExerciseById : async(req, res, next) => {
         try {
             const { exercise_id } = req.params;
+
             const result = await exercisesService.getExerciseById({ exercise_id });
 
-            let data = undefined;
 
+            // API returns detail and detail is "Not found." if no exercise found
             if(result.detail === 'Not found.') {
-                data = {
-                    success: false,
-                    data: null,
-                };
-            } else {
-                data = {
-                    success: true,
-                    data: result,
-                }
-            }
+                logger.error('FAILED getExerciseById : no item found at that exercise id');
+                return sendError(
+                    res,
+                    'No item found at that exercise id',
+                    'NOT_FOUND'
+                )
+            } 
 
-            res
-                .status(200)   
-                .json(data);
+            logger.info('SUCCESS getExerciseById : successfully retrieved exercise by id');
+            return sendSuccess(
+                res,
+                'Successfully retrieved exercise by id',
+                result,
+            );
 
         } catch (err) {
-            logger.error(`Failed to retrieve an exercise by id ${err}`);
             next(err);
         }
     },

@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es2025",
+        "checkJs": false,
+        "maxNodeModuleJsDepth": 2
+    },
+    "include": ["**/*.js", "node_modules/@types/supertest"]
+}

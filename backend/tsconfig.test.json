@@ -1,0 +1,15 @@
+// used for configuring unit tests in ts
+{
+    "compilerOptions": {
+        "target": "es2025",
+        "module": "commonjs",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "typeRoots": [
+            "./node_modules/@types"
+        ]
+    },
+    "include": ["../shared/*.ts"]
+}

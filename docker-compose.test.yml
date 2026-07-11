@@ -1,0 +1,28 @@
+services:
+  api-test:
+    build: 
+      context: .
+      dockerfile: backend/dockerfile
+    container_name: test_api
+    volumes:
+      - ./backend:/usr/src/app/backend
+      - ./shared:/usr/src/app/shared
+      - /usr/src/app/backend/node_modules
+    environment:
+      - NODE_ENV=test
+    command: npm test
+
+  # Dedicated target for only running unit tests
+  api-test-unit:
+    extends: api-test
+    container_name: test_api_unit
+    command: npm run test:unit
+  
+  # Dedicated target for only running integration tests
+  api-test-integration:
+    extends: api-test
+    container_name: test_api_integration
+    command: npm run test:integration
+
+# Full Docker command to run for tests
+# docker compose -f docker-compose.test.yml run --rm api-test-integration 

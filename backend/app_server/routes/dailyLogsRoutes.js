@@ -9,6 +9,7 @@ router
     .get('/', authMiddleware, dailyLogsController.getDayLogId)
     .get('/:log_id/food_data', authMiddleware, dailyLogsController.getFoodData)
     .get('/:log_id/day_calories', authMiddleware, dailyLogsController.getDayCalories)
+    .delete('/:log_id', authMiddleware, dailyLogsController.deleteDailyLog)
 ;
 
 module.exports = router 

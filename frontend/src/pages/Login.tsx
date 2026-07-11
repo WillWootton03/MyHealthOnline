@@ -40,7 +40,6 @@ export default function Login() {
         localStorage.setItem('token', token);
 
         console.log(`Frontend rerouting user to dashboard following successful login`);
-        console.log(token);
         // Redirect to Dashboard
         navigate('/app');
       } catch(err : any) {

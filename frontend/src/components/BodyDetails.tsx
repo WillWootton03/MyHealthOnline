@@ -2,46 +2,115 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import FormField from "./FormField";
 import { useNavigate } from "react-router";
-
+import { feetToCm, lbsToKg, cmToFeetString, kgToLbs} from "@shared/functions/int_conversions";
 
 
 export default function BodyDetails () {
     const [feet, setFeet] = useState("5");
-    const [inches, setInches] = useState('10');
+    const [inches, setInches] = useState('5');
     const [weight, setWeight] = useState("200");
     const [age, setAge] = useState("21");
     const [gender, setGender] = useState('male');
     const [activity_level, setActivity_Level] = useState("1");
 
+    const [cm, setCm] = useState('170');
+    const [kg, setKg] = useState('62');
+
+    const [imperialMeasurement, setImperialMeasurement] = useState(true);
+
     const [loading, setLoading] = useState(false);
+    const [submitting, setSubmitting] =  useState(false);
     const [formError, setFormError] = useState<string | null>(null);
 
     
-        const navigate = useNavigate();
+    const navigate = useNavigate();
 
-
-    const setBodyDetails = async (e: React.SyntheticEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const getBodyDetails = async() => {
         setLoading(true);
 
         const token = localStorage.getItem('token');
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_API_BASE_ROUTE}/users/body_details`, 
+                {
+                    headers: {
+                        'Authorization' : `Bearer ${token}`
+                    }
+                }
+            );
+
+            const data = res.data.data;
+
+            setImperialMeasurement(data.measurement_pref === 'imperial' ? true : false);
+            if(imperialMeasurement) {
+                let f = '';
+                let i = '';
+                [f, i] = data.height.split("'");
+                setFeet(String(f) === '-1' ? '5' : String(f));
+                setInches(String(i) === '-1' ? '6' : String(i));
+                setWeight(String(data.weight) === '-1' ? '200' : String(data.weight));
+            } else {
+                setCm(data.height);
+                setKg(data.weight)
+            }
 
 
-        const Mheight = Math.floor((Number(feet !== '' ? feet : '5') * 30.48) + (Number(inches !== '' ? inches : '10') * 2.54));
+            // If values have not been set make sure to set valid values
+            setAge(String(data.age) === '-1' ? '21' : String(data.age));
+            setGender(String(data.gender) === 'none' ? 'male' : String(data.gender));
+            setActivity_Level(String(data.activity_level) === '-1' ? '1' : String(data.activity_level));
 
-        const KGweight = Math.floor(Number(weight !== '' ? weight : '200') * 0.453592);
+            setLoading(false);
+        } catch(err) {
+            setLoading(false);
+        }
+    }
 
-        const numActivity_level = Number(activity_level !== '' ? activity_level : '1');
+    const switchMeasurement = () => {
+        if(imperialMeasurement) {
+            setKg(String(lbsToKg(Number(weight))));
+            setCm(String(feetToCm(Number(feet), Number(inches))));
+        } else {
+            setWeight(String(kgToLbs(Number(kg))));
+            const [f, i] = cmToFeetString(Number(cm)).split("'");
+            setFeet(f);
+            setInches(i);
+        }
+        setImperialMeasurement(prev => !prev);
+    }
+
+    useEffect(() => {
+        getBodyDetails();
+    }, [])
+
+    const setBodyDetails = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setSubmitting(true);
+
+        const token = localStorage.getItem('token');
+
+        let mHeight = '';
+        let kgWeight = -1;
+
+        if(imperialMeasurement) {
+            mHeight = `${feet}'${inches}`
+            kgWeight = Number(weight) || 200;
+        } else {
+            mHeight = cm;
+            kgWeight = Number(kg);
+        }
+
+        const numActivity_level = Number(activity_level || '1');
 
         try {
             await axios.put(
                 `${import.meta.env.VITE_API_BASE_ROUTE}/users/body_details`,
                 {
-                    height: Mheight,
-                    weight: KGweight,
-                    age: age !== '' ? age : '21',
+                    height: mHeight,
+                    weight: kgWeight,
+                    age: age !== '' ? Number(age) : 21,
                     gender: gender !== '' ? gender : 'male',
                     activity_level: numActivity_level,
+                    measurement_pref: imperialMeasurement ? 'imperial' : 'metric'
                 },{
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -49,58 +118,104 @@ export default function BodyDetails () {
                 },
             );
 
-            setLoading(false);
+            setSubmitting(false);
             navigate('/app');
         } catch (err : any) {
         console.error(`Frontend Could Not Process Set Body Details : ${err.response?.data?.message}`);
-        setLoading(false);
+        setSubmitting(false);
       }
     }
 
     return (
         <form onSubmit={setBodyDetails} className="space-y-4">
-
-            {/* Height */}
-            <div className="flex gap-2 justify-between">
+            <div className="flex w-full justify-between items-center pb-3">
+                <div className="text-md font-semibold">
+                    Measurement
+                </div>
+                <button 
+                    type="button"
+                    className="px-8 mt-1 py-3.5 bg-color-primary text-white text-sm font-medium rounded-lg hover-bg-color-primary active:scale-[0.99] 
+                    transition-all duration-150 disabled:opacity-60 flex items-center justify-center gap-2 hover:cursor-pointer"
+                    onClick={switchMeasurement}  
+                    >
+                    {imperialMeasurement ? 'Imperial' : 'Metric'}
+                </button>
+            </div>  
+        
+            {imperialMeasurement ? (
+                <>
+                    <div className="flex gap-2 justify-between">
+                        <FormField
+                            id='feet'
+                            label='Feet'
+                            type="number"
+                            variant="number"
+                            value={feet}
+                            onChange={setFeet}
+                            min='0'
+                            max='8'
+                            placeholder="5"
+                            required
+                        />
+                        <FormField
+                            id='inches'
+                            label='Inches'
+                            type="number"
+                            variant="number"
+                            value={inches}
+                            onChange={setInches}
+                            min="0"
+                            max='12'
+                            placeholder="10"
+                            required
+                        />
+                    </div>
+                    {/* Weight */}
+                    <FormField
+                        id='weight'
+                        label='Weight'
+                        type="number"
+                        variant="number"
+                        value={weight}
+                        onChange={setWeight}
+                        min="0"
+                        max="2000"
+                        placeholder="200"
+                        required
+                    />
+            </>
+        ) : (
+            <>
                 <FormField
-                    id='feet'
-                    label='Feet'
+                    id='cm'
+                    label='Centimeters'
                     type="number"
                     variant="number"
-                    value={feet}
-                    onChange={setFeet}
+                    value={cm}
+                    onChange={setCm}
                     min='0'
-                    max='8'
-                    placeholder="5"
+                    max='300'
+                    placeholder="170"
                     required
                 />
-                <FormField
-                    id='inches'
-                    label='Inches'
-                    type="number"
-                    variant="number"
-                    value={inches}
-                    onChange={setInches}
-                    min="0"
-                    max='12'
-                    placeholder="10"
-                    required
-                />
-            </div>
+                {/* Weight */}
+                    <FormField
+                        id='weight'
+                        label='Weight'
+                        type="number"
+                        variant="number"
+                        value={kg}
+                        onChange={setKg}
+                        min="0"
+                        max="900"
+                        placeholder="62"
+                        required
+                    />
+            </>
+        )
 
-            {/* Weight */}
-            <FormField
-                id='weight'
-                label='Weight (lbs)'
-                type="number"
-                variant="number"
-                value={weight}
-                onChange={setWeight}
-                min="0"
-                max="1000"
-                placeholder="200"
-                required
-            />
+        }
+            
 
             {/* Age */}
             <FormField
@@ -154,11 +269,11 @@ export default function BodyDetails () {
             {/* Submit */}
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={submitting}
                   className="w-full mt-1 py-3.5 bg-color-primary text-white text-sm font-medium rounded-lg hover-bg-color-primary active:scale-[0.99] 
                   transition-all duration-150 disabled:opacity-60 flex items-center justify-center gap-2 hover:cursor-pointer"
                 >
-                  {loading ? (
+                  {submitting ? (
                     <>
                       <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth='3' />

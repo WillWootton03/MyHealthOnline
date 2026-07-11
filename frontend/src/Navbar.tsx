@@ -1,12 +1,15 @@
 import { ChevronDown, Heart, User, Settings, LogOut, ShieldCheck } from "lucide-react";
 import { useUser } from "./context/UsersContext";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router";
 
 export default function Navbar() {
   const { user, fetchUser, logoutUser, sendVerificationEmail } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
   const [sentEmail, setSentEmail] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUser();
@@ -28,7 +31,7 @@ export default function Navbar() {
 
   
   return (
-    <div className="bg-[#f1f7ff] backdrop-blur-sm border-b border-[#7a9dbd] sticky top-0 z-20">
+    <div className="bg-[#f5f7fa] backdrop-blur-sm border-b border-[#7a9dbd] sticky top-0 z-20">
       <div className="max-w-4xl mx-auto px-6 h-14 flex items-center justify-between">
 
         {/* Page Navigation */}
@@ -101,13 +104,16 @@ export default function Navbar() {
                 <div className="py-1">
                   <button 
                     className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-black/70 hover:bg-[#f0f5ff] hover:text-black 
-                               transition-colors text-left hover:cursor-pointer">
+                               transition-colors text-left hover:cursor-pointer"
+                               >
                     <User className="w-4 h-4 text-color-primary" />
                       Profile
                   </button>
                   <button 
                     className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-black/70 hover:bg-[#f0f5ff] hover:text-black 
-                               transition-colors text-left hover:cursor-pointer">
+                               transition-colors text-left hover:cursor-pointer"
+                    onClick={() => navigate('settings')}     
+                    >
                     <Settings className="w-4 h-4 text-color-primary" />
                       Settings
                   </button>

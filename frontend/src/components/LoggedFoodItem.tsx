@@ -7,6 +7,7 @@ import FoodItemDetails from "./FoodItemDetails";
 type LoggedFoodItemProps = {
     meal_item: MealItem;
     log_id: string;
+    date: Date,
     meal_id: string | undefined;
     meal_type: string;
     calsConsumed: number;
@@ -18,6 +19,7 @@ type LoggedFoodItemProps = {
 export default function LoggedFoodItem({
     meal_item,
     log_id,
+    date,
     meal_id,
     meal_type,
     calsConsumed,
@@ -53,6 +55,7 @@ export default function LoggedFoodItem({
                 <div>
                     <FoodItemDetails 
                         updatedItem={true}
+                        date={date}
                         item={meal_item}
                         log_id={log_id}
                         meal_id={meal_id}

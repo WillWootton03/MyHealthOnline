@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import FoodSearch from "./FoodSearch";
 import LoggedFoodItem from "./LoggedFoodItem";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router";
+import { formatDate } from "@shared/functions/formatting";
 
 
 type DailyCalorieDisplayProps = {
@@ -22,10 +24,10 @@ export type MealItem = {
     protein: number;
     fat: number;
     carbohydrates: number;
-    per100_calories: number;
-    per100_protein: number;
-    per100_fat: number;
-    per100_carbohydrates: number;
+    per100_calories?: number,
+    per100_protein?: number,
+    per100_fat?: number,
+    per100_carbohydrates?: number, 
 }
 
 export type MealData = {
@@ -48,21 +50,17 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
 
     // Formats date to be useful for neon and SQL query : format {YYYY-MM-DD}
     const [date, setDate] = useState(new Date());
-    //const [remaining, setRemaining ] = useState(dailyGoal - calsConsumed);
-    //const [pct, setPct ] = useState(0);
-    
+
+    const navigate = useNavigate();
 
     const mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
-
-    function formatDate(date: Date) {
-        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    }
 
     const getDayLogId = async () => {
         const token = localStorage.getItem('token');
         try {
             console.log('Attempting to get days log_id by user_id and date');
 
+            // date needs to be in formatted string form to perform query
             const res = await axios.get(`${import.meta.env.VITE_API_BASE_ROUTE}/daily_logs?date=${formatDate(date)}`,
                 {
                     headers: {
@@ -88,7 +86,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                 },
             );
             // Set meal data to all retrieved meals and meal_types and ids 
-            setMealData(res.data.data);
+            setMealData(res?.data?.data ?? []);
         } catch (err: any) {
             console.error(`Frontend could not get day eating data : ${err.response?.data?.message}`);
         }
@@ -197,14 +195,10 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
     const removeLoggedItem = async (meal_item: MealItem) => {
         const token = localStorage.getItem('token')
         try {
-            const meal_item_id = meal_item.meal_item_id;
-            await axios.delete(`${import.meta.env.VITE_API_BASE_ROUTE}/meal_items`,
+            await axios.delete(`${import.meta.env.VITE_API_BASE_ROUTE}/meal_items/${meal_item.meal_item_id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
-                    },
-                    params: {
-                        meal_item_id,
                     },
                 }
             );
@@ -221,20 +215,22 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
         let calorieDiff = 0;
         setMealData((prev) => {
             if(!prev) return null;
-            return prev.map(meal => {           
-                // Set calorieDiff to be updated item's calories - old items calories, so the UI accurately updates consumed
-                calorieDiff = meal_item.calories- meal.items[meal_item.meal_item_id].calories;
-                return {
-                    ...meal,
-                    items: {
-                        ...meal.items,
-                        [meal_item.meal_item_id] : meal_item,
+            return prev.map(meal => {      
+                if(meal.items[meal_item.meal_item_id]) {
+                    calorieDiff =  meal_item.calories - meal.items[meal_item.meal_item_id].calories;
+                    return {
+                        ...meal,
+                        items: {
+                            ...meal.items,
+                            [meal_item.meal_item_id] : meal_item,
+                        }
                     }
                 }
+                return meal;
             });
         });
-        // Update cals consumed based on prev and new calorieDiff got from updating item
-        setCalsConsumed(prev => prev + calorieDiff);
+        // Update cals consumed based on prev and new calorieDiff got from updating item\
+        setCalsConsumed(calsConsumed + calorieDiff);
     };
 
     // Set current daily log date to next day
@@ -333,7 +329,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                     <ChevronLeft />
                 </button>
                 <div className="font-semibold text-xl text-black/80">
-                    {date.toDateString()}
+                    {formatDate(date)}
                 </div>
                 <button 
                     className="hover:cursor-pointer px-2 py-2 hover:bg-blue-50 rounded-2xl"
@@ -382,6 +378,15 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                     <span className="text-[10px] text-black/35">{dailyGoal.toLocaleString()} kcal</span>
                 </div>
             </div>
+            {/* Begin Workout Button */}
+            <div className="w-full py-3 px-3">
+                <button 
+                    className="px-3 py-2 rounded-xl bg-color-primary text-white font-semibold hover:cursor-pointer"
+                    onClick={() => navigate('/workout')}
+                >
+                    Start Workout
+                </button>
+            </div>
             <div className="px-6 py-4 light-bg-color border-b border-[#eaf1fb]">
                 {/* Display all meal items based on meal_type */}
                 <div className="flex flex-col gap-y-6">
@@ -419,6 +424,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                                         <LoggedFoodItem 
                                             meal_item={item}
                                             log_id={log_id}
+                                            date={date}
                                             meal_id={meal?.meal_id }
                                             meal_type={mealType}
                                             calsConsumed={calsConsumed}
@@ -445,7 +451,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                     </div>
                     )}
                 </div>
-            </div>
+            </div>/
         </>
             )}
         </section>

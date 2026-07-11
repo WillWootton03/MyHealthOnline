@@ -6,8 +6,8 @@ const router = express.Router();
 
 router
     .post('/', authMiddleware, mealItemsController.newMealItem)
-    .put('/', authMiddleware, mealItemsController.updateMealItem)
-    .delete('/', authMiddleware, mealItemsController.deleteMealItem)
+    .put('/:meal_item_id', authMiddleware, mealItemsController.updateMealItem)
+    .delete('/:meal_item_id', authMiddleware, mealItemsController.deleteMealItem)
 ;
 
 module.exports = router

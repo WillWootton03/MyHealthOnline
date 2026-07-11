@@ -2,6 +2,7 @@ require('dotenv').config();
 const createError = require('http-errors');
 const express = require('express');
 const cors = require('cors');
+const { logger } = require('./app_server/utils/logger.js'); 
 
 // Route connections
 const usersRouter = require('./app_server/routes/userRoutes');
@@ -20,7 +21,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors({
     origin: process.env.FRONTEND_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
 }));
 
 app.use('/api/users', usersRouter);
@@ -38,15 +40,17 @@ app.use(function(req, res, next) {
 
 // Base Error Handler
 app.use(function(err, req, res, next) {
-    console.error(err);
-    console.error(err.stack);
+    console.error(err ?? 'error');
+    console.error(err?.stack ?? 'error');
+
+    logger.error(`Unhandled server error occured ${err}`);
 
     // Handle any incoming server errors
     res.status(err.status || 500)
     .json({
         success: false,
-        message: err.message,
-        stack: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test' ? err.stack : undefined,
+        message: err?.message ?? 'error message',
+        stack: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test' ? err?.stack ?? 'error_stack' : undefined,
     });
 });
 

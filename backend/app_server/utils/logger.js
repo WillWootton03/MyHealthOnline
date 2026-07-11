@@ -4,7 +4,12 @@ const path = require('path');
 const logger = createLogger({
     level: 'info',
     format: format.combine(
-        format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),        // Saves logs with timestamp
+        format.timestamp({ format: () => {
+            return new Date().toLocaleString('en-US', {
+                timeZone: 'America/Los_Angeles'
+            });
+            }
+        }),        // Saves logs with timestamp
         format.json()                                               // Saves Logs in Json for parsing
     ),
     transports: [
@@ -30,7 +35,7 @@ const logger = createLogger({
     ]
 });
 
-if (process.env.ENV === 'production') {
+//if (process.env.ENV === 'production') {
     logger.add(new transports.Console({
         level: 'info',
         format: format.combine(
@@ -38,6 +43,6 @@ if (process.env.ENV === 'production') {
             format.simple(),
         )
     }));
-}
+//}
 
 module.exports = { logger };

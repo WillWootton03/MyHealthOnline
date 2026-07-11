@@ -9,10 +9,11 @@ router
     .post('/login', userController.emailLogin)
     .get('/', authMiddleware, userController.getUser)
     .get('/daily_calories', authMiddleware, userController.getUserDailyCalories)
-    .get('/send_verify_email', authMiddleware, userController.sendVerificationEmail)
+    .get('/send_verifyEmail', authMiddleware, userController.sendVerificationEmail)
+    .get('/body_details', authMiddleware, userController.getUserBodyDetails)
     .put('/', authMiddleware, userController.updateUser)
     .put('/body_details', authMiddleware, userController.setBodyDetails)
-    .put('/verify_email', userController.verify_email)
+    .put('/verifyEmail', userController.verifyEmail)
     .delete('/', authMiddleware, userController.deleteUser);
     ;
 

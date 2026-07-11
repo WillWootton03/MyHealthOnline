@@ -1,26 +1,9 @@
-const { foodTrackerRepo } = require('../repositories/foodTrackerRepo.js');
 const { logger } = require('../utils/logger.js');
 
 const USDA_API_URL = 'https://api.nal.usda.gov/fdc/v1';
 const API_KEY = process.env.FOOD_DATA_API_KEY;
 
 const foodTrackerService = {
-/*
-*
-*
-* POST METHODS
-* 
-* 
-*/
-
-/*
-*
-*
-* GET METHODS
-* 
-* 
-*/
-
     searchSingleItem : async ({ food_name }) => {
         try {
             const searchURL = `${USDA_API_URL}/foods/search?api_key=${API_KEY}&query=${encodeURIComponent(food_name)}&pageSize=1`;
@@ -30,8 +13,7 @@ const foodTrackerService = {
 
             return data.foods[0];
         } catch (err) {
-            console.error(err);
-            logger.error(err);  
+            next(err);
         }
     },
 
@@ -55,8 +37,7 @@ const foodTrackerService = {
             return data.foods;
 
         } catch (err) {
-            console.error(err);
-            logger.error(err);  
+            next(err);
         }
     },
 
@@ -69,28 +50,9 @@ const foodTrackerService = {
 
             return data;
         } catch (err) {
-            console.error(err);
-            logger.error(err);  
+            next(err);
         }
     },
-
-
-/*
-*
-*
-* PUT METHODS
-* 
-* 
-*/
-
-/*
-*
-*
-* DELETE METHODS
-* 
-* 
-*/
-
 
 }
 

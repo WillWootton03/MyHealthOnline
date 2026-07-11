@@ -2,25 +2,36 @@ const { pool } = require('../db/db_connection.js');
 const { logger } = require('../utils/logger.js');
 
 const mealsRepo = {
-    newMeal : async ({ meal_id, log_id, meal_type}) => {
+    newMeal : async ({ user_id, log_id, meal_id, meal_type}) => {
         try {
+            // Conditional insert to verify user owns log
+            // verify with WHERE EXISTS by pulling log_id from daily_logs, and verifying correct log_id and user_id that owns log match inputs
             const query = `
             INSERT INTO meals(meal_id, log_id, meal_type)
-            VALUES ($1, $2, $3)
+            SELECT $1, $2, $3
+            WHERE EXISTS (
+                SELECT 1
+                FROM daily_logs d_l
+                WHERE d_l.log_id = $2
+                AND d_l.user_id = $4
+            )
+            AND NOT EXISTS (
+                SELECT 1
+                FROM meals m
+                WHERE m.meal_type = $3
+                    AND m.log_id = $2
+            )
             RETURNING *
             `;
             
-            const res = await pool.query(query, [meal_id, log_id, meal_type]);
+            const res = await pool.query(query, [meal_id, log_id, meal_type, user_id]);
 
-            logger.info(`Inserted new meal at ${meal_id}`);
-            return res.rows[0];
+            return res.rows[0] ?? null;
         } catch (err) {
-            console.error(`Failed to create meal for daily_log : ${err}`);
-            logger.error(`Failed to create meal for daily_log : ${err}`);
-
             throw err;
         }
     },
+
 }
 module.exports = {
     mealsRepo,

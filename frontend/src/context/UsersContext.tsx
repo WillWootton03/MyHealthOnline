@@ -103,7 +103,7 @@ export function UsersProvider({
     const sendVerificationEmail = async () => {
         if (!user) throw new Error('Cannot send verification email');
         try {
-            await axios.get(`${API_BASE_URL}/users/send_verify_email`, {
+            await axios.get(`${API_BASE_URL}/users/send_verifyEmail`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                 }
@@ -117,7 +117,7 @@ export function UsersProvider({
     const verifyEmail = async () => {
         const token = params.get('token');
         try {
-            await axios.put(`${API_BASE_URL}/users/verify_email`, {
+            await axios.put(`${API_BASE_URL}/users/verifyEmail`, {
                     token,
                 });
         }catch (err) {

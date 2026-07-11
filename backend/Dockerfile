@@ -1,18 +1,30 @@
-# Parent image for Node.js
+FROM node:22-alpine AS builder
+
+WORKDIR /app
+
+COPY backend/package*.json ./
+
+RUN npm ci
+
+COPY backend .
+
+COPY shared ../shared
+
+RUN npm run build
+
+
 FROM node:22-alpine
 
-# Set working dir
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy pkg manager files
-COPY package*.json ./
-RUN npm install
+ENV NODE_ENV=production
 
-# Copy all source code
-COPY . .
+COPY backend/package*/.json ./
 
-# EXPOSE ON PORT
-EXPOSE 3000
+RUN npm ci --omit=dev
 
-# RUN npm app in dev mode
-CMD ["npm", "run", "dev"]
+COPY --from=builder /app/dist ./dist
+
+COPY --from=builder /app/node_modules ./node_modules
+
+CMD ["node", "dist/app.js"]

@@ -1,0 +1,6 @@
+services:
+  api:
+    image: ghcr.io/${{ github.repository }}/backend:${VERSION}
+
+  frontend:
+    image: ghcr.io/${{ github.repository }}/frontend:${VERSION}

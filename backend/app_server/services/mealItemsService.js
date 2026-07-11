@@ -2,74 +2,38 @@ const { dailyLogsRepo } = require('../repositories/dailyLogsRepo.js');
 const { mealItemsRepo } = require('../repositories/mealItemsRepo.js');
 const { logger } = require('../utils/logger.js');
 const { transporter } = require('../utils/nodemailer.js');
+const { calculateMacroNutrients } = require('../../../shared/functions/calorie_calcs.ts');
 
 const crypto = require('crypto');
 
 const mealItemsService = {
     
-    newMealItem : async ({ meal_id, fdc_id, food_name, brand_owner, serving_size, serving_amount, serving_unit, household_serving, macros, per_100}) => {
+    newMealItem : async ({ user_id, meal_id, fdc_id, food_name, brand_owner, serving_size, serving_amount, serving_unit, household_serving, macros}) => {
         const meal_item_id = crypto.randomUUID();
 
-        let calories, protein, fat, carbohydrates;
+        const calories = calculateMacroNutrients(macros.calories, serving_unit, serving_amount, serving_size, household_serving);
+        const protein = calculateMacroNutrients(macros.protein, serving_unit, serving_amount, serving_size, household_serving);
+        const fat = calculateMacroNutrients(macros.fat, serving_unit, serving_amount, serving_size, household_serving);
+        const carbohydrates = calculateMacroNutrients(macros.carbohydrates, serving_unit, serving_amount, serving_size, household_serving);
 
-        // Split up the macros object to put all important macros into their own variables into the repo
-        macros.forEach((macro) => {
-            switch (macro.type) {
-                case 'calories':
-                    calories = macro.amount;
-                    break;
-                case 'protein':
-                    protein = macro.amount;
-                    break;
-                case 'fat':
-                    fat = macro.amount;
-                    break;
-                case 'carbohydrates':
-                    carbohydrates = macro.amount;
-                    break;
-            }
-        });
-
-        // Split up the per100 data from the array of per_100
-        const per100_calories = per_100[0] , per100_protein = per_100[1], per100_fat = per_100[2], per100_carbohydrates = per_100[3];
-  
-        console.log(per_100);
-
-        const res = await mealItemsRepo.newMealItem({ meal_item_id, meal_id, fdc_id, food_name, brand_owner, serving_size, serving_amount, serving_unit, 
-                                                        household_serving, calories, protein, fat, carbohydrates, per100_calories, per100_protein, 
-                                                        per100_fat, per100_carbohydrates });
-
+        const res = await mealItemsRepo.newMealItem({ user_id, meal_item_id, meal_id, fdc_id, food_name, brand_owner, serving_size, serving_amount, serving_unit, 
+                                                        household_serving, calories, protein, fat, carbohydrates, per100_calories: macros.calories, 
+                                                        per100_protein: macros.protein, per100_fat: macros.fat, per100_carbohydrates: macros.carbohydrates });
         return res;
     },
 
-    updateMealItem: async({ meal_item_id, serving_type, serving_amount, macros }) => {
-        let calories, protein, fat, carbohydrates;
+    updateMealItem: async({ user_id, meal_item_id, serving_unit, serving_amount, serving_size, household_serving, macros }) => {
+        const calories = calculateMacroNutrients(macros.calories, serving_unit, serving_amount, serving_size, household_serving);
+        const protein = calculateMacroNutrients(macros.protein, serving_unit, serving_amount, serving_size, household_serving);
+        const fat = calculateMacroNutrients(macros.fat, serving_unit, serving_amount, serving_size, household_serving);
+        const carbohydrates = calculateMacroNutrients(macros.carbohydrates, serving_unit, serving_amount, serving_size, household_serving);
 
-        // Split up the macros object to put all important macros into their own variables into the repo
-        macros.forEach((macro) => {
-            switch (macro.type) {
-                case 'calories':
-                    calories = macro.amount;
-                    break;
-                case 'protein':
-                    protein = macro.amount;
-                    break;
-                case 'fat':
-                    fat = macro.amount;
-                    break;
-                case 'carbohydrates':
-                    carbohydrates = macro.amount;
-                    break;
-            }
-        });
-
-        const res = await mealItemsRepo.updateMealItem({ meal_item_id, serving_type, serving_amount, calories, protein, fat, carbohydrates });
-
+        const res = await mealItemsRepo.updateMealItem({ user_id, meal_item_id, serving_unit, serving_amount, calories, protein, fat, carbohydrates });
         return res;
     },
 
-    deleteMealItem : async ({ meal_item_id }) => {
-        const res = await mealItemsRepo.deleteMealItem({ meal_item_id });
+    deleteMealItem : async ({ user_id, meal_item_id }) => {
+        const res = await mealItemsRepo.deleteMealItem({ user_id, meal_item_id });
 
         return res;
     }

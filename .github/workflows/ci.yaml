@@ -1,0 +1,46 @@
+name: CI
+
+on:
+    pull_request:
+        branches: 
+            - develop
+            - master
+    
+    push:
+        branches: 
+            - develop
+
+concurrency:
+    group: ci-${{ github.ref }} 
+    cancel-in-progress: true   
+
+jobs:
+
+    unit-tests:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Build containers
+              run: docker compose -f docker-compose.test.yml build
+
+            - name: Run unit tests
+              run: docker compose -f docker-compose.test.yml run --rm api-test-unit
+
+    integration-tests:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Build containers
+              run: docker compose -f docker-compose.test.yml build
+            
+            - name: Run integration tests
+              run: docker compose -f docker-compose.test.yml run --rm api-test-integration
+
+            - name: Cleanup
+              if: always()
+              run: docker compose down -v
+        
