@@ -4,12 +4,12 @@ const path = require('path');
 module.exports = {
     testEnvironment : 'node',
     // sets jests context to the project root
-    rootDir: '../',
+    rootDir: '.',
 
     // Tells jest to look for tests in backend and shared
     roots: [
-        '<rootDir>/backend',
-        '<rootDir>/shared'
+        '<rootDir>',
+        '<rootDir>/../shared'
     ],
 
     transform: {
