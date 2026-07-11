@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "test": "npm run test::unit && npm run test::integration",
     "test:unit": "jest --config jest.config.js --testMatch='**/*.unit.test.ts' --force-exit",
     "test:integration": "jest --config jest.config.js --testMatch='**/*.int.test.js' --force-exit",

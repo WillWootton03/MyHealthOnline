@@ -10,8 +10,6 @@ COPY backend .
 
 COPY shared ../shared
 
-RUN npm run build
-
 
 FROM node:22-alpine
 
