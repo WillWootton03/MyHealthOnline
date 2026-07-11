@@ -69,7 +69,7 @@ jobs:
             - name: Build frontend image
               run: |
                 docker build  \
-                -- build-arg VITE_API_URL=/api \
+                --build-arg VITE_API_URL=/api \
                 -t ghcr.io/${{ env.IMAGE_NAME }}/frontend:latest  \
                 -f frontend/dockerfile \
                 .
