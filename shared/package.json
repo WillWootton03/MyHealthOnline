@@ -3,7 +3,7 @@
     "@jest/globals": "^30.4.1",
     "@types/jest": "^30.0.0"
   },
-  "compiler_options" : {
+  "compiler_options": {
     "allowImportingTsExtension": true
   }
 }
