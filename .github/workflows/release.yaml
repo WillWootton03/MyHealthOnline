@@ -64,13 +64,14 @@ jobs:
               run: |
                 docker build \
                 -t ghcr.io/${{ env.IMAGE_NAME }}/backend:latest \
-                backend
+                -f backend/Dockerfile \
+                .
             - name: Build frontend image
               run: |
                 docker build  \
                 -t ghcr.io/${{ env.IMAGE_NAME }}/frontend:latest  \
-                frontend
-
+                -f frontend/dockerfile \
+                .
             - name: Push backend image
               run: |
                 docker push ghcr.io/${{ env.IMAGE_NAME }}/backend:latest
