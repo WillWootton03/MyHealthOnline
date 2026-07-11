@@ -19,7 +19,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY backend/package*/.json ./
+COPY backend/package*.json ./
 
 RUN npm ci --omit=dev
 
