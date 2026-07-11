@@ -125,44 +125,29 @@ export default function Login() {
                 placeholder="example@example.com" 
                 required
                 />
-
                 {/* Password */}
                 <FormField
                     id="password"
-                    type={showPassword ? "text" : "password"}
+                    type={"text"}
+                    variant="password"
                     label="Password"
                     value={password}
                     onChange={setPassword}
                     placeholder="••••••••"
                     required
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-black/35 hover:text-black/60 transition-colors"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
 
                 {/* Verify Password */}
                 <FormField
                     id="verifyPassword"
-                    type={showPassword ? "text" : "password"}
+                    type="text"
+                    variant="password"
                     label="Verify Password"
                     value={verifyPassword}
                     onChange={setVerifyPassword}
                     placeholder="••••••••"
                     required
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-black/35 hover:text-black/60 transition-colors"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
 
                   {/* Form Errors */}
                   {formError && (
@@ -195,10 +180,14 @@ export default function Login() {
               </form>
           </div>
 
+          {isSignedIn ? (
           <div className="w-1/2">
             <BodyDetails />
           </div>
-
+          ) : 
+            <>
+            </>
+          }
         </div>
       </div>
 

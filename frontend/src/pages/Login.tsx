@@ -4,11 +4,11 @@ import { useNavigate } from "react-router";
 
 import axios from 'axios';
 import WebBackground from "../components/WebBackground";
+import FormField from "../components/FormField";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
@@ -48,10 +48,6 @@ export default function Login() {
       }
   };
 
-  // TODO: Implement logic for forgot password
-  const forgotPassword = () => {
-
-  }
 
   return (
         <WebBackground>
@@ -74,76 +70,27 @@ export default function Login() {
 
           {/* Form To Log In */}
           <form onSubmit={handleSubmit} className="space-y-4">
-
-            {/* Email */}
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-xs font-medium text-black/55 mb-1.5 tracking-wide uppercase"
-              >
-                Email
-              </label>
-              <input
+                {/* Email */}
+                <FormField
                 id='email'
                 type="email"
+                label="Email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onFocus={() => setFocusedField('email')}
-                onBlur={() => setFocusedField(null)}
+                onChange={setEmail}
                 placeholder="example@example.com" 
                 required
-                className="w-full px-4 py-3 text-sm bg-gray-100 text-black placeholder-black/25 rounded-lg outline-none transition-all duration-150" 
-                style={{
-                  border: focusedField === 'email' ? "1.5px solid #32a5f1" : "1.5px solid transparent",
-                  boxShadow: focusedField === 'email' ? "0 0 0 3px rgba(124, 77, 186, 0.12" : "none",
-                }}
-              />
-            </div> 
-
-            {/* Password */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label
-                  htmlFor="password"
-                  className="block text-xs font-medium text-black/55 tracking-wide uppercase hover:pointer-none"
-                >
-                  Password
-                </label>
-                <button
-                  type="button"
-                  className="text-xs text-[#5faad4] hover:text-[#254a63] transition-colors"
-                  onClick={forgotPassword}
-                >
-                  Forgot?
-                </button>
-              </div>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onFocus={() => setFocusedField(password)}
-                  onBlur={() => setFocusedField(null)}
-                  placeholder="••••••••"
-                  required
-                  className="w-full px-4 py-4 pr-11 text-sm bg-gray-50 text-black placeholder-black/25 rounded-lg outline-none transition-all duration-150"
-                  style={{
-                    border: focusedField === 'password' ? "1.5px solid #8532f1" : "1.5px solid transparent",
-                    boxShadow: focusedField === 'email' ? "0 0 0 3px rgba(124, 77, 186, 0.12" : "none",
-                  }}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-black/35 hover:text-black/60 transition-colors"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
+                {/* Password */}
+                <FormField
+                    id="password"
+                    type="text"
+                    variant="logged_password"
+                    label="Password"
+                    value={password}
+                    onChange={setPassword}
+                    placeholder="••••••••"
+                    required
+                />
             {/* Submit */}
             <button
               type="submit"
