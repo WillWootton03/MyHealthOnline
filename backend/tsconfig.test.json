@@ -7,9 +7,10 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "typeRoots": [
-            "./node_modules/@types"
-        ]
+        "moduleResolution": "node"
     },
-    "include": ["../shared/*.ts"]
+    "include": [
+        "**/*.ts",
+        "../shared/**/*.ts"
+    ]
 }
