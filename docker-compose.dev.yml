@@ -2,7 +2,7 @@ services:
   api:
     build: 
       context: .  
-      dockerfile: backend/dockerfile.dev
+      dockerfile: backend/Dockerfile.dev
     ports:
       - "3000:3000"
     volumes:
