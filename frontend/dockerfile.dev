@@ -6,6 +6,7 @@ COPY frontend/package*.json ./
 RUN npm install
 
 COPY frontend/ .
+
 COPY shared/ ../shared
 
 EXPOSE 5173
