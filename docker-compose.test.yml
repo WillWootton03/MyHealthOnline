@@ -2,7 +2,7 @@ services:
   api-test:
     build: 
       context: .
-      dockerfile: backend/Dockerfile
+      dockerfile: backend/dockerfile.test
     container_name: test_api
     volumes:
       - ./backend:/usr/src/app/backend
