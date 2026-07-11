@@ -9,8 +9,10 @@ services:
       - ./shared:/app/shared
       - /app/backend/node_modules
       - /app/shared/node_modules
+    env_file:
+      - ./backend/.env.test
     environment:
-      - NODE_ENV=test
+      NODE_ENV: test
     command: npm test
 
   # Dedicated target for only running unit tests
