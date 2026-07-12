@@ -41,8 +41,8 @@ export default function NutrientDetails({
     }, [servingInput, servingType])
 
     return (
-        <div className="flex gap-x-2 py-2 px-4 transition-all">   
-            <div className="text-md text-black font-bold">{nutrientLabel}</div>
+        <div className="flex gap-x-2 justify-center py-2 px-4 transition-all">   
+            <div className="text-md text-black font-bold">{nutrientLabel}:</div>
             <div className="text-md text-black/80"><span className="font-semibold transition-all">{nutrientVal}</span> 
             </div>
         </div>

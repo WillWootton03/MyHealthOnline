@@ -3,6 +3,8 @@ export function pluralCheck(str: string) {
     // verify there is an input for string
     if (!str || typeof str !== 'string') return '';
 
+    if(str.at(-1) === ",") str = str.slice(0,-1); 
+
     // Checks when an item or measurments base val ends in o or O, EX: Potatoes becomes Potato | Tomatoes becomes Tomato
     // Checks when an item or measurements base val ends in x or X, EX: Boxes becomes Box
     if (/o/i.test(str.at(-3) ?? '') || /x/i.test(str.at(-3) ?? '')) return str.slice(0, -2);

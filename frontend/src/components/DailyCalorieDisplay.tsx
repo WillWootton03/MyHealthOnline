@@ -393,18 +393,18 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                     {/* Map all meal types and save mealType as a value */}
                     {mealTypes.map((mealType : string) => 
                     <div
-                        className="flex flex-col gap-y-4"
+                        className="flex flex-col gap-y-1 p-3 rounded-lg bg-[#f8fbff] shadow-md border-b border-black/20"
                     >
                         <div 
-                            className="flex flex-row justify-between items-center"
+                            className="flex flex-row justify-between items-center py-1"
                             key={mealType}
                         >
-                            <h2 className="font-bold tracking-wider ">
+                            <h2 className="font-bold tracking-wider">
                                 {mealType}
                             </h2>
-                            {/* Add Food or Cancel ADding food buttons */}
+                            {/* Add Food or Cancel Adding food buttons */}
                             <button 
-                                className={`px-3 py-2 rounded-xl text-white font-semibold hover:cursor-pointer
+                                className={`px-3 py-2 rounded-xl text-white font-semibold hover:cursor-pointer shadow-md border-b border-black/20
                                     ${
                                         openMealType === mealType ? 'bg-red-700 hover:bg-red-800' : 'bg-color-primary hover-bg-color-primary' 
                                     }   
@@ -414,8 +414,20 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                                 {openMealType === mealType ? 'Cancel' : 'Add Food' }
                             </button>
                         </div>
+                        {/* Use food search for specific meal type */}
+                        {openMealType === mealType && (
+                            <FoodSearch 
+                                meal_id={mealData?.find(m => m.meal_type === mealType.toLowerCase())?.meal_id}
+                                date={date}
+                                log_id={log_id}
+                                meal_type={mealType}
+                                calsConsumed={calsConsumed}
+                                setCalsConsumed={setCalsConsumed}
+                                onAddMealItem={addMealItem}
+                            />
+                        )}
                         {/* Add all logged food items to site with proper meal type */}
-                        <div className="w-full h-fit">
+                        <div className="w-full h-fit flex flex-col gap-y-1">
                             {(() => {
                                 const meal = mealData?.find(meal => meal.meal_type === mealType.toLowerCase());
                                 return Object.values(meal?.items ?? {}).map(item => {
@@ -436,22 +448,10 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                                     });
                             })()}
                         </div>
-                        {/* Use food search for specific meal type */}
-                        {openMealType === mealType && (
-                            <FoodSearch 
-                                meal_id={mealData?.find(m => m.meal_type === mealType.toLowerCase())?.meal_id}
-                                date={date}
-                                log_id={log_id}
-                                meal_type={mealType}
-                                calsConsumed={calsConsumed}
-                                setCalsConsumed={setCalsConsumed}
-                                onAddMealItem={addMealItem}
-                            />
-                        )}
                     </div>
                     )}
                 </div>
-            </div>/
+            </div>
         </>
             )}
         </section>
