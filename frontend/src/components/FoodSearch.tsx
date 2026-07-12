@@ -88,9 +88,9 @@ export default function FoodSearch({
     }, [searchPageNumber]);
 
     return (
-        <div className="px-3 py-4 light-bg-color border-b border-[#eaf1fb]">
+        <div className="px-1 py-4 light-bg-color border-b border-[#eaf1fb]">
                 <form 
-                    className="w-full gap-4 flex items-center justify-between"
+                    className="w-full gap-2 flex items-center justify-between"
                     onSubmit={foodSearch}
                 >
                     <input
@@ -102,13 +102,16 @@ export default function FoodSearch({
                                     text-black placeholder-black/25"
                     />
                     <button 
-                        className="flex-1 h-full bg-color-primary px-3 py-2 rounded-xl text-white font-bold hover-bg-color-primary hover:cursor-pointer
+                        className="flex-2 sm:flex-1 h-full bg-color-primary px-2 py-2 rounded-xl text-white font-bold hover-bg-color-primary hover:cursor-pointer
                                     active:scale-[0.99] transition-all duration-150 disabled:opacity-60 items-center justify-center shadow-md border-b border-black/20"
                         disabled={searching}
                         type="submit"
                     >
                         {searching ? (
-                            "Searching..."
+                            <>
+                                <span className="sm:hidden">...</span>
+                                <span className="hidden sm:inline">Searching</span>
+                            </>
                         ) : (
                             "Search"
                         )}

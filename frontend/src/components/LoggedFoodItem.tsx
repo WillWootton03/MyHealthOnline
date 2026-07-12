@@ -34,7 +34,7 @@ export default function LoggedFoodItem({
         <>
             <div 
                 key={meal_item.fdc_id}
-                className="flex flex-row justify-between py-2 px-5 shadow-md light-card-color border-b border-black/20 rounded-xl"
+                className="flex flex-row justify-between py-2 px-2 shadow-md light-card-color border-b border-black/20 rounded-xl"
             >
                 <div className="md:text-lg text-black/80 font-bold  hover:cursor-pointer"
                 onClick={() => setShowDetails(!showDetails)}
