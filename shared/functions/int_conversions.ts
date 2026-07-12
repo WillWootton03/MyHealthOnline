@@ -12,9 +12,9 @@ export function cmToFeetString(meters: number) : string {
 };
 
 export function lbsToKg(lbs : number) : number {
-    return Math.round(lbs * 0.453592);
+    return Number((lbs * 0.453592).toFixed(2));
 };
 
 export function kgToLbs(kg : number) : number {
-    return Math.round(kg * 2.20462);
+    return Number((kg * 2.20462).toFixed(2));
 };

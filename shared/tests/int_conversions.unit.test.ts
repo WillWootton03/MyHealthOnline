@@ -13,7 +13,7 @@ describe('Verify cmToFeetString', () => {
 });
 describe('Verify lbsToKg', () => {
     it('Should return 82', () => {
-        expect(lbsToKg(180)).toBe(82);
+        expect(lbsToKg(180)).toBe(81.65);
     });
 });
 describe('Verify kgToLbs', () => {

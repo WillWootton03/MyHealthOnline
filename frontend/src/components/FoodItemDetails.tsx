@@ -16,7 +16,6 @@ type FoodItemDetailsProps = {
     updateLoggedItem?: (meal_item: MealItem) => void;
 }
 
-
 export default function FoodItemDetails({
     updatedItem,
     date,
@@ -35,6 +34,7 @@ export default function FoodItemDetails({
     const [adding, setAdding] = useState(false);
     const [updating, setUpdating] = useState(false);
 
+
     // serving_unit is used for logged food items, householdServingFullText, is used for search items
     let options = [updatedItem 
         ? item.household_serving 
@@ -49,31 +49,9 @@ export default function FoodItemDetails({
         options = options.filter((opt) =>  opt !== '1 household');
     }
 
-    async function newDailyLog() {
-        const token = localStorage.getItem('token');
-
-        const sendDate = date ? formatDate(date) : undefined;
-        try {
-            const result = await axios.post(`${import.meta.env.VITE_API_BASE_ROUTE}/daily_logs`,
-                {
-                    date : sendDate,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-            return result.data.data.log_id;
-        } catch (err: any) {
-            console.error(`Frontend could not create new daily log: ${err.response?.data?.message}`);
-        }
-    }
-
     async function addItem() {
         const token = localStorage.getItem('token');
         // If the user has not logged any info for the day, first create a new log and set log_id 
-        if(!log_id) log_id = await newDailyLog();
 
         try {
             setAdding(true);
@@ -88,10 +66,8 @@ export default function FoodItemDetails({
             const new_serving_type = servingType !== '1 household' ? servingType : `1 ${item.householdServingFullText.split(' ')[1].slice(0, -1) ?? 'household'}`;
             const res = await axios.post(`${import.meta.env.VITE_API_BASE_ROUTE}/meal_items/`,
                 {
-                    meal_id: meal_id,
-                    log_id: log_id,
                     meal_type: meal_type.toLocaleLowerCase(),
-                    date: date,
+                    date: formatDate(date),
                     fdc_id: String(item.fdcId),                         // When a logged item passed use fdc_id, when a search item use fdcId
                     food_name: brandName ? `${brandName} ${item.description}` : item.description,   // Properly format food name to display brandName and food name if possible
                     brand_owner: item.brandOwner,
@@ -192,7 +168,7 @@ export default function FoodItemDetails({
             {/* HEADER */}
             <div className="flex flex-col gap-y-2 items-center">
                 <a 
-                    className="text-xl font-bold text-black/70 hover:text-black hover:cursor-pointer"
+                    className="text-xl font-bold text-black/70 hover:text-black hover:cursor-pointer text-center"
                     href={`https://fdc.nal.usda.gov/food-details/${updatedItem ? item.fdc_id : item.fdcId}/nutrients`}
                     target="_blank"
                 >
@@ -210,7 +186,7 @@ export default function FoodItemDetails({
             </div>
             <div className="flex justify-between">
                 {/* Nutrients Breakdown */}
-                <div className="grid grid-cols-4 flex-3 px-4 py-5 gap-y-2">
+                <div className="md:grid md:grid-cols-2 lg:grid-cols-3 lg:flex-4 sm:flex-col px-4 items-center py-5 gap-y-2">
                     <NutrientDetails 
                         isLoggedItem={updatedItem ? true : false}
                         nutrientLabel='Calories'
@@ -271,10 +247,10 @@ export default function FoodItemDetails({
                     )}
                 </div>
                 {/* Side Tab */}
-                <div className="flex-1 flex flex-col py-2 gap-y-4">
+                <div className="flex-2 flex flex-col py-2 gap-y-4">
                     {/* Serving Size */}
-                    <div className="flex gap-x-4">
-                        <div className="text-black font-semibold">
+                    <div className="flex flex-col gap-x-4">
+                        <div className="text-black text-sm md:text-md text-center font-semibold">
                             Serving Size
                         </div>
                         <select 

@@ -31,20 +31,20 @@ export default function LoggedFoodItem({
     const [showDetails, setShowDetails] = useState(false);
 
     return (
-        <div className="flex flex-col gap-y-2">
+        <>
             <div 
                 key={meal_item.fdc_id}
                 className="flex flex-row justify-between py-2 px-5 shadow-md light-card-color border-b border-black/20 rounded-xl"
             >
-                <div className="text-lg text-black/80 font-bold hover:cursor-pointer"
+                <div className="md:text-lg text-black/80 font-bold  hover:cursor-pointer"
                 onClick={() => setShowDetails(!showDetails)}
                 >
                     {meal_item.food_name}
                 </div>
-                <div className="text-lg font-semibold tracking-wide flex flex-row gap-x-2 justify-center">
+                <div className="md:text-lg font-semibold tracking-wide flex flex-row items-center gap-x-2 justify-center text-center">
                     Calories: {meal_item.calories}
                 <button
-                    className="bg-red-600/50 rounded-lg px-1 py-1 hover:cursor-pointer hover:bg-red-600"
+                    className="bg-red-600/50 rounded-lg px-1 h-fit py-1 hover:cursor-pointer hover:bg-red-600"
                     onClick={() => removeLoggedItem(meal_item)}    
                 >
                     <X />
@@ -66,7 +66,7 @@ export default function LoggedFoodItem({
                     />
                 </div>
             )} 
-        </div>
+        </>
     );
 }
 

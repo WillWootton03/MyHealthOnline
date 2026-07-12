@@ -95,7 +95,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-1 py-3.5 bg-[#54a6bb] text-white text-sm font-medium rounded-lg hover:bg-[#0d4c64] active:scale-[0.99] transition-all duration-150
+              className="w-full mt-1 py-3.5 bg-color-primary text-white text-sm font-medium rounded-lg hover-bg-primary active:scale-[0.99] transition-all duration-150
                         disabled:opacity-60 flex items-center justify-center gap-2 hover:cursor-pointer"
             >
               {loading ? (

@@ -7,13 +7,13 @@ const dailyLogsController = {
     newDailyLog : async (req, res, next)  => {
         const { date } = req.query;
         const { user_id } = req.user;
-
+        
         // verifies date is a string object
         if (typeof date !== 'string') {
             logger.error('FAILED newDailyLog : date not valid input')
             return sendError(
                 res,
-                'Failed to create daily log, date needs to be of type date',
+                'Failed to create daily log invalid date',
                 'INVALID_FIELD_INPUT'
             )
         }

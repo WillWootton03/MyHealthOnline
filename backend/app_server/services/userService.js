@@ -44,7 +44,7 @@ const userService = {
                     process.env.JWT_SECRET,
                     {
                         // Generate fast-expire token if in a test environment
-                        expiresIn: process.env.NODE_ENV === 'test' ? '2m' : '7d',
+                        expiresIn: process.env.NODE_ENV === 'test' ? '5m' : '7d',
                     }
                 );
 
