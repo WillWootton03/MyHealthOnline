@@ -41,7 +41,6 @@ export default function Navbar() {
           </div>
           <a
             className="text-black text-lg font-medium"
-            style={{ fontFamily: "'Raleway', serif"}}
             href="/app"
           >
             My Health Online

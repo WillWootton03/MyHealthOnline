@@ -36,7 +36,7 @@ const features = [
 
 export default function Landing() {
     return (
-        <div className='min-h-screen page-bg-light text-black' style={{ fontFamily: "'Raleway', seriff"}}>
+        <div className='min-h-screen page-bg-light text-black'>
             {/* Hero */}
             <section className='max-w-5xl mx-auto px-6 pt-20 pb-16 text-center'>
                 <div className='inline-flex items-center gap-2 page-background-light border border-[#d0daf0] text-color-primary text-xs font-medium px-3 py-1.5 rounded-full mb-8'>
@@ -46,7 +46,6 @@ export default function Landing() {
 
                 <h1
                     className='text-5xl md-text-6xl font-medium leading-[1.1] mb-6 max-w-3xl mx-auto'
-                    style={{ fontFamily: "'Raleway', seriff"}}
                 >
                     Your health, {" "}
                     <em className='text-color-primary not-italic'>simplified</em>
@@ -89,7 +88,6 @@ export default function Landing() {
                             What is My Health Online
                         </p>
                         <h2 className='text-3xl md:text-4xl font-medium leading-tight mb-5'
-                            style={{ fontFamily: "'Raleway', seriff"}}
                         >
                             The one stop help companion for all your needs.
                         </h2>
@@ -141,8 +139,7 @@ export default function Landing() {
                         What My Health Online Helps With
                     </p>
                     <h2
-                        className='text-3xl md:text-4xl font-medium leading-tight max-w-lg mx-auto'
-                        style={{ fontFamily: "'Raleway', seriff"}}>
+                        className='text-3xl md:text-4xl font-medium leading-tight max-w-lg mx-auto'>
                             Everything you need, nothing you don&apos;t
                     </h2>
                 </div>
@@ -174,9 +171,7 @@ export default function Landing() {
             {/* CTA */}
             <section className='max-w-5xl mx-auto px-6 py-20 text-center'>
                 <div className='bg-[#1e5fa8] rounded-2xl px-8 py-14'>
-                    <h2 className='text-3xl md:text-4xl font-medium text-white leading-tight mb-4'
-                        style={{ fontFamily: "'Raleway', seriff"}}
-                    >
+                    <h2 className='text-3xl md:text-4xl font-medium text-white leading-tight mb-4'>
                         Ready to reach your goals?
                     </h2>
                     <p className='text-white/55 max-5-sm mx-auto mb-8 text-sm leading-relaxed'>

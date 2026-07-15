@@ -341,7 +341,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
             {/* HEADER */}
             <div className="px-6 pt-5 pb-4 border-b light-bg-color">
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-base font-semibold text-black" style={{ fontFamily: "'Raleway', seriff"}}>
+                    <h2 className="text-base font-semibold text-black">
                         Calories
                     </h2>
 
@@ -382,7 +382,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
             <div className="w-full py-3 px-3">
                 <button 
                     className="px-3 py-2 rounded-xl bg-color-primary text-white font-semibold hover:cursor-pointer"
-                    onClick={() => navigate('/workout')}
+                    onClick={() => navigate('workout')}
                 >
                     Start Workout
                 </button>

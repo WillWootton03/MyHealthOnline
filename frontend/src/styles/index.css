@@ -16,7 +16,7 @@
     }
 
     .light-bg-color {
-        background-color: #f7faff;
+        background-color: #e5efff;
     }
 
     :hover.hover-light-bg-color {
@@ -35,5 +35,18 @@
         color: #234a7c
     }
 
+    /* no-spinner user to stop input increments for number */
+    .no-spinner::-webkit-inner-spin-button,
+    .no-spinner::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
 
+    .no-spinner {
+        appearance: textField;
+    }
+}
+
+body {
+    font-family: 'Raleway', sans-serif;
 }

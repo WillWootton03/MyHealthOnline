@@ -60,9 +60,7 @@ export default function Login() {
               <Heart className="w-5 h-5 text-white fill='white" />
             </div>
             {/* AppTitle */}
-            <h1 className="text-black text-2xl font-medium"
-                style={{ fontFamily: "'Raleway', serif"}}
-            >
+            <h1 className="text-black text-2xl font-medium">
             My Health Online
             </h1>
             <p className="text-black/45 text-sm mt-1">Sign in to continue</p>
