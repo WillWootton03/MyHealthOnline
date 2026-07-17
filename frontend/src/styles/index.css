@@ -50,3 +50,11 @@
 body {
     font-family: 'Raleway', sans-serif;
 }
+
+button {
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: default;
+}

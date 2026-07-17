@@ -135,7 +135,7 @@ export default function BodyDetails () {
                 <button 
                     type="button"
                     className="px-8 mt-1 py-3.5 bg-color-primary text-white text-sm font-medium rounded-lg hover-bg-color-primary active:scale-[0.99] 
-                    transition-all duration-150 disabled:opacity-60 flex items-center justify-center gap-2 hover:cursor-pointer"
+                    transition-all duration-150 disabled:opacity-60 flex items-center justify-center gap-2 hover:"
                     onClick={switchMeasurement}  
                     >
                     {imperialMeasurement ? 'Imperial' : 'Metric'}
@@ -271,7 +271,7 @@ export default function BodyDetails () {
                   type="submit"
                   disabled={submitting}
                   className="w-full mt-1 py-3.5 bg-color-primary text-white text-sm font-medium rounded-lg hover-bg-color-primary active:scale-[0.99] 
-                  transition-all duration-150 disabled:opacity-60 flex items-center justify-center gap-2 hover:cursor-pointer"
+                  transition-all duration-150 disabled:opacity-60 flex items-center justify-center gap-2 hover:"
                 >
                   {submitting ? (
                     <>

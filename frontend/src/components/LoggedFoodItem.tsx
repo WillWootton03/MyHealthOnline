@@ -36,7 +36,7 @@ export default function LoggedFoodItem({
                 key={meal_item.fdc_id}
                 className="flex flex-row justify-between py-2 px-5 shadow-md light-card-color border-b border-black/20 rounded-xl"
             >
-                <div className="text-lg text-black/80 font-bold hover:cursor-pointer"
+                <div className="text-lg text-black/80 font-bold hover:"
                 onClick={() => setShowDetails(!showDetails)}
                 >
                     {meal_item.food_name}
@@ -44,7 +44,7 @@ export default function LoggedFoodItem({
                 <div className="text-lg font-semibold tracking-wide flex flex-row gap-x-2 justify-center">
                     Calories: {meal_item.calories}
                 <button
-                    className="bg-red-600/50 rounded-lg px-1 py-1 hover:cursor-pointer hover:bg-red-600"
+                    className="bg-red-600/50 rounded-lg px-1 py-1 hover: hover:bg-red-600"
                     onClick={() => removeLoggedItem(meal_item)}    
                 >
                     <X />

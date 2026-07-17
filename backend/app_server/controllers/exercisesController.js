@@ -11,10 +11,25 @@ const exercisesController = {
             logger.info('SUCCESS getAllExercises : successfully retrieved all exercises');
             return sendSuccess(
                 res,
-                'Sucessfully retrieved all excersizes',
+                'Sucessfully retrieved all exercises',
                 result
             )
 
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    shortGetAllExercises : async(req, res, next) => {
+        try {
+            const result = await exercisesService.shortGetAllExercises();
+
+            logger.info('SUCCESS shortGetAllExercises : successfully retrieved all exercises short version');
+            return sendSuccess(
+                res,
+                'Successfully retrieved all exercises',
+                result,
+            )
         } catch (err) {
             next(err);
         }

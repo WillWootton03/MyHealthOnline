@@ -192,7 +192,7 @@ export default function FoodItemDetails({
             {/* HEADER */}
             <div className="flex flex-col gap-y-2 items-center">
                 <a 
-                    className="text-xl font-bold text-black/70 hover:text-black hover:cursor-pointer"
+                    className="text-xl font-bold text-black/70 hover:text-black hover:"
                     href={`https://fdc.nal.usda.gov/food-details/${updatedItem ? item.fdc_id : item.fdcId}/nutrients`}
                     target="_blank"
                 >
@@ -304,7 +304,7 @@ export default function FoodItemDetails({
                         />
                         {updatedItem ? (
                             <button 
-                                className="px-6 py-3 bg-green-700/80 hover:bg-green-900 hover:cursor-pointer text-sm text-white rounded-xl"
+                                className="px-6 py-3 bg-green-700/80 hover:bg-green-900 hover: text-sm text-white rounded-xl"
                                 onClick={() => updateItem()}
                             >
                                 {!updating ? (
@@ -315,7 +315,7 @@ export default function FoodItemDetails({
                             </button>
                         ) : (
                             <button 
-                                className="px-6 py-3 bg-green-700/80 hover:bg-green-900 hover:cursor-pointer text-sm text-white rounded-xl"
+                                className="px-6 py-3 bg-green-700/80 hover:bg-green-900 hover: text-sm text-white rounded-xl"
                                 onClick={() => addItem()}
                             >
                                 {!adding ? (

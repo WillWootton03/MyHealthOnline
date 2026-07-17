@@ -1,5 +1,5 @@
-import { Check, Minus, MinusCircle, Plus, PlusCircle, Timer, Trash2 } from "lucide-react";
-import { use, useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import { Check, Minus, Plus, Timer, Trash2 } from "lucide-react";
+import {  useEffect, useState } from "react";
 import type { ExerciseSet } from "./ExerciseDetails";
 
 
@@ -20,6 +20,7 @@ type ExerciseSetProps =({
         completed: boolean;
     }) => void;
     removeExerciseSet: (id: string) => void;
+    updateSet: (set: ExerciseSet) => void;
 });
 
 export default function ExerciseSet({
@@ -29,6 +30,7 @@ export default function ExerciseSet({
     reps: i_reps,
     onCompleted,
     removeExerciseSet,
+    updateSet
 } : ExerciseSetProps) {
     const [weight, setWeight] = useState(i_weight || 0);
     const [reps, setReps] = useState(i_reps || 0);
@@ -97,6 +99,10 @@ export default function ExerciseSet({
     }
 
     useEffect(() => {
+        updateSet({ id, weight, reps, completed: isCompleted })
+    }, [weight, reps])
+
+    useEffect(() => {
         onCompleted({
             id: id,
             weight: weight,
@@ -124,9 +130,9 @@ export default function ExerciseSet({
 
     return (
     <div className={`border rounded-xl px-1 md:px-10 py-5 gap-y-3 light-bg-color flex flex-col ${isCompleted ? 'border-blue-300' : 'border-transparent'}`}>
-        <div className="flex flex-row gap-x-2 lg:gap-x-20 justify-center">
+        <div className="flex flex-row gap-x-2 xl:gap-x-20 justify-center">
             {/* Weight Section */}
-            <div className="flex flex-row gap-x-3 md:gap-x-20 items-center">
+            <div className="flex flex-row sm:gap-x-15 md:gap-x-20 items-center">
                 <button 
                     className="border rounded-2xl border-gray-400/60 hover:border-blue-400/60"
                     onClick={() => incInputs(-2.5, 'weight')}
@@ -220,7 +226,7 @@ export default function ExerciseSet({
                     </button>
                     <button 
                         onClick={() => removeExerciseSet(id)}
-                        className="text-gray-400 hover:bg-red-500/20 hover:text-red-700 rounded-2xl p-2 cursor-pointer h-fit"
+                        className="text-gray-400 hover:bg-red-500/20 hover:text-red-700 rounded-2xl p-2  h-fit"
                     >
                         <Trash2 size={18} />
                     </button>

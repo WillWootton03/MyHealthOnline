@@ -51,7 +51,7 @@ export default function Navbar() {
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setMenuOpen(v => !v)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover-light-bg-color transition-colors hover:cursor-pointer" >
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover-light-bg-color transition-colors hover:" >
               <div className="w-7 h-7 rounded-full bg-color-primary flex items-center justify-center">
                 <span className="text-white text-xs font-semibold">
                   {
@@ -103,14 +103,14 @@ export default function Navbar() {
                 <div className="py-1">
                   <button 
                     className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-black/70 hover:bg-[#f0f5ff] hover:text-black 
-                               transition-colors text-left hover:cursor-pointer"
+                               transition-colors text-left hover:"
                                >
                     <User className="w-4 h-4 text-color-primary" />
                       Profile
                   </button>
                   <button 
                     className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-black/70 hover:bg-[#f0f5ff] hover:text-black 
-                               transition-colors text-left hover:cursor-pointer"
+                               transition-colors text-left hover:"
                     onClick={() => navigate('settings')}     
                     >
                     <Settings className="w-4 h-4 text-color-primary" />
@@ -120,7 +120,7 @@ export default function Navbar() {
                     <button 
                       onClick={() => { sendVerificationEmail(); setSentEmail(true); setMenuOpen(false); }}
                       className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-black/70 hover:bg-[#f0f5ff] hover:text-black 
-                                 transition-colors text-left hover:cursor-pointer">
+                                 transition-colors text-left hover:">
                       <ShieldCheck className="w-4 h-4 text-color-primary" />
                         Verify Email
                     </button>
@@ -130,7 +130,7 @@ export default function Navbar() {
                   <button
                     onClick={logoutUser}
                     className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-color-primary hover:bg-[#fda7a7]/20
-                               hover-text-color-primary transistion-colors text-left hover:cursor-pointer"
+                               hover-text-color-primary transistion-colors text-left hover:"
                     >
                     <LogOut className="w-4 h-4" />
                     Sign Out

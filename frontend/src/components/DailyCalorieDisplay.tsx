@@ -323,7 +323,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
             {/* Date Selector */}
             <div className="flex flex-row justify-between px-3 py-3">
                 <button 
-                    className="hover:cursor-pointer px-2 py-2 hover:bg-blue-50 rounded-2xl"
+                    className="hover: px-2 py-2 hover:bg-blue-50 rounded-2xl"
                     onClick={prevDate}
                 >
                     <ChevronLeft />
@@ -332,7 +332,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                     {formatDate(date)}
                 </div>
                 <button 
-                    className="hover:cursor-pointer px-2 py-2 hover:bg-blue-50 rounded-2xl"
+                    className="hover: px-2 py-2 hover:bg-blue-50 rounded-2xl"
                     onClick={nextDate}
                 >
                     <ChevronRight /> 
@@ -381,7 +381,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
             {/* Begin Workout Button */}
             <div className="w-full py-3 px-3">
                 <button 
-                    className="px-3 py-2 rounded-xl bg-color-primary text-white font-semibold hover:cursor-pointer"
+                    className="px-3 py-2 rounded-xl bg-color-primary text-white font-semibold hover:"
                     onClick={() => navigate('workout')}
                 >
                     Start Workout
@@ -404,7 +404,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                             </h2>
                             {/* Add Food or Cancel ADding food buttons */}
                             <button 
-                                className={`px-3 py-2 rounded-xl text-white font-semibold hover:cursor-pointer
+                                className={`px-3 py-2 rounded-xl text-white font-semibold hover:
                                     ${
                                         openMealType === mealType ? 'bg-red-700 hover:bg-red-800' : 'bg-color-primary hover-bg-color-primary' 
                                     }   

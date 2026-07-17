@@ -105,7 +105,7 @@ export default function FoodSearch({
                                     text-black placeholder-black/25"
                     />
                     <button 
-                        className="w-5 flex-1 h-full bg-color-primary px-3 py-2 rounded-xl text-white font-bold hover-bg-color-primary hover:cursor-pointer
+                        className="w-5 flex-1 h-full bg-color-primary px-3 py-2 rounded-xl text-white font-bold hover-bg-color-primary hover:
                                     active:scale-[0.99] transition-all duration-150 disabled:opacity-60 items-center justify-center"
                         disabled={searching}
                         type="submit"
@@ -137,7 +137,7 @@ export default function FoodSearch({
                             </div>
                             <div className="flex items-center gap-3">
                                 <button 
-                                    className="px-6 py-3 bg-color-primary hover-bg-color-primary hover:cursor-pointer text-sm text-white rounded-xl"
+                                    className="px-6 py-3 bg-color-primary hover-bg-color-primary hover: text-sm text-white rounded-xl"
                                     onClick={() => ShowFoodItemDetails(item)}
                                 >
                                         Details
@@ -164,7 +164,7 @@ export default function FoodSearch({
         {(foodItems.length !== 0) && (
             <div className="flex justify-center gap-x-3 py-2 mb-2">
                 <button 
-                    className="text-color-primary px-1 py-2 rounded-xl text-white hover:bg-[#f5fbff] hover-text-color-primary hover:cursor-pointer"
+                    className="text-color-primary px-1 py-2 rounded-xl text-white hover:bg-[#f5fbff] hover-text-color-primary hover:"
                     onClick={() => setSearchPageNumber(searchPageNumber + 1)}
                 >
                     See More

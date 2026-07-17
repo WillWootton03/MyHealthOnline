@@ -161,7 +161,7 @@ export default function Login() {
                     type="submit"
                     disabled={loading}
                     className="w-full mt-1 py-3.5 bg-color-primary text-white text-sm font-medium rounded-lg hover-bg-color-primary active:scale-[0.99] transition-all duration-150
-                              disabled:opacity-60 flex items-center justify-center gap-2 hover:cursor-pointer"
+                              disabled:opacity-60 flex items-center justify-center gap-2 hover:"
                   >
                     {loading ? (
                       <>
@@ -195,7 +195,7 @@ export default function Login() {
               Already have an account?{" "}
             <button
               type="button"
-              className="text-[#4d89ba] font-medium hover:text-[#294963] transition-colors hover:cursor-pointer"
+              className="text-[#4d89ba] font-medium hover:text-[#294963] transition-colors hover:"
               onClick={signInRedirect}
             >
               Sign In
