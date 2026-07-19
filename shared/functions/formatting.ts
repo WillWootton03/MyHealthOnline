@@ -49,3 +49,22 @@ export function formatDate(date : Date) : string {
     const [y, m, d] = date.toLocaleDateString('en-CA').split('-');
     return `${m}-${d}-${y}`
 } 
+
+// Formats a timer string given amount of time in seconds
+export function formatTimer(totSeconds: number) : string {
+    const minutes = Math.floor(totSeconds / 60);
+    const seconds = totSeconds - (minutes * 60);
+
+    return `${minutes}:${String(seconds).padStart(2, '0')}`
+}
+
+// Gets the amount of seconds out of a normal m?m:ss timer
+export function getTotSeconds(timer: string) : number {
+    const [minutes, seconds] = timer.split(':');
+    return Number(seconds) + (Number(minutes) * 60);
+}
+
+// given 2 dates return the time difference in seconds between them 
+export function getTimeDifferenceInSeconds(timeNow: Date, timeThen: Date) : number {
+    return Math.round((timeNow.getTime() - timeThen.getTime()) / 1000);
+}

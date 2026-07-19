@@ -7,6 +7,7 @@ import Landing from './pages/Landing.tsx';
 import VerifyEmail from './pages/VerifyEmail.tsx';
 import UserSettings from './pages/UserSettings.tsx';
 import WorkoutPage from './pages/Workout.tsx';
+import { WorkoutLayout } from './WorkoutLayout.tsx';
 
 export const router = createBrowserRouter([
     { path: '/', Component: Landing},
@@ -18,7 +19,11 @@ export const router = createBrowserRouter([
             { path: 'verifyEmail', Component: VerifyEmail},
             { path: 'dashboard', Component : Dashboard},
             { path: 'settings', Component : UserSettings},
-            { path: 'workout', Component: WorkoutPage},
+            { 
+                Component: WorkoutLayout,
+                children: [
+                    { path: 'workout/:log_id?', Component: WorkoutPage},
+                ]},
         ]
     },
     { path: '/login', Component: Login },

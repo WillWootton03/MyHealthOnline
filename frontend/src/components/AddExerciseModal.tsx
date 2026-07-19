@@ -3,19 +3,14 @@ import { useEffect, useState } from "react";
 import SearchExercise from "./SearchExercise";
 import { Search, X } from "lucide-react";
 
+import { type SnipExerciseData } from "../context/WorkoutsContext";
+
+
 type AddExerciseModalProps = {
     setPLoading: (arg0: boolean) => void;
     setDisplayNewExercise: (arg0: boolean) => void;
     addExercises: (arg0: SnipExerciseData[]) => void;
 }
-
-export type SnipExerciseData = {
-    id: number;
-    name: string;
-    category: string;
-    thumbnail: string;
-}
-
 
 export const ExerciseCategories = ['Legs', 'Cardio' , 'Arms' , 'Back' , 'Chest' , 'Shoulders' , 'Abs' , 'Calves'] as const;
 export type ExerciseCategory = typeof ExerciseCategories[number];
@@ -26,6 +21,7 @@ export default function AddExerciseModal({
     setDisplayNewExercise,
     addExercises
 } : AddExerciseModalProps ) {
+
     const [searchCategory, setSearchCategory] = useState<ExerciseCategory>('Legs');
 
     const [loading, setLoading] = useState(false);
@@ -51,12 +47,18 @@ export default function AddExerciseModal({
         run();
     }, [])  
 
+    const addExercisesHandler = (selectedExercises : SnipExerciseData[]) => {
+        addExercises(selectedExercises);
+        setDisplayNewExercise(false);
+    }
+
     const getExerciseData = async() => {
         setPLoading(true);
         setLoading(true);
         const token = localStorage.getItem('token');
+        
+        // Attempt to read loaded exercise data
         let stored = sessionStorage.getItem('short_exercises');
-
         if(stored) {
             setSearchExercises(JSON.parse(stored));
             setPLoading(false);
@@ -164,7 +166,7 @@ export default function AddExerciseModal({
                                         className={`${selectedExercises.length > 0 ? 'bg-blue-400/70 hover:bg-blue-500/70 ' : 'bg-gray-400 cursor-default'} 
                                                     rounded-xl py-2 px-4 text-white font-semibold `}
                                         disabled={selectedExercises.length <= 0}
-                                        onClick={() => addExercises(selectedExercises)}
+                                        onClick={() => addExercisesHandler(selectedExercises)}
                                         >
                                         Add
                                     </button>
@@ -173,7 +175,7 @@ export default function AddExerciseModal({
                                                         rounded-xl py-2 px-4 text-white font-semibold`}
                                         disabled={selectedExercises.length <= 1}
                                         /* TODO : Add superset functionality */
-                                        onClick={() => addExercises(selectedExercises)}
+                                        onClick={() => addExercisesHandler(selectedExercises)}
                                     >
                                         Superset
                                     </button>
@@ -184,6 +186,7 @@ export default function AddExerciseModal({
                             {filteredExercises
                                     .map(exercise =>  (
                                         <SearchExercise
+                                            key={exercise.id}
                                             id={exercise.id} 
                                             name={exercise.name}
                                             category={exercise.category}

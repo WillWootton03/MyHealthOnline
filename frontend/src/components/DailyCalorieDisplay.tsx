@@ -382,7 +382,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
             <div className="w-full py-3 px-3">
                 <button 
                     className="px-3 py-2 rounded-xl bg-color-primary text-white font-semibold hover:"
-                    onClick={() => navigate('workout')}
+                    onClick={() => navigate(`workout/${log_id}`)}
                 >
                     Start Workout
                 </button>

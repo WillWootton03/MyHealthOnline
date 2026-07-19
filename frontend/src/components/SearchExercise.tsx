@@ -1,6 +1,6 @@
 import { Check, CircleQuestionMark } from "lucide-react";
 import { useState } from "react";
-import type { SnipExerciseData } from "../components/AddExerciseModal";
+import type { SnipExerciseData } from "../context/WorkoutsContext";
 
 type SearchExerciseProps = {
     id: number;
@@ -38,7 +38,7 @@ export default function SearchExercise({
         <div   
             key={id}
             onClick={() => SelectWorkout()} 
-            className={`flex justify-between cursor-pointer rounded-xl p-1 border-2 h-23 ${isSelected ? 'border-blue-700' : 'border-transparent hover:border-blue-600/70'}`}    
+            className={`flex justify-between  rounded-xl p-1 border-2 h-23 ${isSelected ? 'border-blue-700' : 'border-transparent hover:border-blue-600/70'}`}    
         >
             <div className="flex gap-x-1 md:gap-x-5">
                 {thumbnail ? (
@@ -63,7 +63,7 @@ export default function SearchExercise({
             </div>
             {/* Show Details Modal Button */}
             <button 
-                className={`cursor-pointer transition-all duration-250 ${isSelected ? 'text-blue-700' : 'text-black/50 hover:text-blue-500/80'}`}
+                className={` transition-all duration-250 ${isSelected ? 'text-blue-700' : 'text-black/50 hover:text-blue-500/80'}`}
             >
                 {isSelected ? (
                     <Check />

@@ -1,9 +1,7 @@
 import { ChevronDown, ChevronUp, Dot, Dumbbell, Plus, Trash, Trash2 } from "lucide-react";
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import ExerciseSet from "./ExerciseSet";
-import type { ExerciseItem } from "../pages/Workout";
-
-
+import { useWorkout, type ExerciseItem, type ExerciseSetType } from "../context/WorkoutsContext";
 
 
 type ExerciseDetailsProps = ({
@@ -12,89 +10,68 @@ type ExerciseDetailsProps = ({
     onDeleteExercise: (id: string) => void;
 });
 
-export type ExerciseSet = ({
-    id: string;
-    weight: number | undefined;
-    reps: number | undefined;
-    completed: boolean;
-});
-
 export default function ExerciseDetails({
-    exerciseData: exercise,
+    exerciseData,
     measurement_pref = 'imperial',
     onDeleteExercise
 } : ExerciseDetailsProps) {
+    const { workout, addExerciseSet, removeExerciseSet, updateExercise } = useWorkout();
 
-    const [totalSets, setTotalSets] = useState(1);
     const [completedSets, setCompletedSets] = useState(0);
-    const [sets, setSets] = useState<ExerciseSet[]>([
-        { id: crypto.randomUUID(), weight: undefined, reps: undefined, completed: false}
-    ]);
+    const [sets, setSets] = useState<ExerciseSetType[]>(exerciseData.sets);
 
     const [totalWeight, setTotalWeight] = useState(0);
     const [totalReps, setTotalReps] = useState(0);
 
+
+    useEffect(() => {
+        setSets(() => {
+            return workout?.exercises.find((exercise) =>
+                exercise.id === exerciseData.id)?.sets ?? [];
+            });
+    }, [workout, exerciseData.id]);
+    
     const [isOpen, setIsOpen] = useState(false);
 
-    function addExerciseSet() {
-        setTotalSets(prev => prev + 1);
-        setSets(prev => {
-            const lastSet = prev[prev.length - 1];
-            return [
-                ...prev,
-                {
-                    ...lastSet,
-                    id: crypto.randomUUID(),
-                    completed: false,
-                }
-            ]
-        });
+    function addSetHandler() {
+        addExerciseSet(exerciseData.id);
     }
 
-    function updateSet(exercise: ExerciseSet) {
-        const indx = sets.findIndex(s => s.id === exercise.id);
-
-        if(indx !== -1) {
-            setSets(prev => 
-                prev.map((set, i) => 
-                    i === indx
-                        ? {
-                            ...set,
-                            weight: exercise.weight,
-                            reps: exercise.reps,
-                        }
-                        : set
-                )
-            );
-        }
-
+    function deleteSetHandler(exerciseId: string, setItemId: string) {
+        removeExerciseSet(exerciseId, setItemId);
     }
 
-    function removeExerciseSet(id: string) {
-        setTotalSets(prev => prev - 1);
+    function onCompletedSet(set: ExerciseSetType) {
+        let newWeight = 0;
+        let newReps = 0;
+        let newSets = 0;
 
-        const indx = sets.findIndex(s => s.id === id);
-        if (indx) {
-            setTotalReps(prev => prev - (sets[indx]?.reps ?? 0));
-            setTotalWeight(prev => prev - (sets[indx]?.weight ?? 0));
-            setSets(prev => prev.filter(s => s.id !== id));
-        }
-    }
-
-    function onCompletedSet(set: ExerciseSet) {
         if(set.completed) {
-            setCompletedSets(prev => prev + 1);
-            setTotalWeight((prev) => prev + (set.weight || 0) * (set.reps || 0));
-            setTotalReps(prev => prev + (set.reps || 0));
+            newSets = 1;
+            newWeight = (set.weight || 0) * (set.reps || 0);
+            newReps = (set.reps || 0);
+
         } else {
-            setCompletedSets(prev => prev - 1 < 0 ? 0 : prev - 1);
-            setTotalWeight((prev) => prev - (set.weight || 0) * (set.reps || 0));
-            setTotalReps(prev => prev - (set.reps || 0));
+            newSets = -1;
+            newWeight = -((set.weight || 0) * (set.reps || 0));
+            newReps = -(set.reps || 0);
         }
+
+        const updatedWeight = totalWeight + newWeight;
+        const updatedReps = totalReps + newReps;
+        const updatedSets = completedSets + newSets < 0 ? 0 : completedSets + newSets;
+
+        console.log(exerciseData.id, updatedWeight, updatedReps, updatedSets);
+
+        updateExercise(exerciseData.id, {totalWeight: updatedWeight, totalReps: updatedReps, totalSets: updatedSets })
+
+        setCompletedSets(updatedSets);
+        setTotalWeight(updatedWeight);
+        setTotalReps(updatedReps);
     }
 
     return (
-        <div className="flex flex-col gap-y-3 px-3 md:px-6 bg-white drop-shadow-md rounded-3xl py-4 w-fit">
+        <div className="flex flex-col gap-y-3 px-6 md:px-6 bg-white drop-shadow-md rounded-3xl py-4 w-full">
             {/* Header */}
             <div className="flex flex-row justify-between">
                 <div className="flex gap-x-2">
@@ -103,9 +80,9 @@ export default function ExerciseDetails({
                     </div>
                     {/* Exercise Details */}
                     <div className="flex flex-col font-semibold">
-                        {exercise.name}
+                        {exerciseData.name}
                         <div className="text-sm text-black/40 flex">
-                            {completedSets}/{totalSets} sets
+                            {completedSets}/{sets.length} sets
                             <span className={`${totalWeight > 0 ? 'inline-flex' : 'hidden'} text-blue-500 text-sm`}> 
                                 <Dot size={20} /> 
                                 {totalWeight} {measurement_pref == 'imperial' ? 'lbs' : 'kg'} of total volume
@@ -116,7 +93,7 @@ export default function ExerciseDetails({
                 {/* Exercise Tools */}
                 <div className="flex flex-row pl-3 gap-x-2 items-center">
                     <button 
-                        onClick={() => addExerciseSet()}
+                        onClick={() => addSetHandler()}
                         className="flex gap-x-2 bg-blue-500/30 py-2 px-4 md:px-4 rounded-xl text-blue-500 font-semibold items-center hover:bg-blue-500 hover:text-white"
                     >
                         <Plus strokeWidth={2.2} />
@@ -133,7 +110,7 @@ export default function ExerciseDetails({
                     </button>
                     <button
                         className="text-gray-400 hover:bg-red-500/20 hover:text-red-700 rounded-2xl p-2 "
-                        onClick={() => onDeleteExercise(exercise.id)}
+                        onClick={() => onDeleteExercise(exerciseData.id)}
                     >
                         <Trash2 size={18} />
                     </button>
@@ -143,14 +120,12 @@ export default function ExerciseDetails({
             <div className="flex flex-col gap-y-2">
                 {sets.map(set => (
                     <ExerciseSet
+                        exerciseId={exerciseData.id}
                         key={set.id}
-                        id={set.id}
+                        setItem={set}
                         measurement_pref={'imperial'}
-                        weight={set.weight}
-                        reps={set.reps}
                         onCompleted={(updatedSet) => onCompletedSet(updatedSet)}
-                        updateSet={((set) => updateSet(set))}
-                        removeExerciseSet={() => removeExerciseSet(set.id)}
+                        onDeleteSet={(exerciseId, setItemId) => deleteSetHandler(exerciseId, setItemId)}
                     />
                 ))}
             </div>
