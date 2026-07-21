@@ -137,8 +137,8 @@ export default function FoodSearch({
                             </div>
                             <div className="flex items-center gap-3">
                                 <button 
-                                    className={`px-6 py-3 ${(showDetailsModal && currItem === item) ? 'bg-red-500 hover:bg-red-600' :'bg-color-primary hover-bg-color-primary' }
-                                        hover:cursor-pointer text-sm text-white rounded-xl shadow-md border-b border-black/20`}
+                                    className={`px-6 py-3 text-white ${(showDetailsModal && currItem === item) ? 'bg-red-500/60 hover:bg-red-600 hover:text-red-800' :'bg-color-primary hover-bg-color-primary' }
+                                        text-sm  rounded-xl shadow-md border-b border-black/20`}
                                     onClick={() => ShowFoodItemDetails(item)}
                                 >
                                         {(showDetailsModal && currItem === item) ? 'Close' : 'Details' }
