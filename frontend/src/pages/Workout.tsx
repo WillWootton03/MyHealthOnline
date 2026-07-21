@@ -64,7 +64,6 @@ export default function WorkoutPage() {
                 ) : 
                 <AddExerciseModal 
                         setDisplayNewExercise={(val: boolean) => setDisplayNewExercise(val)}
-                        setPLoading={(val: boolean) => setLoading(val)}
                         addExercises={(val) => addExercises(val)}
                     /> 
                 }

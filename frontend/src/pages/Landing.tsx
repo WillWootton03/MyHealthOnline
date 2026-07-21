@@ -1,5 +1,6 @@
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { Heart, Dumbbell, Apple, Scale, ChevronRight, ArrowRight, BarChart2, Broccoli, Map} from 'lucide-react';
+import { useEffect } from 'react';
 
 const features = [
     {
@@ -35,6 +36,16 @@ const features = [
 ];
 
 export default function Landing() {
+
+    const navigate = useNavigate();
+    // Used to bypass login when user has valid token
+    useEffect(() => {
+        const token = localStorage.getItem('token') ?? null;
+        if (token) {
+            navigate('/app');
+        }
+    }, [])
+
     return (
         <div className='min-h-screen page-bg-light text-black'>
             {/* Hero */}

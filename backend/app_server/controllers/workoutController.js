@@ -183,6 +183,105 @@ const workoutController = {
             next(err);
         }
     },
+
+    newCustomExercise : async(req, res, next) => {
+        const { user_id } = req.user;
+        const { custom_exercise } = req.body;
+
+        if(!custom_exercise) {
+            logger.error('FAILED newCustomExercise : workoutController : invalid field input');
+            return sendError(
+                res,
+                'invalid field input',
+                'INVALID FIELD INPUT'
+            );
+        }
+
+        try {
+            const result = await workoutService.newCustomExercise({ user_id, custom_exercise });
+
+            if(!result) {
+                logger.error('FAILED newCustomExercise : workoutController : invalid or not found');
+                return sendError(
+                    res,
+                    'invalid or not found',
+                    'INVALID or NOT_FOUND'
+                );
+            }
+
+            logger.info(`SUCCESS : newCustomExercise : successfully created a new custom exercise : user: ${user_id} : c_e : ${result.custom_exercsie_id}`);
+                return sendSuccess(
+                    res,
+                    'successfully created a new custom exercise : ',
+                    result,
+                );
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    updateCustomExercise : async(req, res, next) => {
+        const { user_id } = req.user;
+        const { custom_exercise } = req.body;
+
+        if(!custom_exercise) {
+            logger.error('FAILED updateCustomExercise : workoutController : invalid updated exercise given');
+            return sendError(
+                res,
+                'invalid updated exercise given',
+                'INVALID_FIELD_INPUTS'
+            );
+        }
+
+        try {
+            const result = await workoutService.updateCustomExercise({ user_id, custom_exercise });
+
+            if(!result) {
+                logger.error('FAILED updateCustomExercise : workoutController : invalid or not found');
+                return sendError(
+                    res,
+                    'invalid or not found',
+                    'INVALID or NOT_FOUND'
+                );
+            }
+
+            logger.info('SUCCESS : updateCustomExercise : successfully update row with new values');
+                return sendSuccess(
+                    res,
+                    'successfully update row with new values',
+                    result,
+                );
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    deleteCustomExercise : async(req, res, next) => {
+        const { user_id } = req.user;
+        const { custom_exercsie_id } = req.params;
+
+        try {
+            const result = await workoutService.deleteCustomExercise({ user_id, custom_exercise_id });
+
+            if(!result) {
+                logger.error('FAILED deleteCustomExercise : workoutController : invalid or not found');
+                return sendError(
+                    res,
+                    'invalid or not found',
+                    'INVALID or NOT_FOUND'
+                );
+            }
+
+            logger.info(`SUCCESS : deleteCustomExercise : successfully deleted row at ${custom_exercise_id}`);
+                return sendSuccess(
+                    res,
+                    `successfully deleted row at`,
+                    result,
+                );
+        } catch (err) {
+            next(err);
+        }
+    },
 }
 
 module.exports = {

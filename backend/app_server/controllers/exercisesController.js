@@ -35,6 +35,31 @@ const exercisesController = {
         }
     },
 
+    customGetAllExercises : async(req, res, next) => {
+        const { user_id } = req.user;
+        try {
+            const result = await exercisesService.customGetAllExercises({ user_id });
+
+            if(!result) {
+                logger.error('FAILED customGetAllExercises : exercisesController : not found or invalid');
+                return sendError(
+                    res,
+                    'not found or invalid',
+                    'NOT_FOUND or INVALID'
+                );
+            }
+
+            logger.info('SUCCESS : customGetAllExercises : successfully retrieved all uses custom exercises');
+                return sendSuccess(
+                    res,
+                    'successfully retrieved all uses custom exercises',
+                    result,
+                ); 
+        } catch(err) {
+            next(err);
+        }
+    },
+
     getExerciseById : async(req, res, next) => {
         try {
             const { exercise_id } = req.params;

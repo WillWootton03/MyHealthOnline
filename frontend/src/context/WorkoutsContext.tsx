@@ -15,7 +15,7 @@ export type ExerciseSetType = ({
 });
 
 export type SnipExerciseData = {
-    id: number;
+    id: string;
     name: string;
     category: string;
     thumbnail: string;
@@ -31,7 +31,7 @@ export type Workout = {
 
 export type ExerciseItem = {
     id: string;
-    exercise_id: number;
+    exercise_id: string;
     name: string;
     category: string;
     sets: ExerciseSetType[];
@@ -40,8 +40,16 @@ export type ExerciseItem = {
     totalSets?: number;
 };
 
+export const ExerciseCategories = ['Legs', 'Cardio' , 'Arms' , 'Back' , 'Chest' , 'Shoulders' , 'Abs' , 'Calves'] as const;
+export type ExerciseCategory = typeof ExerciseCategories[number];
+export type ExerciseCategoryGroup = Record<ExerciseCategory, SnipExerciseData[]>;
+
 interface WorkoutsContextType {
     workout: Workout | undefined;
+
+    searchExercises : ExerciseCategoryGroup;
+    setSearchExercises : React.Dispatch<React.SetStateAction<ExerciseCategoryGroup>>;
+
     setWorkout: React.Dispatch<React.SetStateAction<Workout | undefined>>;
 
     addExercises : (exercise: SnipExerciseData[]) => void;
@@ -68,6 +76,19 @@ export function WorkoutsProvider({
     const [workout, setWorkout] = useState<Workout | undefined>(undefined);
     const [loaded, setLoaded] = useState(false);
 
+    const [searchExercises, setSearchExercises] = useState<ExerciseCategoryGroup>({
+        "Legs": [],
+        "Cardio": [],
+        "Arms": [],
+        "Back": [],
+        "Chest": [],
+        "Shoulders": [],
+        "Abs": [],
+        "Calves": []
+    });
+
+
+
     const navigate = useNavigate();
 
     function addExercises(exercises: SnipExerciseData[]) {
@@ -81,7 +102,7 @@ export function WorkoutsProvider({
                         ...prev.exercises,
                         ...exercises.map(exercise => ({
                                                 id:crypto.randomUUID(),
-                                                exercise_id: exercise.id,
+                                                exercise_id: String(exercise.id),
                                                 name: exercise.name,
                                                 category: exercise.category,
                                                 sets: [ {      
@@ -226,9 +247,72 @@ export function WorkoutsProvider({
         );
     }
 
+    async function getExerciseData() {
+        const token = localStorage.getItem('token');
+        
+        // Attempt to read loaded exercise data
+        let stored = sessionStorage.getItem('short_exercises');
+        if(stored) {
+            setSearchExercises(JSON.parse(stored));
+            return;
+        }
+
+        const { data } = await axios.get(`${import.meta.env.VITE_API_BASE_ROUTE}/exercises/short`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_ROUTE}/exercises/custom`,
+            {
+                headers : {
+                    'Authorization' : `Bearer ${token}`
+                }
+            }
+        );
+        const custom_exercises = response.data.data;
+
+
+        const ret: ExerciseCategoryGroup = {        
+            "Legs": [],
+            "Cardio": [],
+            "Arms": [],
+            "Back": [],
+            "Chest": [],
+            "Shoulders": [],
+            "Abs": [],
+            "Calves": []
+        };
+
+        data.data.forEach((exercise: SnipExerciseData) => {
+            ret[exercise.category as ExerciseCategory].push({ 
+                ...exercise,
+                id: String(exercise.id)
+             });
+        });
+
+        custom_exercises.forEach((exercise : any) => {
+            ret[exercise.category as ExerciseCategory].push({
+                id: exercise.custom_exercise_id,
+                ...exercise
+            });
+        });
+
+        ExerciseCategories.forEach((category) => {
+            ret[category].sort((a, b) => a.name.localeCompare(b.name));
+        }) 
+
+        sessionStorage.setItem('short_exercises', JSON.stringify(ret));
+        setSearchExercises(ret);
+    }
+
+
     // Loads workout data from localStorage if available
     useEffect(() => {
         const stored = localStorage.getItem('workout');
+        getExerciseData();
 
         if(stored) {
             setWorkout(JSON.parse(stored));
@@ -245,6 +329,9 @@ export function WorkoutsProvider({
         setLoaded(true);
     }, [])
 
+    useEffect(() => {
+        if(loaded) sessionStorage.setItem('short_exercises', JSON.stringify(searchExercises));
+    }, [searchExercises, loaded]);
     
     // Automatically saves workout data if anything in workout changes
     useEffect(() => {
@@ -255,6 +342,8 @@ export function WorkoutsProvider({
         <WorkoutsContext.Provider
             value={{
                 workout,
+                searchExercises,
+                setSearchExercises,
                 setWorkout,
                 addExercises,
                 updateExercise,

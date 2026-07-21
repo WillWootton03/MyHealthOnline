@@ -49,6 +49,10 @@ const exercisesService = {
         }
     },
 
+    customGetAllExercises : async({ user_id }) => {
+        return exercisesRepo.customGetAllExercises({ user_id });
+    },
+
     getExerciseById : async ({ exercise_id }) => {
         try {
             const url = `${WGER_API_URL}/exerciseinfo/${exercise_id}`;

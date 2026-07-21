@@ -7,6 +7,7 @@ const router = express.Router();
 router
     .get('/', authMiddleware, exercisesController.getAllExercises)
     .get('/short', authMiddleware, exercisesController.shortGetAllExercises)
+    .get('/custom', authMiddleware, exercisesController.customGetAllExercises)
     .get('/:exercise_id', authMiddleware, exercisesController.getExerciseById)  
 ;
 

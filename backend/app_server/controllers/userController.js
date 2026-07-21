@@ -51,8 +51,7 @@ const userController = {
     },
     
     emailLogin : async(req, res, next) => {
-        // Attempt to pull user from req and bypass login if valid token
-        const user_id  = req.user?.user_id ?? null;
+
 
         try {
             const { email, password } = req.body;

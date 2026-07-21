@@ -120,6 +120,77 @@ const workoutRepo = {
             logger.error(`FAILED : newSets : workoutRepo : failed insert new sets : ${err}`);
             throw err;
         }
+    },
+
+    newCustomExercise : async({ user_id, custom_exercise_id, name, description, category }) => {
+        try {
+            const query = `
+                INSERT INTO custom_exercises(custom_exercise_id, name, description, category, user_id)
+                SELECT $1, $2, $3, $4, $5
+                FROM users u 
+                    WHERE u.user_id = $5
+                RETURNING *
+            `
+
+            const res = await pool.query(query, [custom_exercise_id, name, description, category, user_id ]);
+            return res.rows[0] ?? null;
+        } catch (err) {
+            logger.error(`FAILED : newCustomExercise : workoutRepo : failed insert new custom exercise : ${err}`);
+            throw err;
+        }
+    },
+
+    updateCustomExercise : async({ user_id, exercise_id, name, description, category }) => {
+
+        const fields = [];
+        const values = [exercise_id, user_id,];
+        let paramIndx = 2;
+
+        if (name !== undefined) {
+            fields.push(`name = $${paramIndx}`);
+            values.push(name);
+            paramIndx++;
+        }
+
+        if (description !== undefined) {
+            fields.push(`description = $${paramIndx}`);
+            values.push(description);
+            paramIndx++;
+        }
+
+        if (category !== undefined) {
+            fields.push(`category = $${paramIndx}`);
+            values.push(category);
+            paramIndx++;
+        }
+
+        try {
+            const query = `
+                UPDATE custom_exercises 
+                SET ${fields.join(', ')}
+                WHERE id = $1
+                AND user_id = $2
+                RETURNING *
+            `
+
+            const result = await pool.query(query, values);
+            return res.rows[0] ?? null;
+        } catch (err) {
+            logger.error(`FAILED : updateCustomExercise : workoutRepo : failed to update custom exercise : ${err}`);
+            throw err;
+        }
+    },
+
+    deleteCustomExercise : async({ user_id, custom_exercise_id }) => {
+        try {
+            const query = `DELETE FROM custom_exercises WHERE id = $1 AND user_id = $2`;
+
+            const result = await pool.query(query, [custom_exercise_id, user_id]);
+            return res.rows[0] ?? null;
+        } catch (err) {
+            logger.error(`FAILED : deleteCustomExercise : workoutRepo : failed to delete custom exercise at id : ${err}`);
+            throw err;
+        }
     }
 
 }

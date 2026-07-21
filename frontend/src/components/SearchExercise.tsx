@@ -3,7 +3,7 @@ import { useState } from "react";
 import type { SnipExerciseData } from "../context/WorkoutsContext";
 
 type SearchExerciseProps = {
-    id: number;
+    id: string;
     name: string;
     category: string;
     thumbnail: string;
