@@ -163,7 +163,7 @@ export default function FoodItemDetails({
 
     return (
         // DETAILS SECTION
-        <div className="flex-col gap-y-2 justify-items-center h-80 w-full">
+        <div className="flex-col gap-y-2 justify-items-center h-fit w-full">
 
             {/* HEADER */}
             <div className="flex flex-col gap-y-2 items-center">
@@ -184,7 +184,7 @@ export default function FoodItemDetails({
                     {titleCase(item.brand_owner ? item.brand_owner : item.brandOwner)}
                 </div>
             </div>
-            <div className="flex justify-between">
+            <div className="flex flex-col sm:flex-row gap-y-2 justify-between">
                 {/* Nutrients Breakdown */}
                 <div className="md:grid md:grid-cols-2 lg:grid-cols-3 lg:flex-4 sm:flex-col px-4 items-center py-5 gap-y-2">
                     <NutrientDetails 
