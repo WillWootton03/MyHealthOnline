@@ -15,13 +15,12 @@ export default function ExerciseDetails({
     measurement_pref = 'imperial',
     onDeleteExercise
 } : ExerciseDetailsProps) {
-    const { workout, addExerciseSet, removeExerciseSet, updateExercise } = useWorkout();
-
-    const [completedSets, setCompletedSets] = useState(0);
+    const { workout, addExerciseSet, removeExerciseSet, updateExercise, completedSets, totalSets } = useWorkout();
+;
     const [sets, setSets] = useState<ExerciseSetType[]>(exerciseData.sets);
 
-    const [totalWeight, setTotalWeight] = useState(0);
-    const [totalReps, setTotalReps] = useState(0);
+    const [totalWeight, setTotalWeight] = useState(workout?.exercises.find(exercise => exercise.id === exerciseData.id)?.totalWeight ?? 0);
+    const [totalReps, setTotalReps] = useState(workout?.exercises.find(exercise => exercise.id === exerciseData.id)?.totalReps ?? 0);
 
 
     useEffect(() => {
@@ -29,6 +28,7 @@ export default function ExerciseDetails({
             return workout?.exercises.find((exercise) =>
                 exercise.id === exerciseData.id)?.sets ?? [];
             });
+
     }, [workout, exerciseData.id]);
     
     const [isOpen, setIsOpen] = useState(false);
@@ -61,11 +61,9 @@ export default function ExerciseDetails({
         const updatedReps = totalReps + newReps;
         const updatedSets = completedSets + newSets < 0 ? 0 : completedSets + newSets;
 
-        console.log(exerciseData.id, updatedWeight, updatedReps, updatedSets);
-
+        // Calls update exercise to update its totals
         updateExercise(exerciseData.id, {totalWeight: updatedWeight, totalReps: updatedReps, totalSets: updatedSets })
 
-        setCompletedSets(updatedSets);
         setTotalWeight(updatedWeight);
         setTotalReps(updatedReps);
     }
@@ -82,7 +80,7 @@ export default function ExerciseDetails({
                     <div className="flex flex-col font-semibold">
                         {exerciseData.name}
                         <div className="text-sm text-black/40 flex">
-                            {completedSets}/{sets.length} sets
+                            {completedSets}/{totalSets} sets
                             <span className={`${totalWeight > 0 ? 'inline-flex' : 'hidden'} text-blue-500 text-sm`}> 
                                 <Dot size={20} /> 
                                 {totalWeight} {measurement_pref == 'imperial' ? 'lbs' : 'kg'} of total volume

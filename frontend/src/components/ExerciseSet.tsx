@@ -25,7 +25,7 @@ export default function ExerciseSet({
     onCompleted,
     onDeleteSet,
 } : ExerciseSetProps) {
-    const { updateExerciseSet, workout } = useWorkout();
+    const { updateExerciseSet, } = useWorkout();
 
     const [weight, setWeight] = useState(setItem.weight || 0);
     const [reps, setReps] = useState(setItem.reps || 0);
@@ -38,14 +38,16 @@ export default function ExerciseSet({
     const [isCompleted, setIsCompleted] = useState(setItem.completed);
     const [isSetFinished, setIsSetFinished] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
-    const [pauseTimerSeconds, setPauseTimerSeconds] = useState(0);
 
     const [totSeconds, setTotSeconds] = useState(setItem.restTime);
     const [pct, setPct] = useState(setItem.completed ? 100 : 0);
 
     const secondsElapsed = useRef(0);
 
+    const [update, setUpdate] = useState(false);
+
     useEffect(() => {
+        setUpdate(true);
         if(!holdingReps.on === true && !holdingWeight.on === true) return;
 
         setIsCompleted(false);
@@ -72,6 +74,7 @@ export default function ExerciseSet({
     }, [holdingReps, holdingWeight]);
 
     function onFinishedSet() {
+        setUpdate(true);
         const c_finished = !isSetFinished;
         // Makes sure to remove set weight, reps, and set count from totals if unchecking completed
         if (isCompleted) {
@@ -95,7 +98,9 @@ export default function ExerciseSet({
     } 
     
     function incInputs(val: number, type: String){
+        setUpdate(true);
         setIsSetFinished(false);
+        setIsCompleted(false);
         setPct(0);
         if(type === 'weight'){
             setWeight((prev) => (prev + val < 0) ? 0 : prev + val);
@@ -105,19 +110,27 @@ export default function ExerciseSet({
     }
 
     function setInputs(val:number, type: string){
+        setUpdate(true);
         setIsSetFinished(false);
+        setIsCompleted(false);
         setPct(0);
         if(type === 'weight'){
-            setWeight(() => val < 0 ? 0 : val);
+            setWeight(val < 0 ? 0 : val);
         } else if (type === 'reps') {
             setReps(() => val < 0 ? 0 : val);
         }
+
     }
 
     useEffect(() => {
-        updateExerciseSet(exerciseId, { id: setItem.id , weight, reps, completed: isCompleted, restTime: totSeconds })
+        // Verifies a variable has been changed. Prevents auto updating completedSets when loading workout data and mounting
+        if(!update) {
+            return;
+        }
+        updateExerciseSet(exerciseId, { id: setItem.id , weight, reps, completed: isCompleted, restTime: totSeconds });
     }, [weight, reps, totSeconds, isCompleted])
-
+        
+    
 
 
     useEffect(() => {

@@ -1,19 +1,27 @@
 import { Check, CircleQuestionMark } from "lucide-react";
 import { useState } from "react";
-import type { SnipExerciseData } from "../context/WorkoutsContext";
+import type { ExerciseData } from "../context/WorkoutsContext";
 
 type SearchExerciseProps = {
     id: string;
     name: string;
+    description: string;
+    muscles: [];
+    secondary_muscles: [];
     category: string;
+    equipment: string[];
     thumbnail: string;
-    selectedExercise: (arg0: boolean, arg1: SnipExerciseData) => void;
+    selectedExercise: (arg0: boolean, arg1: ExerciseData) => void;
 }
 
 export default function SearchExercise({
     id,
     name,
+    description,
+    muscles,
+    secondary_muscles,
     category,
+    equipment,
     thumbnail,
     selectedExercise,
 } : SearchExerciseProps) {
@@ -27,7 +35,11 @@ export default function SearchExercise({
             {
                 id,
                 name,
+                description,
+                muscles,
+                secondary_muscles,
                 category,
+                equipment, 
                 thumbnail
             }
         );

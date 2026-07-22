@@ -3,12 +3,12 @@ import { useDebugValue, useEffect, useState, type EventHandler } from "react";
 import SearchExercise from "./SearchExercise";
 import { Search, X } from "lucide-react";
 
-import { type ExerciseCategory, type SnipExerciseData, ExerciseCategories, useWorkout } from "../context/WorkoutsContext";
+import { type ExerciseCategory, type ExerciseData, ExerciseCategories, useWorkout } from "../context/WorkoutsContext";
 
 
 type AddExerciseModalProps = {
     setDisplayNewExercise: (arg0: boolean) => void;
-    addExercises: (arg0: SnipExerciseData[]) => void;
+    addExercises: (arg0: ExerciseData[]) => void;
 }
 
 
@@ -29,7 +29,7 @@ export default function AddExerciseModal({
 
     const [search, setSearch] = useState('');
 
-    const [selectedExercises, setSelectedExercises] = useState<SnipExerciseData[]>([]);
+    const [selectedExercises, setSelectedExercises] = useState<ExerciseData[]>([]);
 
     const [customExerciseName, setCustomExerciseName] = useState('');
     const [customExerciseCategory, setCustomExerciseCategory ] = useState('Legs');
@@ -37,7 +37,7 @@ export default function AddExerciseModal({
 
 
 
-    const addExercisesHandler = (selectedExercises : SnipExerciseData[]) => {
+    const addExercisesHandler = (selectedExercises : ExerciseData[]) => {
         addExercises(selectedExercises);
         setDisplayNewExercise(false);
     }
@@ -80,7 +80,7 @@ export default function AddExerciseModal({
 
 
 
-    const [filteredExercises, setFilteredExercises] = useState<SnipExerciseData[]>([]);
+    const [filteredExercises, setFilteredExercises] = useState<ExerciseData[]>([]);
     // Provides a list of filtered exercises for search without editing retrieved exercises from backend
 
     useEffect(() => {
@@ -89,7 +89,7 @@ export default function AddExerciseModal({
 
 
     // Adds and removes items from selected depending on how many selected in SearchExercise
-    const updateSelectedExercises = (selected: boolean, i_exercise: SnipExerciseData) => {
+    const updateSelectedExercises = (selected: boolean, i_exercise: ExerciseData) => {
         if(selected){
             setSelectedExercises((prev) => [...prev, i_exercise]);
         } else {
@@ -228,9 +228,13 @@ export default function AddExerciseModal({
                                             key={exercise.id}
                                             id={exercise.id} 
                                             name={exercise.name}
+                                            description={exercise.description}
+                                            muscles={exercise.muscles}
+                                            secondary_muscles={exercise.secondary_muscles}
                                             category={exercise.category}
+                                            equipment={exercise.equipment}
                                             thumbnail={exercise.thumbnail}
-                                            selectedExercise={(isSelected: boolean, val: SnipExerciseData) => updateSelectedExercises(isSelected, val)}
+                                            selectedExercise={(isSelected: boolean, val: ExerciseData) => updateSelectedExercises(isSelected, val)}
                                         />
                                     ))
                                 }

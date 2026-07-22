@@ -381,7 +381,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
             {/* Begin Workout Button */}
             <div className="w-full py-3 px-3">
                 <button 
-                    className="px-3 py-2 rounded-xl bg-color-primary text-white font-semibold hover:"
+                    className="px-3 py-2 rounded-xl bg-color-primary font-semibold hover:bg-blue-500 text-white transition-colors duration-100"
                     onClick={() => navigate(`workout/${log_id}`)}
                 >
                     Start Workout
@@ -451,7 +451,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                     </div>
                     )}
                 </div>
-            </div>/
+            </div>
         </>
             )}
         </section>

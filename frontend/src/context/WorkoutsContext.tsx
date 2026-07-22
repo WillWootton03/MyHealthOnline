@@ -14,10 +14,14 @@ export type ExerciseSetType = ({
     restTime: number;       // in total seconds
 });
 
-export type SnipExerciseData = {
+export type ExerciseData = {
     id: string;
     name: string;
+    description: string;
+    muscles: [];
+    secondary_muscles: [];
     category: string;
+    equipment: string[];
     thumbnail: string;
 };
 
@@ -42,17 +46,21 @@ export type ExerciseItem = {
 
 export const ExerciseCategories = ['Legs', 'Cardio' , 'Arms' , 'Back' , 'Chest' , 'Shoulders' , 'Abs' , 'Calves'] as const;
 export type ExerciseCategory = typeof ExerciseCategories[number];
-export type ExerciseCategoryGroup = Record<ExerciseCategory, SnipExerciseData[]>;
+export type ExerciseCategoryGroup = Record<ExerciseCategory, ExerciseData[]>;
 
 interface WorkoutsContextType {
     workout: Workout | undefined;
+
+    totalSets : number;
+    completedSets: number;
+    setCompletedSets: React.Dispatch<React.SetStateAction<number>>;
 
     searchExercises : ExerciseCategoryGroup;
     setSearchExercises : React.Dispatch<React.SetStateAction<ExerciseCategoryGroup>>;
 
     setWorkout: React.Dispatch<React.SetStateAction<Workout | undefined>>;
 
-    addExercises : (exercise: SnipExerciseData[]) => void;
+    addExercises : (exercise: ExerciseData[]) => void;
     updateExercise : (exerciseId: string, updatedExercise: Partial<ExerciseItem>) => void;
     removeExercise : (exerciseId: string) => void;
 
@@ -76,6 +84,9 @@ export function WorkoutsProvider({
     const [workout, setWorkout] = useState<Workout | undefined>(undefined);
     const [loaded, setLoaded] = useState(false);
 
+    const [totalSets, setTotalSets] = useState(0);
+    const [completedSets, setCompletedSets] = useState(0);
+
     const [searchExercises, setSearchExercises] = useState<ExerciseCategoryGroup>({
         "Legs": [],
         "Cardio": [],
@@ -91,7 +102,9 @@ export function WorkoutsProvider({
 
     const navigate = useNavigate();
 
-    function addExercises(exercises: SnipExerciseData[]) {
+    function addExercises(exercises: ExerciseData[]) {
+
+        setTotalSets(prev => prev + exercises.length);
         // Iterate through all items preset in the new data
         setWorkout(prev => {
             if(!prev) return prev;
@@ -104,7 +117,11 @@ export function WorkoutsProvider({
                                                 id:crypto.randomUUID(),
                                                 exercise_id: String(exercise.id),
                                                 name: exercise.name,
+                                                description: exercise.description,
+                                                muscles : exercise.muscles,
+                                                secondary_muscles: exercise.secondary_muscles,
                                                 category: exercise.category,
+                                                equipment: exercise.equipment,
                                                 sets: [ {      
                                                     id: crypto.randomUUID(),  
                                                     weight: 0,
@@ -119,7 +136,10 @@ export function WorkoutsProvider({
         });
     }
 
+    // Called when a set is completed to update totals
     function updateExercise(exercise_id : string, updatedExercise : Partial<ExerciseItem>) {
+
+        console.log(updatedExercise);
         setWorkout(prev => {
             if (!prev) return prev;
             return {
@@ -135,6 +155,12 @@ export function WorkoutsProvider({
     }
 
     function removeExercise(exerciseId: string) {
+
+        const removeEx = workout?.exercises.find(exercise => exercise.id === exerciseId);
+        // Removes sets from totals when removing an exercise
+        setTotalSets(prev => prev - (removeEx?.sets.length ?? 0));
+        setCompletedSets(prev => prev - (removeEx?.sets.filter(set => set.completed === true).length ?? 0));
+
         setWorkout(prev => {
             if (!prev) return prev;
             return {
@@ -146,6 +172,8 @@ export function WorkoutsProvider({
     
 
     const addExerciseSet = (exerciseId: string) => {
+        setTotalSets(prev => prev + 1);
+
         setWorkout(prev => {
             if (!prev) return prev;
 
@@ -181,6 +209,16 @@ export function WorkoutsProvider({
     };
 
     function updateExerciseSet(exerciseId: string, updateSet: ExerciseSetType) {
+        // Completed Sets is incremented only if updateSet is now truw
+        // If it is toggled off, check if it was previously completed, if so subtract 1 from completed set
+        // If completed set was previously false do not subtract 1 from completed set
+        setCompletedSets(prev => prev + (updateSet.completed === true 
+                                            ? 1 
+                                                : (workout?.exercises.find(exercise => exercise.id === exerciseId)?.sets.find(set => set.id === updateSet.id)?.completed) 
+                                                    ? -1 
+                                                        : 0
+        ));
+
         setWorkout(prev => {
             if (!prev) return prev;
 
@@ -208,6 +246,13 @@ export function WorkoutsProvider({
     };
 
     function removeExerciseSet(exerciseId: string, setId: string) {
+        
+        setTotalSets(totSets => totSets - 1);
+        // Find exercise and set in exercise mathcing ids. If set is completed subtract 1 from completed sets total, else do not subtract
+        setCompletedSets(compSets => compSets - ((workout?.exercises
+            .find(exercise => exercise.id === exerciseId)?.sets
+                .find(set => set.id === setId)?.completed) ? 1 : 0))
+
         setWorkout(prev => {
             if (!prev) return prev;
             return {
@@ -286,7 +331,7 @@ export function WorkoutsProvider({
             "Calves": []
         };
 
-        data.data.forEach((exercise: SnipExerciseData) => {
+        data.data.forEach((exercise: ExerciseData) => {
             ret[exercise.category as ExerciseCategory].push({ 
                 ...exercise,
                 id: String(exercise.id)
@@ -315,6 +360,11 @@ export function WorkoutsProvider({
         getExerciseData();
 
         if(stored) {
+            const foundWorkout = JSON.parse(stored);
+
+            // Gets total of all lengths for each exercises sets and adds to total using reduce
+            setTotalSets(foundWorkout.exercises.reduce((total : number, exercise : ExerciseItem) => total + exercise.sets.length, 0));
+            setCompletedSets(foundWorkout.exercises.reduce((total: number, exercise: ExerciseItem) => total + exercise.sets.filter(set => set.completed).length, 0));
             setWorkout(JSON.parse(stored));
         } else {
             setWorkout({
@@ -325,7 +375,6 @@ export function WorkoutsProvider({
                 exercises: []
             })
         }
-
         setLoaded(true);
     }, [])
 
@@ -343,6 +392,9 @@ export function WorkoutsProvider({
             value={{
                 workout,
                 searchExercises,
+                totalSets,
+                completedSets,
+                setCompletedSets,
                 setSearchExercises,
                 setWorkout,
                 addExercises,

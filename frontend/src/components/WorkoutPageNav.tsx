@@ -18,10 +18,7 @@ export default function WorkoutPageNav({
     }),
     completeWorkout
 } : WorkoutPageNavProps) {
-    const { workout } = useWorkout();
-
-    const [setsDone, setSetsDone] = useState(0);
-    const [totalSets, setTotalSets] = useState(0);
+    const { workout, totalSets, completedSets } = useWorkout();
 
     const [totalSeconds, setTotalSeconds] = useState(0);
 
@@ -30,6 +27,7 @@ export default function WorkoutPageNav({
         
         setTotalSeconds(getTimeDifferenceInSeconds(new Date(), new Date(workout?.startTime)));
     }, [workout?.startTime])
+
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -65,13 +63,13 @@ export default function WorkoutPageNav({
                         <Check strokeWidth={2.5} width={22} />
                         Complete Workout
                     </button>
-                    <div className="flex flex-row md:gap-x-4 justify-between">
+                    <div className="flex flex-row md:gap-x-8 justify-between">
                         <div className="flex-col flex">
                             <div className="test-sm md:text-md text-black/50">
                                 Sets Done
                             </div>
                             <div className="text-md md:text-xl font-semibold text-end text-black/40">
-                                    <span className="text-black">{setsDone}</span>/{totalSets}
+                                    <span className="text-black">{completedSets ?? 0}</span>/{totalSets ?? 0}
                             </div>
                         </div>
                         <div className="flex flex-col justify-center items-center w-8">
