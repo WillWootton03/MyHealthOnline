@@ -10,6 +10,7 @@ async function createTestCustomExercise(test_token) {
                 name: 'test',
                 description: 'test',
                 category: 'Legs',
+                equipment: 'Barbell'
             }
         });
 
