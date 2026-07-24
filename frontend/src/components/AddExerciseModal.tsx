@@ -56,7 +56,7 @@ export default function AddExerciseModal({
             description: customExerciseDescription,
             category: customExerciseCategory
         }
-        const res = await axios.post(`${import.meta.env.VITE_API_BASE_ROUTE}/workouts/custom_exercise`, 
+        const res = await axios.post(`${import.meta.env.VITE_API_BASE_ROUTE}/exercises/custom_exercise`, 
             { custom_exercise },
             {
                 headers: {

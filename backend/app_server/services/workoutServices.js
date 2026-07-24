@@ -37,22 +37,7 @@ const workoutService = {
         return workoutRepo.newSets({ user_id, workout_id, sets });
     },
 
-    newCustomExercise : async({ user_id, custom_exercise }) => {
-        const custom_exercise_id = crypto.randomUUID();
-        const { name, description, category } = custom_exercise;
 
-        return workoutRepo.newCustomExercise({ user_id, custom_exercise_id, name, description, category });
-    },
-
-    updateCustomExercise : async({ user_id, custom_exercise }) => {
-        const { custom_exercise_id, name, description, category } = custom_exercise;
-
-        return workoutRepo.updateCustomExercise({ user_id, custom_exercise_id, name, description, category });
-    },
-
-    deleteCustomExercise : async({ user_id, custom_exercise_id }) => {
-        return workoutRepo.deleteCustomExercise({ user_id, custom_exercise_id });
-    },
 }
 
 module.exports = { 

@@ -71,7 +71,24 @@ const exercisesService = {
             console.error(`Service Failed get an exercise by id${err}`);
             logger.error(`Service Failed to get an exercise by id${err}`);
         }
-    }
+    },
+
+    newCustomExercise : async({ user_id, custom_exercise }) => {
+        const custom_exercise_id = crypto.randomUUID();
+        const { name, description, category } = custom_exercise;
+
+        return exercisesRepo.newCustomExercise({ user_id, custom_exercise_id, name, description, category });
+    },
+
+    updateCustomExercise : async({ user_id, custom_exercise }) => {
+        const { custom_exercise_id, name, description, category } = custom_exercise;
+
+        return exercisesRepo.updateCustomExercise({ user_id, custom_exercise_id, name, description, category });
+    },
+
+    deleteCustomExercise : async({ user_id, custom_exercise_id }) => {
+        return exercisesRepo.deleteCustomExercise({ user_id, custom_exercise_id });
+    },
 
 }
 

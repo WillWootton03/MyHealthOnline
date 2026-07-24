@@ -49,6 +49,7 @@ describe('Wagr Exercise API Tests', () => {
                     "id" : 1962
                 });
         });
+
     });
     // Verify incorrect data returns correct responses
     describe('Use invalid data for GET endpoints', () => {
