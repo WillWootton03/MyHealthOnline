@@ -1,7 +1,7 @@
-import { getTimeDifferenceInSeconds } from '@shared/functions/formatting';
 import axios from 'axios';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
+import { v4 } from 'uuid';
 
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_ROUTE;
@@ -117,7 +117,7 @@ export function WorkoutsProvider({
                     [
                         ...prev.exercises,
                         ...exercises.map(exercise => ({
-                                                id:crypto.randomUUID(),
+                                                id: v4(),
                                                 exercise_id: String(exercise.id),
                                                 name: exercise.name,
                                                 description: exercise.description,
@@ -126,7 +126,7 @@ export function WorkoutsProvider({
                                                 category: exercise.category,
                                                 equipment: exercise.equipment,
                                                 sets: [ {      
-                                                    id: crypto.randomUUID(),  
+                                                    id: v4(),  
                                                     weight: 0,
                                                     reps: 0,
                                                     restTime: 120,
@@ -141,8 +141,6 @@ export function WorkoutsProvider({
 
     // Called when a set is completed to update totals
     function updateExercise(exercise_id : string, updatedExercise : Partial<ExerciseItem>) {
-
-        console.log(updatedExercise);
         setWorkout(prev => {
             if (!prev) return prev;
             return {
@@ -185,7 +183,7 @@ export function WorkoutsProvider({
                 exercises: prev.exercises.map(exercise => {
                 if (exercise.id !== exerciseId) return exercise;
 
-                const newId = crypto.randomUUID();
+                const newId = v4();
                 const newSet = exercise.sets.length > 0
                     ? 
                     {
@@ -384,7 +382,7 @@ export function WorkoutsProvider({
             setWorkout(JSON.parse(stored));
         } else {
             setWorkout({
-                id: crypto.randomUUID(),
+                id: v4(),
                 log_id: log_id,
                 title: "Today's Workout",
                 startTime: new Date(),

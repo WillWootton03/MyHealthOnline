@@ -19,8 +19,14 @@ var app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+const origin = [process.env.FRONTEND_URL,];
+
+if(process.env.NODE_ENV === 'development') {
+    origin.push(process.env.LOCAL_IP);
+}
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL,
+    origin: origin, 
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
