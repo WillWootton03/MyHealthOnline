@@ -253,6 +253,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
 
 
 
+    // TODO : add caching when loading and saving user data to reduce queries to DB
     useEffect(() => {
         const run = async () => {
             setLoading(true);

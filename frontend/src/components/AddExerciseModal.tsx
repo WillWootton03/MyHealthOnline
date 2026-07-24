@@ -4,6 +4,7 @@ import SearchExercise from "./SearchExercise";
 import { Search, X } from "lucide-react";
 
 import { type ExerciseCategory, type ExerciseData, ExerciseCategories, useWorkout } from "../context/WorkoutsContext";
+import SearchExerciseDetailsModal from "./SearchExerciseDetailsModal";
 
 
 type AddExerciseModalProps = {
@@ -35,17 +36,20 @@ export default function AddExerciseModal({
     const [customExerciseCategory, setCustomExerciseCategory ] = useState('Legs');
     const [customExerciseDescription, setCustomExerciseDescription] = useState('');
 
-
+    const [showExerciseDetails, setShowExerciseDetails] = useState(false);
 
     const addExercisesHandler = (selectedExercises : ExerciseData[]) => {
         addExercises(selectedExercises);
         setDisplayNewExercise(false);
     }
 
-    
+    const [exerciseToDetail, setExerciseToDetail] = useState<ExerciseData | null>(null);
+    const handleShowDetails = (exercise : ExerciseData) => {
+        setExerciseToDetail(exercise);
+        setShowExerciseDetails(true);
+    }
 
-    const handleSubmitNewCustomExercise = async(e : React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmitNewCustomExercise = async() => {
         const token = localStorage.getItem('token');
         const custom_exercise = {
             name: customExerciseName,
@@ -75,6 +79,7 @@ export default function AddExerciseModal({
                 saved_exercise
             ].sort((a,b) => a.name.localeCompare(b.name))
         }));
+        setDisplayNewExercise(false);
     }
 
 
@@ -97,6 +102,7 @@ export default function AddExerciseModal({
         }
     }
 
+
     return (
             <div className="px-1 md:px-10 lg:px-40 xl:px-60 2xl:px-80 py-4 flex min-h-[80vh] items-center justify-center">
                 {displayNewCustomExercise ? 
@@ -109,7 +115,7 @@ export default function AddExerciseModal({
                         <X />
                     </button>
                         <form 
-                            onSubmit={(e) => handleSubmitNewCustomExercise(e)}
+                            onSubmit={() => handleSubmitNewCustomExercise()}
                             className="flex flex-col gap-y-4 py-2 px-2 justify-between items-center"
                         >
                             <div className="flex gap-x-4 items-center">
@@ -145,8 +151,7 @@ export default function AddExerciseModal({
                             </button>
                         </form>
                     </div>
-                ) : 
-                (
+                ) : (
                 <div className="flex flex-col z-10 px-1 py-5 md:px-5 shadow-md items-center bg-white relative">
                     <button 
                         onClick={() => setDisplayNewExercise(false)}
@@ -235,6 +240,7 @@ export default function AddExerciseModal({
                                             equipment={exercise.equipment}
                                             thumbnail={exercise.thumbnail}
                                             selectedExercise={(isSelected: boolean, val: ExerciseData) => updateSelectedExercises(isSelected, val)}
+                                            showDetails={() => handleShowDetails(exercise)}
                                         />
                                     ))
                                 }
@@ -243,6 +249,18 @@ export default function AddExerciseModal({
                     )}
                 </div>
                 )}
+                { showExerciseDetails ? (
+                    <div 
+                        onClick={() => setShowExerciseDetails(false)}
+                        className="fixed inset-0 z-20 backdrop-blur-sm flex items-center justify-center"
+                    >
+                        <SearchExerciseDetailsModal 
+                            exercise={exerciseToDetail}
+                            setShowDetails={setShowExerciseDetails}
+                            addExercise={addExercisesHandler}
+                        />
+                    </div>
+                ) : ( <></>)}
             </div>
     );
 }

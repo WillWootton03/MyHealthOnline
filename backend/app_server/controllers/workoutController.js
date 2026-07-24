@@ -21,12 +21,23 @@ const workoutController = {
             );
         }
 
+        // Error handler for weird data passed in major factors
         if (!workout.id || !workout.startTime) {
             logger.error('FAILED newWorkout : workoutController : incorrect workout data in body');
             return sendError(
                 res,
                 'incorrect workout data in body',
                 'INVALID OR NOT_FOUND'
+            );
+        }
+
+        // Prevents empty workouts from being uploaded
+        if(workout.exercises.length < 1 || workout.exercises.reduce((total, exercises) => total + exercises.sets.length, 0) < 1) {
+            logger.error('FAILED newWorkout : workoutController : no workout data present');
+            return sendError(
+                res,
+                'no workout data present',
+                'INVALID_FIELD_INPUTS'
             );
         }
 
@@ -53,7 +64,17 @@ const workoutController = {
             } else {
                 try {
                     const workout_id = workout.id;
-                    const exercises = workout.exercises;
+                    const exercises = workout.exercises.filter(exercise => exercise.sets.length > 0);
+
+                    if(!exercises) {
+                        logger.error('FAILED newWorkout : workoutController : failed to add exercises, since no exercise had any valid complete sets');
+                        return sendError(
+                            res,
+                            'failed to add exercises, since no exercise had any valid complete sets',
+                            'INVALID_FIELD_INPUTS'
+                        );
+                    }
+
                     const exercisesResult = await workoutService.newExercises({ user_id, workout_id, exercises });
 
                     if(!exercisesResult) {
@@ -146,7 +167,6 @@ const workoutController = {
             }
     },
 
-    // TODO : add functionality for 
     newSets : async(req, res, next) => {
         const { user_id } = req.user;
         const { workout_exercise_id } = req.params;

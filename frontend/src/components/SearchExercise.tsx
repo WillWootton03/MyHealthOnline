@@ -1,5 +1,5 @@
 import { Check, CircleQuestionMark } from "lucide-react";
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import type { ExerciseData } from "../context/WorkoutsContext";
 
 type SearchExerciseProps = {
@@ -12,6 +12,7 @@ type SearchExerciseProps = {
     equipment: string[];
     thumbnail: string;
     selectedExercise: (arg0: boolean, arg1: ExerciseData) => void;
+    showDetails: () => void;
 }
 
 export default function SearchExercise({
@@ -24,6 +25,7 @@ export default function SearchExercise({
     equipment,
     thumbnail,
     selectedExercise,
+    showDetails
 } : SearchExerciseProps) {
 
     const [isSelected, setIsSelected] = useState(false); 
@@ -45,6 +47,13 @@ export default function SearchExercise({
         );
         setIsSelected(nextSelected);
     }
+
+    const handleShowDetails = (e : React.MouseEvent) => {
+        e.stopPropagation();
+        if(!isSelected) {
+            showDetails();
+        }
+    }   
 
     return(
         <div   
@@ -75,7 +84,8 @@ export default function SearchExercise({
             </div>
             {/* Show Details Modal Button */}
             <button 
-                className={` transition-all duration-250 ${isSelected ? 'text-blue-700' : 'text-black/50 hover:text-blue-500/80'}`}
+                onClick={(e) => handleShowDetails(e)}
+                className={`transition-all duration-250 ${isSelected ? 'text-blue-700' : 'text-black/50 hover:text-blue-500/80'}`}
             >
                 {isSelected ? (
                     <Check />

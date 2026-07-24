@@ -279,6 +279,21 @@ export function WorkoutsProvider({
     async function submitWorkout() {
         const token = localStorage.getItem('token');
         localStorage.removeItem('workout');
+
+        console.log(workout);
+
+        if (!workout) { 
+            navigate('');
+            return;
+        } 
+            // Filters sets out unless they are completed
+            workout.exercises = workout.exercises.map((exercise : ExerciseItem) => ({
+                ...exercise,
+                sets: exercise.sets.filter((set : ExerciseSetType) => set.completed),
+            })
+            ).filter((exercise : ExerciseItem) => exercise.sets.length > 0);
+
+
         navigate('');
         await axios.post(`${import.meta.env.VITE_API_BASE_ROUTE}/workouts`, 
             {

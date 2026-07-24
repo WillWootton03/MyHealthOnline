@@ -41,7 +41,7 @@ const exercisesService = {
                     name: exercise.translations?.find(t => t.language === 2)?.name,
                     description: exercise.description ?? exercise.translations?.find(t => t.language === 2)?.description,
                     muscles: exercise.muscles,
-                    muscles_secondary: exercise,muscles_secondary,
+                    muscles_secondary: exercise.muscles_secondary,
                     category: exercise.category.name,
                     equipment: exercise.equipment?.map(equipment => equipment.name),
                     thumbnail: exercise.images?.[0]?.thumbnails?.small ?? exercise.images?.[0]?.image,

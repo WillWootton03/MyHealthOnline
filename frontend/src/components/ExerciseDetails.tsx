@@ -2,6 +2,7 @@ import { ChevronDown, ChevronUp, Dot, Dumbbell, Plus, Trash, Trash2 } from "luci
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import ExerciseSet from "./ExerciseSet";
 import { useWorkout, type ExerciseItem, type ExerciseSetType } from "../context/WorkoutsContext";
+import { titleCase } from "@shared/functions/formatting";
 
 
 type ExerciseDetailsProps = ({
@@ -15,9 +16,11 @@ export default function ExerciseDetails({
     measurement_pref = 'imperial',
     onDeleteExercise
 } : ExerciseDetailsProps) {
-    const { workout, addExerciseSet, removeExerciseSet, updateExercise, completedSets, totalSets } = useWorkout();
+    const { workout, addExerciseSet, removeExerciseSet, updateExercise, } = useWorkout();
 ;
     const [sets, setSets] = useState<ExerciseSetType[]>(exerciseData.sets);
+    const [totalSets, setTotalSets] = useState(exerciseData.sets.length);
+    const [completedSets, setCompletedSets] = useState(exerciseData.sets.reduce((total : number, set : ExerciseSetType) => total + (set.completed ? 1 : 0), 0));
 
     const [totalWeight, setTotalWeight] = useState(workout?.exercises.find(exercise => exercise.id === exerciseData.id)?.totalWeight ?? 0);
     const [totalReps, setTotalReps] = useState(workout?.exercises.find(exercise => exercise.id === exerciseData.id)?.totalReps ?? 0);
@@ -28,6 +31,9 @@ export default function ExerciseDetails({
             return workout?.exercises.find((exercise) =>
                 exercise.id === exerciseData.id)?.sets ?? [];
             });
+
+            setTotalSets(exerciseData.sets.length);
+            setCompletedSets(exerciseData.sets.reduce((total : number, set : ExerciseSetType) => total + (set.completed ? 1 : 0), 0));
 
     }, [workout, exerciseData.id]);
     
@@ -59,7 +65,7 @@ export default function ExerciseDetails({
 
         const updatedWeight = totalWeight + newWeight;
         const updatedReps = totalReps + newReps;
-        const updatedSets = completedSets + newSets < 0 ? 0 : completedSets + newSets;
+        const updatedSets =  + newSets < 0 ? 0 :  + newSets;
 
         // Calls update exercise to update its totals
         updateExercise(exerciseData.id, {totalWeight: updatedWeight, totalReps: updatedReps, totalSets: updatedSets })
@@ -78,7 +84,7 @@ export default function ExerciseDetails({
                     </div>
                     {/* Exercise Details */}
                     <div className="flex flex-col font-semibold">
-                        {exerciseData.name}
+                        {titleCase(exerciseData.name)}
                         <div className="text-sm text-black/40 flex">
                             {completedSets}/{totalSets} sets
                             <span className={`${totalWeight > 0 ? 'inline-flex' : 'hidden'} text-blue-500 text-sm`}> 
