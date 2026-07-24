@@ -11,6 +11,7 @@ const dailyLogsRouter = require('./app_server/routes/dailyLogsRoutes');
 const mealsRouter = require('./app_server/routes/mealsRoutes');
 const mealItemsRouter = require('./app_server/routes/mealItemsRoutes');
 const exercisesRouter = require('./app_server/routes/exercisesRoutes');
+const workoutRouter = require('./app_server/routes/workoutRoutes');
 
 // Set up app init
 var app = express();
@@ -31,6 +32,7 @@ app.use('/api/daily_logs', dailyLogsRouter);
 app.use('/api/meals', mealsRouter);
 app.use('/api/meal_items', mealItemsRouter);
 app.use('/api/exercises', exercisesRouter);
+app.use('/api/workouts', workoutRouter);
 
 
 // catch 404 and forware to error handler

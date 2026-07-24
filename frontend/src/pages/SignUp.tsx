@@ -83,9 +83,7 @@ export default function Login() {
               <Heart className="w-5 h-5 text-white fill='white" />
             </div>
             {/* AppTitle */}
-            <h1 className="text-black text-2xl font-medium"
-                style={{ fontFamily: "'Raleway', serif"}}
-            >
+            <h1 className="text-black text-2xl font-medium">
             My Health Online
             </h1>
             <p className="text-black/45 text-sm mt-1">Sign Up to start your journey</p>
@@ -163,7 +161,7 @@ export default function Login() {
                     type="submit"
                     disabled={loading}
                     className="w-full mt-1 py-3.5 bg-color-primary text-white text-sm font-medium rounded-lg hover-bg-color-primary active:scale-[0.99] transition-all duration-150
-                              disabled:opacity-60 flex items-center justify-center gap-2 hover:cursor-pointer"
+                              disabled:opacity-60 flex items-center justify-center gap-2 hover:"
                   >
                     {loading ? (
                       <>
@@ -197,7 +195,7 @@ export default function Login() {
               Already have an account?{" "}
             <button
               type="button"
-              className="text-[#4d89ba] font-medium hover:text-[#294963] transition-colors hover:cursor-pointer"
+              className="text-[#4d89ba] font-medium hover:text-[#294963] transition-colors hover:"
               onClick={signInRedirect}
             >
               Sign In

@@ -20,12 +20,45 @@ const exercisesService = {
                 headers: HEADERS,
             });
 
-            return res.json();
+            return await res.json();
         } catch (err) {
-            console.error(`Service Failed get all exercise by id${err}`);
-            logger.error(`Service Failed to get all exercise by id${err}`);
+            console.error(`Service Failed get all exercises ${err}`);
+            logger.error(`Service Failed to get all exercises ${err}`);
         }
 
+    },
+
+    shortGetAllExercises : async() => {
+        try {
+            const url = `${WGER_API_URL}/exerciseinfo/?limit=850`
+
+            const res = await fetch(url, {
+                method: 'GET',
+                headers: HEADERS,
+            });
+
+            const data = await res.json();
+
+            return (data.results.filter(exercise => exercise.language = 2).map(exercise => {
+                return {
+                    id: exercise.id,
+                    name: exercise.translations?.find(t => t.language === 2)?.name,
+                    description: exercise.description ?? exercise.translations?.find(t => t.language === 2)?.description,
+                    muscles: exercise.muscles,
+                    muscles_secondary: exercise.muscles_secondary,
+                    category: exercise.category.name,
+                    equipment: exercise.equipment?.map(equipment => equipment.name),
+                    thumbnail: exercise.images?.[0]?.thumbnails?.small ?? exercise.images?.[0]?.image,
+                }
+            }));
+
+        } catch(err) {
+            logger.error(`Service Failed to get all short exercises ${err}`);
+        }
+    },
+
+    customGetAllExercises : async({ user_id }) => {
+        return exercisesRepo.customGetAllExercises({ user_id });
     },
 
     getExerciseById : async ({ exercise_id }) => {
@@ -42,7 +75,24 @@ const exercisesService = {
             console.error(`Service Failed get an exercise by id${err}`);
             logger.error(`Service Failed to get an exercise by id${err}`);
         }
-    }
+    },
+
+    newCustomExercise : async({ user_id, custom_exercise }) => {
+        const custom_exercise_id = crypto.randomUUID();
+        const { name, description, category, equipment } = custom_exercise;
+
+        return exercisesRepo.newCustomExercise({ user_id, custom_exercise_id, name, description, category, equipment });
+    },
+
+    updateCustomExercise : async({ user_id, custom_exercise }) => {
+        const { custom_exercise_id, name, description, category, equipment } = custom_exercise;
+
+        return exercisesRepo.updateCustomExercise({ user_id, custom_exercise_id, name, description, category, equipment });
+    },
+
+    deleteCustomExercise : async({ user_id, custom_exercise_id }) => {
+        return exercisesRepo.deleteCustomExercise({ user_id, custom_exercise_id });
+    },
 
 }
 

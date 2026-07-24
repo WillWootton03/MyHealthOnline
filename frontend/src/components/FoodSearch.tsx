@@ -165,7 +165,7 @@ export default function FoodSearch({
         {(foodItems.length !== 0) && (
             <div className="flex justify-center gap-x-3 py-2 mb-2">
                 <button 
-                    className="text-color-primary px-1 py-2 rounded-xl text-white hover:bg-[#f5fbff] hover-text-color-primary hover:cursor-pointer"
+                    className="text-color-primary px-1 py-2 rounded-xl text-white hover:bg-[#f5fbff] hover-text-color-primary hover:"
                     onClick={() => setSearchPageNumber(searchPageNumber + 1)}
                 >
                     See More

@@ -253,6 +253,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
 
 
 
+    // TODO : add caching when loading and saving user data to reduce queries to DB
     useEffect(() => {
         const run = async () => {
             setLoading(true);
@@ -323,7 +324,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
             {/* Date Selector */}
             <div className="flex flex-row justify-between px-3 py-3">
                 <button 
-                    className="hover:cursor-pointer px-2 py-2 hover:bg-blue-50 rounded-2xl"
+                    className="hover: px-2 py-2 hover:bg-blue-50 rounded-2xl"
                     onClick={prevDate}
                 >
                     <ChevronLeft />
@@ -332,7 +333,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                     {formatDate(date)}
                 </div>
                 <button 
-                    className="hover:cursor-pointer px-2 py-2 hover:bg-blue-50 rounded-2xl"
+                    className="hover: px-2 py-2 hover:bg-blue-50 rounded-2xl"
                     onClick={nextDate}
                 >
                     <ChevronRight /> 
@@ -341,7 +342,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
             {/* HEADER */}
             <div className="px-6 pt-5 pb-4 border-b light-bg-color">
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-base font-semibold text-black" style={{ fontFamily: "'Raleway', seriff"}}>
+                    <h2 className="text-base font-semibold text-black">
                         Calories
                     </h2>
 
@@ -381,8 +382,8 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
             {/* Begin Workout Button */}
             <div className="w-full py-3 px-3">
                 <button 
-                    className="px-3 py-2 rounded-xl bg-color-primary text-white font-semibold hover:cursor-pointer"
-                    onClick={() => navigate('/workout')}
+                    className="px-3 py-2 rounded-xl bg-color-primary font-semibold hover:bg-blue-500 text-white transition-colors duration-100"
+                    onClick={() => navigate(`workout/${log_id}`)}
                 >
                     Start Workout
                 </button>
@@ -404,7 +405,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                             </h2>
                             {/* Add Food or Cancel Adding food buttons */}
                             <button 
-                                className={`px-3 py-2 rounded-xl text-white font-semibold hover:cursor-pointer shadow-md border-b border-black/20
+                                className={`px-3 py-2 rounded-xl text-white font-semibold hover:
                                     ${
                                         openMealType === mealType ? 'bg-red-700 hover:bg-red-800' : 'bg-color-primary hover-bg-color-primary' 
                                     }   
