@@ -34,6 +34,8 @@ export default function ExerciseDetails({
 
             setTotalSets(exerciseData.sets.length);
             setCompletedSets(exerciseData.sets.reduce((total : number, set : ExerciseSetType) => total + (set.completed ? 1 : 0), 0));
+            console.log(workout?.exercises.find(exercise => exercise.id === exerciseData.id)?.totalWeight ?? 0);
+            setTotalWeight(workout?.exercises.find(exercise => exercise.id === exerciseData.id)?.totalWeight ?? 0);
 
     }, [workout, exerciseData.id]);
     

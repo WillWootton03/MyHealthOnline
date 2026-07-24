@@ -88,11 +88,19 @@ const exercisesController = {
             next(err);
         }
     },
+
     newCustomExercise : async(req, res, next) => {
         const { user_id } = req.user;
         const { custom_exercise } = req.body;
 
-        if(!custom_exercise) {
+        // Verify there is a custom_exercise present in body, as well as name, description, and category 
+        if(!custom_exercise || 
+            (
+                typeof custom_exercise?.name !== 'string'
+                || typeof custom_exercise?.description !== 'string'
+                || typeof custom_exercise?.category !== 'string'
+            ) 
+        ) {
             logger.error('FAILED newCustomExercise : exercisesController : invalid field input');
             return sendError(
                 res,
@@ -128,7 +136,21 @@ const exercisesController = {
         const { user_id } = req.user;
         const { custom_exercise } = req.body;
 
-        if(!custom_exercise) {
+        if(!custom_exercise || 
+            (
+                // Check to see if at least one value in custom_exercise
+                !custom_exercise.name
+                && !custom_exercise.description
+                && !custom_exercise.category
+            )
+            ||
+            // Checks that if there is a present value, it is of correct type
+            (
+                (custom_exercise.name && typeof custom_exercise.name !== 'string')
+                || (custom_exercise.description && typeof custom_exercise.description !== 'string')
+                || (custom_exercise.category && typeof custom_exercise?.category !== 'string')
+            ) 
+        ) {
             logger.error('FAILED updateCustomExercise : exercisesController : invalid updated exercise given');
             return sendError(
                 res,
@@ -136,7 +158,6 @@ const exercisesController = {
                 'INVALID_FIELD_INPUTS'
             );
         }
-
         try {
             const result = await exercisesService.updateCustomExercise({ user_id, custom_exercise });
 
@@ -179,8 +200,7 @@ const exercisesController = {
             logger.info(`SUCCESS : deleteCustomExercise : successfully deleted row at ${custom_exercise_id}`);
                 return sendSuccess(
                     res,
-                    `successfully deleted row at`,
-                    result,
+                    `successfully deleted row at ${custom_exercsie_id}`,
                 );
         } catch (err) {
             next(err);

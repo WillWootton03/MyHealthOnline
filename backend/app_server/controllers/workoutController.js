@@ -31,7 +31,9 @@ const workoutController = {
             );
         }
 
-        // Prevents empty workouts from being uploaded
+        // Prevents workouts without exercises, or exercises without any sets to be uploaded
+        // IF no exercises return erro
+        // IF exercises but no exercise contains a set then also through err
         if(workout.exercises.length < 1 || workout.exercises.reduce((total, exercises) => total + exercises.sets.length, 0) < 1) {
             logger.error('FAILED newWorkout : workoutController : no workout data present');
             return sendError(
@@ -52,86 +54,74 @@ const workoutController = {
                     'INVALID OR NOT_FOUND'
                 );
             }
+            try {
+                const workout_id = workout.id;
+                const exercises = workout.exercises.filter(exercise => exercise.sets.length > 0);
 
-            logger.info('SUCCESS : newWorkout : successfully created a row for workout');
-            // Return success here if no exercises logged, else log exercies
-            if(workout.exercises?.length === 0) {
-                    return sendSuccess(
+                if(!exercises) {
+                    logger.error('FAILED newWorkout : workoutController : failed to add exercises, since no exercise had any valid complete sets');
+                    return sendError(
                         res,
-                        'Successfully created new workout',
-                        workoutResult,
+                        'failed to add exercises, since no exercise had any valid complete sets',
+                        'INVALID_FIELD_INPUTS'
                     );
-            } else {
-                try {
-                    const workout_id = workout.id;
-                    const exercises = workout.exercises.filter(exercise => exercise.sets.length > 0);
-
-                    if(!exercises) {
-                        logger.error('FAILED newWorkout : workoutController : failed to add exercises, since no exercise had any valid complete sets');
-                        return sendError(
-                            res,
-                            'failed to add exercises, since no exercise had any valid complete sets',
-                            'INVALID_FIELD_INPUTS'
-                        );
-                    }
-
-                    const exercisesResult = await workoutService.newExercises({ user_id, workout_id, exercises });
-
-                    if(!exercisesResult) {
-                        logger.error('FAILED newWorkout : workoutConroller : failed to create rows for exercises');
-                        return sendError(
-                            res,
-                            'failed to create rows for exercises',
-                            'INVALID or NOT_FOUND'
-                        );
-                    }
-
-                    logger.info('SUCCESS : newWorkout : Successfully added new workout_exercise rows');
-
-                    // Init sets with an array of all sets
-                    const sets = workout.exercises.flatMap(exercise => 
-                        exercise.sets.map(set => ({
-                            ...set,
-                            exercise_id: exercise.id
-                        }))
-                    );
-                    console.log(sets);
-                    // Attempt to add sets if exercise result succeeded
-                    if(sets.length === 0) {
-                            logger.info('SUCCESS : newWorkout : Successfully created workout and exercises');
-                            return sendSuccess(
-                                res,
-                                'Successfully created workout and exercises',
-                                exercisesResult,
-                            );
-                    } else {
-                        try {
-                            const setsResult = await workoutService.newSets({ user_id, workout_id, sets })
-
-                            if(!setsResult) {
-                                logger.error('FAILED newWorkout : workoutController : failed to create rows for sets');
-                                return sendError(
-                                    res,
-                                    'failed to create new rows for sets',
-                                    'INVALID or NOT_FOUND'
-                                );
-                            }
-
-                            logger.info('SUCCESS : newWorkout : Successfully created sets');
-                            return sendSuccess(
-                                res,
-                                'Successfully created workout, exerercises, and sets',
-                                setsResult,
-                            );
-
-                        } catch (err) {
-                            next(err);
-                        }
-                    }
-
-                } catch (err) {
-                    next(err)
                 }
+
+                const exercisesResult = await workoutService.newExercises({ user_id, workout_id, exercises });
+
+                if(!exercisesResult) {
+                    logger.error('FAILED newWorkout : workoutConroller : failed to create rows for exercises');
+                    return sendError(
+                        res,
+                        'failed to create rows for exercises',
+                        'INVALID or NOT_FOUND'
+                    );
+                }
+
+                logger.info('SUCCESS : newWorkout : Successfully added new workout_exercise rows');
+
+                // Init sets with an array of all sets
+                const sets = workout.exercises.flatMap(exercise => 
+                    exercise.sets.map(set => ({
+                        ...set,
+                        exercise_id: exercise.id
+                    }))
+                );
+                // Attempt to add sets if exercise result succeeded
+                if(sets.length === 0) {
+                        logger.info('SUCCESS : newWorkout : Successfully created workout and exercises');
+                        return sendSuccess(
+                            res,
+                            'Successfully created workout and exercises',
+                            exercisesResult,
+                        );
+                } else {
+                    try {
+                        const setsResult = await workoutService.newSets({ user_id, workout_id, sets })
+
+                        if(!setsResult) {
+                            logger.error('FAILED newWorkout : workoutController : failed to create rows for sets');
+                            return sendError(
+                                res,
+                                'failed to create new rows for sets',
+                                'INVALID or NOT_FOUND'
+                            );
+                        }
+
+                        logger.info('SUCCESS : newWorkout : Successfully created sets');
+                        return sendSuccess(
+                            res,
+                            'Successfully created workout, exerercises, and sets',
+                            setsResult,
+                        );
+
+                    } catch (err) {
+                        next(err);
+                    }
+                }
+
+            } catch (err) {
+                next(err)
             }
 
         } catch (err) {

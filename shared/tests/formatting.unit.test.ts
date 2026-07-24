@@ -1,5 +1,5 @@
-import {describe, expect, it} from '@jest/globals';
-import { formatDate, getFeetInchesFromString, pluralCheck, titleCase } from '../functions/formatting';
+import {describe, expect, it, test} from '@jest/globals';
+import { formatDate, formatTimer, getFeetInchesFromString, getTimeDifferenceInSeconds, getTotSeconds, pluralCheck, titleCase } from '../functions/formatting';
 
 // Verfiies all possibilities for plural strings and singular string inputs
 describe('Valid inputs for plural string checks', () => {
@@ -62,5 +62,44 @@ describe('Verify getFeetInchesFromString is returned properly', () => {
 describe('Verify formatDate returns properly', () => {
     it('Should return 07-10-2026', () => {
         expect(formatDate(new Date(2026, 6, 10))).toBe('07-10-2026');
+    });
+});
+
+describe('Verify formatTimer', () => {
+    // Formats total seconds into m?m:ss format
+    it('Formats total seconds into m?m:ss format', async() => {
+        expect(formatTimer(135)).toBe('2:15');
+    });
+    // Format double digit minutes
+    it('Format double digit minutes', async() => {
+        expect(formatTimer(620)).toBe("10:20");
+    });
+    // Format no minutes
+    it('Format no minutes', async() => {
+        expect(formatTimer(40)).toBe("0:40");
+    });
+});
+
+describe('Return total seconds from timer string', () => {
+    // Return 135 from 2:15 total seconds
+    it('Return 135 from 2:15 total seconds', async() => {
+        expect(getTotSeconds("2:15")).toBe(135);
+    });
+    // Return 620 from 10:20 total seconds
+    it('Return 620 from 10:20 total seconds', async() => {
+        expect(getTotSeconds("10:20")).toBe(620);
+    });
+    // Return 40 total seconds from 0:40 for no minutes
+    it('Return 40 total seconds from 0:40 for no minutes', async() => {
+        expect(getTotSeconds("0:40")).toBe(40);
+    }); 
+});
+
+describe('Return time in total seconds difference from two date times', () => {
+    // Get Valid seconds between two times given new Date() objects 10 minutes apart
+    it('Get Valid seconds between two times given new Date() objects', async() => {
+        const timeThen = new Date("2026-07-24T03:00:00Z");
+        const timeNow = new Date("2026-07-24T03:10:00Z")
+        expect(getTimeDifferenceInSeconds(timeNow, timeThen)).toBe(600);
     });
 });

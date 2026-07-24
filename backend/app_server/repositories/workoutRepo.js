@@ -5,6 +5,8 @@ const workoutRepo = {
 
     newWorkout : async({ workout_id, log_id, duration, user_id }) => {
 
+        console.log(workout_id, log_id, duration, user_id);
+
         try {
             const query = `
                 INSERT INTO workouts(workout_id, log_id, duration_seconds)

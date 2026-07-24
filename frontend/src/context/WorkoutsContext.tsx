@@ -280,8 +280,6 @@ export function WorkoutsProvider({
         const token = localStorage.getItem('token');
         localStorage.removeItem('workout');
 
-        console.log(workout);
-
         if (!workout) { 
             navigate('');
             return;
