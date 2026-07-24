@@ -40,20 +40,29 @@ export default function BodyDetails () {
 
             const data = res.data.data;
 
-            setImperialMeasurement(data.measurement_pref === 'imperial' ? true : false);
-            if(imperialMeasurement) {
-                let f = '';
-                let i = '';
+
+            let f = '';
+            let i = '';
+            if(data.measurement_pref == 'imperial') {
                 [f, i] = data.height.split("'");
-                setFeet(String(f) === '-1' ? '5' : String(f));
-                setInches(String(i) === '-1' ? '6' : String(i));
+                setFeet(f === '-1' ? '5' : f);
+                setInches(i === '-1' ? '6' : i);
                 setWeight(String(data.weight) === '-1' ? '200' : String(data.weight));
+                // Set metric data when loading
+                setCm(String(feetToCm(Number(f), Number(i))));
+                setKg(String(lbsToKg(data.weight)))
             } else {
-                setCm(data.height);
-                setKg(data.weight)
+                setCm(String(data.height));
+                setKg(String(data.weight))
+                // Set Feet, inches and weight to be proper data when loading
+                const fString = cmToFeetString(data.height);
+                [f, i] = fString.split("'");
+                setFeet(f);
+                setInches(i);
+                setWeight(String(kgToLbs(data.weight)));
             }
-
-
+            // Should not be used to calculate if above since react state doesn't update in time to operate
+            setImperialMeasurement(data.measurement_pref == 'imperial' ? true : false);
             // If values have not been set make sure to set valid values
             setAge(String(data.age) === '-1' ? '21' : String(data.age));
             setGender(String(data.gender) === 'none' ? 'male' : String(data.gender));
@@ -72,6 +81,11 @@ export default function BodyDetails () {
         } else {
             setWeight(String(kgToLbs(Number(kg))));
             const [f, i] = cmToFeetString(Number(cm)).split("'");
+            // Used if user inputs 12 for inches to add one to feet
+            if (Number(i) >= Number('12')) {
+                setInches('0');
+                setFeet(String(Number(f + 1)));
+            }
             setFeet(f);
             setInches(i);
         }
@@ -176,7 +190,7 @@ export default function BodyDetails () {
                         label='Weight'
                         type="number"
                         variant="number"
-                        value={weight}
+                        value={String(Math.round(Number(weight)))}
                         onChange={setWeight}
                         min="0"
                         max="2000"
@@ -191,7 +205,7 @@ export default function BodyDetails () {
                     label='Centimeters'
                     type="number"
                     variant="number"
-                    value={cm}
+                    value={String(Math.round(Number(cm)))}
                     onChange={setCm}
                     min='0'
                     max='300'
@@ -204,7 +218,7 @@ export default function BodyDetails () {
                         label='Weight'
                         type="number"
                         variant="number"
-                        value={kg}
+                        value={String(Math.round(Number(kg)))}
                         onChange={setKg}
                         min="0"
                         max="900"

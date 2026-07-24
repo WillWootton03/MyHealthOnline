@@ -19,7 +19,7 @@ number {
         || (serving_size && typeof serving_size !== 'number') || (household && typeof household !== 'string'))
         || serving_input < 0
     ) {
-        return -1
+        return 0
     }
 
     let val = 0;
@@ -37,9 +37,9 @@ number {
     else if(serving_unit === '100 g') {
         val = Math.round(nutrient_val * serving_input);
     } 
-    // invalid option selected return -1
+    // invalid option selected return 0
     else {
-        return -1
+        return 0
     }
 
     // Verify val is a valid number and greater than 0s
