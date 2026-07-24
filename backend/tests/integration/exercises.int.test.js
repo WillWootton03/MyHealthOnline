@@ -62,7 +62,8 @@ describe('Wagr Exercise API Tests', () => {
                     custom_exercise : {
                         name: 'test1',
                         description: 'test1',
-                        category: "Legs"
+                        category: "Legs",
+                        equipment: 'Barbell'
                     }
                 });
         

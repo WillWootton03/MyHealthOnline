@@ -99,6 +99,7 @@ const exercisesController = {
                 typeof custom_exercise?.name !== 'string'
                 || typeof custom_exercise?.description !== 'string'
                 || typeof custom_exercise?.category !== 'string'
+                || typeof custom_exercise?.equipment !== 'string'
             ) 
         ) {
             logger.error('FAILED newCustomExercise : exercisesController : invalid field input');
@@ -142,6 +143,7 @@ const exercisesController = {
                 !custom_exercise.name
                 && !custom_exercise.description
                 && !custom_exercise.category
+                && !custom_exercise.equipment
             )
             ||
             // Checks that if there is a present value, it is of correct type
@@ -149,6 +151,7 @@ const exercisesController = {
                 (custom_exercise.name && typeof custom_exercise.name !== 'string')
                 || (custom_exercise.description && typeof custom_exercise.description !== 'string')
                 || (custom_exercise.category && typeof custom_exercise?.category !== 'string')
+                || (custom_exercise.equipment && typeof custom_exercise?.equipment !== 'string')
             ) 
         ) {
             logger.error('FAILED updateCustomExercise : exercisesController : invalid updated exercise given');

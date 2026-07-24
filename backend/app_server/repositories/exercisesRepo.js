@@ -18,17 +18,17 @@ const exercisesRepo = {
         }
     },
 
-    newCustomExercise : async({ user_id, custom_exercise_id, name, description, category }) => {
+    newCustomExercise : async({ user_id, custom_exercise_id, name, description, category, equipment }) => {
         try {
             const query = `
-                INSERT INTO custom_exercises(custom_exercise_id, name, description, category, user_id)
-                SELECT $1, $2, $3, $4, $5
+                INSERT INTO custom_exercises(custom_exercise_id, name, description, category, user_id, equipment)
+                SELECT $1, $2, $3, $4, $5, $6
                 FROM users u 
                     WHERE u.user_id = $5
                 RETURNING *
             `
 
-            const res = await pool.query(query, [custom_exercise_id, name, description, category, user_id ]);
+            const res = await pool.query(query, [custom_exercise_id, name, description, category, user_id, equipment ]);
             return res.rows[0] ?? null;
         } catch (err) {
             logger.error(`FAILED : newCustomExercise : exercisesRepo : failed insert new custom exercise : ${err}`);
@@ -36,7 +36,7 @@ const exercisesRepo = {
         }
     },
 
-    updateCustomExercise : async({ user_id, custom_exercise_id, name, description, category }) => {
+    updateCustomExercise : async({ user_id, custom_exercise_id, name, description, category, equipment }) => {
 
         const fields = [];
         const values = [custom_exercise_id, user_id,];
@@ -57,6 +57,12 @@ const exercisesRepo = {
         if (category !== undefined) {
             fields.push(`category = $${paramIndx}`);
             values.push(category);
+            paramIndx++;
+        }
+
+        if (equipment !== undefined) {
+            fields.push(`equipment = $${paramIndx}`);
+            values.push(equipment);
             paramIndx++;
         }
 

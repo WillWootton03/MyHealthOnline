@@ -3,7 +3,7 @@ import { useDebugValue, useEffect, useState, type EventHandler } from "react";
 import SearchExercise from "./SearchExercise";
 import { Search, X } from "lucide-react";
 
-import { type ExerciseCategory, type ExerciseData, ExerciseCategories, useWorkout } from "../context/WorkoutsContext";
+import { type ExerciseCategory, type ExerciseData, ExerciseCategories, useWorkout, type ExerciseEquipment, ExerciseEquipments } from "../context/WorkoutsContext";
 import SearchExerciseDetailsModal from "./SearchExerciseDetailsModal";
 
 
@@ -11,6 +11,8 @@ type AddExerciseModalProps = {
     setDisplayNewExercise: (arg0: boolean) => void;
     addExercises: (arg0: ExerciseData[]) => void;
 }
+
+
 
 
 
@@ -23,6 +25,7 @@ export default function AddExerciseModal({
     const { searchExercises, setSearchExercises} = useWorkout();
 
     const [searchCategory, setSearchCategory] = useState<ExerciseCategory>('Legs');
+    const [customEquipment, setCustomEquipment] = useState<ExerciseEquipment>('Other');
 
     const [loading, setLoading] = useState(false);
 
@@ -49,12 +52,15 @@ export default function AddExerciseModal({
         setShowExerciseDetails(true);
     }
 
-    const handleSubmitNewCustomExercise = async() => {
+    const handleSubmitNewCustomExercise = async(e : React.FormEvent) => {
+        e.preventDefault();
+
         const token = localStorage.getItem('token');
         const custom_exercise = {
             name: customExerciseName,
             description: customExerciseDescription,
-            category: customExerciseCategory
+            category: customExerciseCategory,
+            equipment: customEquipment,
         }
         const res = await axios.post(`${import.meta.env.VITE_API_BASE_ROUTE}/exercises/custom_exercise`, 
             { custom_exercise },
@@ -67,21 +73,23 @@ export default function AddExerciseModal({
         
 
         const saved_exercise = res.data.data;
+
+        setSearchExercises(prev => ({ 
+            ...prev,
+            [customExerciseCategory as ExerciseCategory]: [
+                ...prev[customExerciseCategory as ExerciseCategory],
+                saved_exercise
+            ].sort((a,b) => a.name.localeCompare(b.name))
+        }));
+
         // Category needs to be set to base category for creating multiple exercises in one menu
         setCustomExerciseCategory('Legs');
         setCustomExerciseName('');
         setCustomExerciseDescription('');
 
-        setSearchExercises(prev => ({
-            ...prev,
-            Legs: [
-                ...prev.Legs,
-                saved_exercise
-            ].sort((a,b) => a.name.localeCompare(b.name))
-        }));
         setDisplayNewExercise(false);
+        
     }
-
 
 
 
@@ -115,20 +123,36 @@ export default function AddExerciseModal({
                         <X />
                     </button>
                         <form 
-                            onSubmit={() => handleSubmitNewCustomExercise()}
+                            onSubmit={(e) => handleSubmitNewCustomExercise(e)}
                             className="flex flex-col gap-y-4 py-2 px-2 justify-between items-center"
                         >
-                            <div className="flex gap-x-4 items-center">
-                                <select
-                                    value={searchCategory === null ? 'None' : searchCategory}
-                                    onChange={(e) => setCustomExerciseCategory(e.target.value as ExerciseCategory)}
-                                >
-                                    {ExerciseCategories.map(category => (
-                                        <option key={category} value={category}>
-                                            {category}
-                                        </option>
-                                    ))}
-                                </select>
+                            <div className="flex flex-col gap-y-2">
+                                <div className="flex gap-x-4 items-center">
+                                    <select
+                                        value={customExerciseCategory}
+                                        onChange={(e) => setCustomExerciseCategory(e.target.value as ExerciseCategory)}
+                                    >
+                                        {ExerciseCategories.map(category => (
+                                            <option 
+                                                key={category} 
+                                                value={category}
+                                                onChange={(e) => setCustomExerciseCategory(e.target.value as ExerciseCategory)}
+                                            >
+                                                {category}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <select
+                                        value={customEquipment}
+                                        onChange={(e) => setCustomEquipment(e.target.value as ExerciseEquipment)}
+                                        >
+                                            {ExerciseEquipments.map(equipment => (
+                                                <option key={equipment} value={equipment}>
+                                                    {equipment}
+                                                </option>
+                                            ))}
+                                    </select>
+                                </div>
                                 <input 
                                     type="text"
                                     onChange={(e) => setCustomExerciseName(e.target.value)}

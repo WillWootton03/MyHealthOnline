@@ -79,15 +79,15 @@ const exercisesService = {
 
     newCustomExercise : async({ user_id, custom_exercise }) => {
         const custom_exercise_id = crypto.randomUUID();
-        const { name, description, category } = custom_exercise;
+        const { name, description, category, equipment } = custom_exercise;
 
-        return exercisesRepo.newCustomExercise({ user_id, custom_exercise_id, name, description, category });
+        return exercisesRepo.newCustomExercise({ user_id, custom_exercise_id, name, description, category, equipment });
     },
 
     updateCustomExercise : async({ user_id, custom_exercise }) => {
-        const { custom_exercise_id, name, description, category } = custom_exercise;
+        const { custom_exercise_id, name, description, category, equipment } = custom_exercise;
 
-        return exercisesRepo.updateCustomExercise({ user_id, custom_exercise_id, name, description, category });
+        return exercisesRepo.updateCustomExercise({ user_id, custom_exercise_id, name, description, category, equipment });
     },
 
     deleteCustomExercise : async({ user_id, custom_exercise_id }) => {

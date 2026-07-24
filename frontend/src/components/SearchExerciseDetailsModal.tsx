@@ -10,7 +10,7 @@ type SearchExerciseDetailsModalProps = {
 }
 
 type MuscleData = {
-    id: number;
+    id?: number;
     name: string;
     name_en: string;
     is_front: boolean;
@@ -27,9 +27,8 @@ export default function SearchExerciseDetailsModal({
     const [muscleNames, setMuscleNames] = useState<string[] | null>(null);
 
     useEffect(() => {
-        console.log(exercise);
         // Name en is traditional muscles name, some muslces don't have so if empty string use scientific name
-        setMuscleNames(exercise?.muscles.map((muscle : MuscleData) => muscle.name_en || muscle.name) ?? null);
+        setMuscleNames(exercise?.muscles?.map((muscle : MuscleData) => muscle.name_en || muscle.name) ?? null);
     }, []);
 
     const handleAddButton = () => {
@@ -79,12 +78,26 @@ export default function SearchExerciseDetailsModal({
                 */}
                 {/* Equipment */}
                 <p className="text-center font-medium text-black/50">
-                    Equipment : {exercise.equipment.map(equipment => titleCase(equipment))}
+                    {/* If only single instance of equipment, just print it, else map other values to print all equipment needed*/}
+                    Equipment : {typeof exercise.equipment == 'string' ? exercise.equipment : exercise.equipment?.map(equipment => titleCase(equipment)).join(', ') ?? '' }
                 </p>
                 {/* Description */}
-                <p className="text-center font-semibold text-black/70 ">
-                    {exercise.description.slice(3, -5) }
-                </p>
+                { exercise.custom_exercise_id ?(
+                    // Set description if its from user custom exercise
+                    <div 
+                        className="text-center font-semibold text-black/70"
+                    >  
+                        {exercise.description}
+                    </div>
+                ) : (
+                    // Only Set dangerous inner html if its from WGER APi
+                    <div 
+                        className="text-center font-semibold text-black/70"
+                        dangerouslySetInnerHTML={{ __html: exercise.description }}
+                    >  
+                    </div>
+                ) }
+
             </div>  
             <button 
                 onClick={handleAddButton}

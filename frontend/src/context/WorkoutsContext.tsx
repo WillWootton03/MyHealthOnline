@@ -16,6 +16,7 @@ export type ExerciseSetType = ({
 
 export type ExerciseData = {
     id: string;
+    custom_exercise_id?: string;
     name: string;
     description: string;
     muscles: [];
@@ -45,7 +46,9 @@ export type ExerciseItem = {
 };
 
 export const ExerciseCategories = ['Legs', 'Cardio' , 'Arms' , 'Back' , 'Chest' , 'Shoulders' , 'Abs' , 'Calves'] as const;
+export const ExerciseEquipments = ['Barbell', 'Dumbell', 'None (Bodyweight)', 'Machine', 'Cable', 'Other'] as const;
 export type ExerciseCategory = typeof ExerciseCategories[number];
+export type ExerciseEquipment = typeof ExerciseEquipments[number];
 export type ExerciseCategoryGroup = Record<ExerciseCategory, ExerciseData[]>;
 
 interface WorkoutsContextType {

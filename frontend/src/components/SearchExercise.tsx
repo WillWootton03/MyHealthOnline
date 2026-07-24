@@ -50,6 +50,11 @@ export default function SearchExercise({
 
     const handleShowDetails = (e : React.MouseEvent) => {
         e.stopPropagation();
+        // Allow for unselecting exercise if already selected
+        if(isSelected) {
+            setIsSelected(false);
+        }
+        // If not selected can view details
         if(!isSelected) {
             showDetails();
         }
@@ -59,7 +64,7 @@ export default function SearchExercise({
         <div   
             key={id}
             onClick={() => SelectWorkout()} 
-            className={`flex justify-between  rounded-xl p-1 border-2 h-23 ${isSelected ? 'border-blue-700' : 'border-transparent hover:border-blue-600/70'}`}    
+            className={`flex justify-between  rounded-xl p-1 border-2 h-23 ${isSelected ? 'border-blue-700' : 'border-transparent hover:border-blue-600/70 cursor-pointer'}`}    
         >
             <div className="flex gap-x-1 md:gap-x-5">
                 {thumbnail ? (
