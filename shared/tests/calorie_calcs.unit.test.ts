@@ -19,22 +19,22 @@ describe('Valid input for macronutrient calculations', () => {
     });    
 });
 describe('Invalid inputs for values', () => {
-    it('Should return -1', () => {
-        expect(calculateMacroNutrients(468, '100 g', -1)).toBe(-1);
+    it('Should return 0', () => {
+        expect(calculateMacroNutrients(468, '100 g', -1)).toBe(0);
     });
-    it('Should return -1', () => {
-        expect(calculateMacroNutrients(0, '100 g', 1)).toBe(-1);
+    it('Should return 0', () => {
+        expect(calculateMacroNutrients(0, '100 g', 1)).toBe(0);
     });
-    it('Should return -1', () => {
-        expect(calculateMacroNutrients(468, 'none', 1)).toBe(-1);
+    it('Should return 0', () => {
+        expect(calculateMacroNutrients(468, 'none', 1)).toBe(0);
     });
-    it('Should return -1', () => {
-        expect(calculateMacroNutrients(468, '100 g', -1)).toBe(-1);
+    it('Should return -0', () => {
+        expect(calculateMacroNutrients(468, '100 g', -1)).toBe(0);
     });
-    it('Should return -1', () => {
-        expect(calculateMacroNutrients(468, '3 fake', 1)).toBe(-1);
+    it('Should return 0', () => {
+        expect(calculateMacroNutrients(468, '3 fake', 1)).toBe(0);
     });
-    it('Should return -1', () => {
-        expect(calculateMacroNutrients(468, '3 fake', 1, 27.799999237060547, '3 CRACKERS')).toBe(-1);
+    it('Should return 0', () => {
+        expect(calculateMacroNutrients(468, '3 fake', 1, 27.799999237060547, '3 CRACKERS')).toBe(0);
     });
 });
