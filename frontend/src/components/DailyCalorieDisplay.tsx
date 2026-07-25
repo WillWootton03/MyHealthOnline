@@ -285,8 +285,6 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
         run();
     }, [date]);
 
-    console.log(mealData?.find(m => m.meal_type === 'dinner'));
-
     const pct = useMemo(() => {
         return dailyGoal
             ? Math.min(Math.floor((calsConsumed / dailyGoal) * 100), 100)
@@ -364,7 +362,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                 >
                     <ChevronLeft />
                 </button>
-                <div className="font-semibold text-xl text-black/80">
+                <div className="font-semibold text-2xl text-black/80">
                     {formatDate(date)}
                 </div>
                 <button 
@@ -377,7 +375,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
             {/* HEADER */}
             <div className="px-6 pt-5 pb-4 rounded">
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-base font-semibold text-black">
+                    <h2 className="text-xl font-semibold text-black">
                         Calories
                     </h2>
 
@@ -391,9 +389,9 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                         { label: "Remaining", value: (dailyGoal - calsConsumed), unit: 'kcal', color: remaining < 0 ? "#e05252" : "#2a9d5c" },
                     ].map(s => (
                         <div key={s.label} className="light-bg-color rounded-xl px-3 py-3 text-center">
-                            <div className="text-[10px] text-black/40 uppercase tracking-wide mb-1">{s.label}</div>
-                            <div className="text-lg font-semibold" style={{ color: s.color}}>{s.value}</div>
-                            <div className="text-[10px] text-black/35">{s.unit}</div>
+                            <div className="text-[10px] md:text-[14px] text-black/40 uppercase tracking-wide mb-1">{s.label}</div>
+                            <div className="text-xl font-semibold" style={{ color: s.color}}>{s.value}</div>
+                            <div className="text-[10px] md:text-[14px] text-black/35">{s.unit}</div>
                         </div>
                     ))}
                 </div>
@@ -409,9 +407,9 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                     />
                 </div>
                 <div className="flex justify-between mt-1.5">
-                    <span className="text-[10px] text-black/35">0 kcal</span>   
-                    <span className="text-[10px] text-black/35">{Math.round(pct)}% of daily goal</span>
-                    <span className="text-[10px] text-black/35">{dailyGoal.toLocaleString()} kcal</span>
+                    <span className="text-[12px] md:text-[14px] font-semibold text-black/35">0 kcal</span>   
+                    <span className="text-[12px] md:text-[14px] font-semibold text-black/35">{Math.round(pct)}% of daily goal</span>
+                    <span className="text-[12px] md:text-[14px] font-semibold text-black/35">{dailyGoal.toLocaleString()} kcal</span>
                 </div>
             </div>
             {/* Begin Workout Button */}
@@ -467,8 +465,9 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                         className={`w-full h-fit flex flex-col gap-y-1
                             ${(mealData?.find(m => m.meal_type === mealType.toLowerCase())
                                 ?.items)
-                                    ? 'hidden' 
-                                    : 'flex flex-col gap-y-1' 
+                                    ? 'flex flex-col gap-y-1' 
+                                    : 'hidden'
+                                    
                             }
                         `}>
                             {(() => {

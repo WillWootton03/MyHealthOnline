@@ -26,6 +26,13 @@ export default function Login() {
     navigate('/login');
   }
 
+  const [allFieldsValid, setAllFieldsValid] = useState(false);
+
+  useEffect(() => {
+    if(email && password  && verifyPassword && name ) setAllFieldsValid(true);
+    else setAllFieldsValid(false);
+  }, [email, password, name, verifyPassword]);
+
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
 
@@ -159,9 +166,9 @@ export default function Login() {
                   {/* Submit */}
                   <button
                     type="submit"
-                    disabled={loading}
-                    className="w-full mt-1 py-3.5 bg-color-primary text-white text-sm font-medium rounded-lg hover-bg-color-primary active:scale-[0.99] transition-all duration-150
-                              disabled:opacity-60 flex items-center justify-center gap-2 hover:"
+                    disabled={!allFieldsValid}
+                    className={`w-full mt-1 py-3.5 ${allFieldsValid ? 'bg-color-primary text-white active:scale-[0.99] transition-all duration-150' : 'button-disabled'} text-sm font-medium rounded-lg 
+                              disabled:opacity-60 flex items-center justify-center gap-2 `}
                   >
                     {loading ? (
                       <>

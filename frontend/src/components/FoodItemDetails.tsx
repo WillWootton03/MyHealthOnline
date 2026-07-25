@@ -8,7 +8,7 @@ type FoodItemDetailsProps = {
     date: Date;
     item: any;
     log_id: string;
-    meal_id: string;
+    meal_id: string | undefined;
     meal_type: string;
     calsConsumed: number;
     setCalsConsumed: Dispatch<SetStateAction<number>>;
@@ -164,8 +164,7 @@ export default function FoodItemDetails({
 
     return (
         // DETAILS SECTION
-        <div className="flex-col gap-y-2 p-2 justify-items-center h-fit w-full border border-black/10 rounded-xl shadow-md">
-
+        <div className="flex-col gap-y-2 p-2 justify-items-center h-fit w-full border border-gray-200 mt-2 rounded-xl shadow-md">
             {/* HEADER */}
             <div className="flex flex-col gap-y-2 items-center">
                 <a 
@@ -281,7 +280,7 @@ export default function FoodItemDetails({
                         />
                         {updatedItem ? (
                             <button 
-                                className="px-6 py-3 bg-green-700/80 hover:bg-green-900 hover: text-sm text-white rounded-xl"
+                                className="px-6 py-3 button-confirm text-sm rounded-xl"
                                 onClick={() => updateItem()}
                             >
                                 {!updating ? (
@@ -292,7 +291,7 @@ export default function FoodItemDetails({
                             </button>
                         ) : (
                             <button 
-                                className="px-6 py-3 bg-green-700/80 hover:bg-green-900 hover: text-sm text-white rounded-xl"
+                                className="px-6 py-3 button-confirm text-sm  rounded-xl"
                                 onClick={() => addItem()}
                             >
                                 {!adding ? (

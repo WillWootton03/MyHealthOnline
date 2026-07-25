@@ -51,7 +51,7 @@ export default function LoggedFoodItem({
                 </button>
                 </div>
             </div>
-            <div className={`transition-all duration-600 ease-out overflow-hidden ${
+            <div className={`transition-all duration-600 ease-in-out overflow-hidden ${
             showDetails 
                 ? "opacity-100 translate-y-0 max-h-1000"
                 : 'opacity-0 translate-y-2 max-h-0'

@@ -88,7 +88,7 @@ export default function FoodSearch({
     }, [searchPageNumber]);
 
     return (
-        <div className="px-1 py-4 light-bg-color border-b border-[#eaf1fb]">
+        <div className="px-2 py-4 rounded-xl border border-gray-200/80 bg-[#e8eaeb]">
                 <form 
                     className="w-full gap-2 flex items-center justify-between"
                     onSubmit={foodSearch}
@@ -137,7 +137,7 @@ export default function FoodSearch({
                             </div>
                             <div className="flex items-center gap-3">
                                 <button 
-                                    className={`px-6 py-3 text-white ${(showDetailsModal && currItem === item) ? 'bg-red-500/60 hover:bg-red-600 hover:text-red-800' :'bg-color-primary hover-bg-color-primary' }
+                                    className={`px-6 py-3 ${(showDetailsModal && currItem === item) ? 'button-danger' :'button-primary' }
                                         text-sm  rounded-xl shadow-md border-b border-black/20`}
                                     onClick={() => ShowFoodItemDetails(item)}
                                 >
