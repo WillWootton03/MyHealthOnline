@@ -49,8 +49,6 @@ export default function FoodItemDetails({
         options = options.slice(1);
     }
 
-    console.log(log_id);
-
     async function addItem() {
         const token = localStorage.getItem('token');
         // If the user has not logged any info for the day, first create a new log and set log_id 
@@ -165,12 +163,12 @@ export default function FoodItemDetails({
 
     return (
         // DETAILS SECTION
-        <div className="flex-col gap-y-2 justify-items-center h-fit w-full">
+        <div className="flex-col gap-y-2 p-2 justify-items-center h-fit w-full border border-black/10 rounded-xl shadow-md">
 
             {/* HEADER */}
             <div className="flex flex-col gap-y-2 items-center">
                 <a 
-                    className="text-xl font-bold text-black/70 hover:text-black hover:"
+                    className="text-xl text-center font-bold text-black/70 hover:text-black hover:"
                     href={`https://fdc.nal.usda.gov/food-details/${updatedItem ? item.fdc_id : item.fdcId}/nutrients`}
                     target="_blank"
                 >

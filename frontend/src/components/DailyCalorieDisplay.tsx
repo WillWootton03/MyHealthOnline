@@ -5,7 +5,7 @@ import LoggedFoodItem from "./LoggedFoodItem";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router";
 import { formatDate } from "@shared/functions/formatting";
-
+import { motion, AnimatePresence } from "motion/react";
 
 type DailyCalorieDisplayProps = {
     children? : ReactNode;
@@ -233,8 +233,11 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
         setCalsConsumed(calsConsumed + calorieDiff);
     };
 
+    const [key, setKey] = useState(0);
     // Set current daily log date to next day
-    const nextDate = async () => {
+    const nextDate = async (dir: number) => {
+        setDirection(dir);
+        setKey(prev => prev+1);
         setDate((prev : Date) => {
             const nextDay = new Date(prev);
             nextDay.setDate(nextDay.getDate() + 1);
@@ -243,7 +246,9 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
     }
 
     // Set current daily log date to prev day
-    const prevDate = async () => {
+    const prevDate = async (dir: number) => {
+        setKey(prev => prev+1);
+        setDirection(dir);
         setDate((prev : Date) => {
             const prevDay = new Date(prev);
             prevDay.setDate(prevDay.getDate() - 1);
@@ -279,6 +284,8 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
         run();
     }, [date]);
 
+    console.log(mealData?.find(m => m.meal_type === 'dinner'));
+
     const pct = useMemo(() => {
         return dailyGoal
             ? Math.min(Math.floor((calsConsumed / dailyGoal) * 100), 100)
@@ -287,9 +294,36 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
 
     const remaining = dailyGoal - calsConsumed;
 
+    // Used to change direction of animation based on wether u go back or forward a day
+    const [direction, setDirection] = useState(1);
+    const animationVariants = {
+        enter: (direction: number) => ({
+            x: direction > 0 ? 100 : -100,
+            opacity: 0,
+        }),
+        center: {
+            x: 0,
+            opacity: 1,
+        },
+        exit: (direction: number) =>  ({    
+           x: direction > 0 ? -100 : 100,
+           opacity: 0,  
+        }),
+    };
+
 
     return(
-        <section className="bg-white/75 backdrop-blur-sm rounded-2xl border border-white/80 shadow-[0_2px_16px_rgba(0,0,0,0.05)] overflow-hidden">
+        <AnimatePresence mode="wait" custom={direction}>
+        <motion.div 
+            key={key}
+            custom={direction}
+            variants={animationVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.3 }}    
+            className="bg-white/75 backdrop-blur-sm rounded-2xl border border-white/80 shadow-[0_2px_16px_rgba(0,0,0,0.05)] overflow-hidden"
+        >
             {loading ? (
                 <div className="flex flex-col gap-y-4 items-center py-80">
                     <div>
@@ -324,8 +358,8 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
             {/* Date Selector */}
             <div className="flex flex-row justify-between px-3 py-3">
                 <button 
-                    className="hover: px-2 py-2 hover:bg-blue-50 rounded-2xl"
-                    onClick={prevDate}
+                    className="px-2 py-2 hover:bg-blue-50 rounded-2xl"
+                    onClick={() => prevDate(-1)}
                 >
                     <ChevronLeft />
                 </button>
@@ -333,8 +367,8 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                     {formatDate(date)}
                 </div>
                 <button 
-                    className="hover: px-2 py-2 hover:bg-blue-50 rounded-2xl"
-                    onClick={nextDate}
+                    className="px-2 py-2 hover:bg-blue-50 rounded-2xl"
+                    onClick={() => nextDate(1)}
                 >
                     <ChevronRight /> 
                 </button>
@@ -388,13 +422,13 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                     Start Workout
                 </button>
             </div>
-            <div className="px-6 py-4 light-bg-color border-b border-[#eaf1fb]">
+            <div className="px-6 py-4 border-b border-[#eaf1fb]">
                 {/* Display all meal items based on meal_type */}
                 <div className="flex flex-col gap-y-6">
                     {/* Map all meal types and save mealType as a value */}
                     {mealTypes.map((mealType : string) => 
                     <div
-                        className="flex flex-col gap-y-1 p-3 rounded-lg bg-[#f8fbff] shadow-md border-b border-black/20"
+                        className="flex flex-col gap-y-1 p-3 rounded-lg bg-[#f1f1f1] shadow-lg border-b border-black/20"
                     >
                         <div 
                             className="flex flex-row justify-between items-center py-1"
@@ -428,7 +462,14 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                             />
                         )}
                         {/* Add all logged food items to site with proper meal type */}
-                        <div className="w-full h-fit flex flex-col gap-y-1">
+                        <div 
+                        className={`w-full h-fit flex flex-col gap-y-1
+                            ${(mealData?.find(m => m.meal_type === mealType.toLowerCase())
+                                ?.items)
+                                    ? 'hidden' 
+                                    : 'flex flex-col gap-y-1' 
+                            }
+                        `}>
                             {(() => {
                                 const meal = mealData?.find(meal => meal.meal_type === mealType.toLowerCase());
                                 return Object.values(meal?.items ?? {}).map(item => {
@@ -455,6 +496,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
             </div>
         </>
             )}
-        </section>
+        </motion.div>
+    </AnimatePresence>
     )
 }

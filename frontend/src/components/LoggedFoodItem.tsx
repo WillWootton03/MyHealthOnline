@@ -31,42 +31,45 @@ export default function LoggedFoodItem({
     const [showDetails, setShowDetails] = useState(false);
 
     return (
-        <>
+        <div>
             <div 
                 key={meal_item.fdc_id}
-                className="flex flex-row justify-between py-2 px-2 shadow-md light-card-color border-b border-black/20 rounded-xl"
-            >
-                <div className="md:text-lg text-black/80 font-bold  hover:cursor-pointer"
                 onClick={() => setShowDetails(!showDetails)}
+                className="flex flex-row justify-between py-2 px-2 shadow-md light-card-color border-b border-black/20 rounded-xl cursor-pointer"
+            >
+                <div className="md:text-lg text-black/80 font-bold"
                 >
                     {meal_item.food_name}
                 </div>
                 <div className="md:text-lg font-semibold tracking-wide flex flex-row items-center gap-x-2 justify-center text-center">
                     Calories: {meal_item.calories}
                 <button
-                    className="bg-red-600/50 rounded-lg px-1 h-fit py-1 hover:cursor-pointer hover:bg-red-600"
+                    className="button-danger rounded-lg px-1 h-fit py-1"
                     onClick={() => removeLoggedItem(meal_item)}    
                 >
                     <X />
                 </button>
                 </div>
             </div>
-            {showDetails && (
-                <div>
-                    <FoodItemDetails 
-                        updatedItem={true}
-                        date={date}
-                        item={meal_item}
-                        log_id={log_id}
-                        meal_id={meal_id}
-                        meal_type={meal_type}
-                        calsConsumed={calsConsumed}
-                        setCalsConsumed={setCalsConsumed}
-                        updateLoggedItem={updateLoggedItem}
-                    />
-                </div>
-            )} 
-        </>
+            <div className={`transition-all duration-600 ease-out overflow-hidden ${
+            showDetails 
+                ? "opacity-100 translate-y-0 max-h-1000"
+                : 'opacity-0 translate-y-2 max-h-0'
+            }`}
+            >
+                <FoodItemDetails 
+                    updatedItem={true}
+                    date={date}
+                    item={meal_item}
+                    log_id={log_id}
+                    meal_id={meal_id}
+                    meal_type={meal_type}
+                    calsConsumed={calsConsumed}
+                    setCalsConsumed={setCalsConsumed}
+                    updateLoggedItem={updateLoggedItem}
+                />
+            </div>
+        </div>
     );
 }
 

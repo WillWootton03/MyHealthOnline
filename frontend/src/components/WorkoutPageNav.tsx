@@ -43,7 +43,7 @@ export default function WorkoutPageNav({
 
 
     return (
-            <div className="flex flex-row justify-between px-1 md:px-4 py-5 bg-white h-fit w-full md:rounded-xl">
+            <div className="flex flex-row justify-between px-1 md:px-4 py-5 bg-white h-fit w-full md:rounded-xl ">
                 {/* Workout Title and Description */}
                 <div className="flex flex-col">
                     <div className="text-md font-bold md:text-xl"
