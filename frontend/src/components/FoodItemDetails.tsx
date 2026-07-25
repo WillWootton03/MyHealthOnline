@@ -8,7 +8,7 @@ type FoodItemDetailsProps = {
     date: Date;
     item: any;
     log_id: string;
-    meal_id: string | undefined;
+    meal_id: string;
     meal_type: string;
     calsConsumed: number;
     setCalsConsumed: Dispatch<SetStateAction<number>>;
@@ -33,7 +33,6 @@ export default function FoodItemDetails({
     const [servingType, setServingType] = useState(`${item.serving_unit ? item.serving_unit : item.householdServingFullText}`);
     const [adding, setAdding] = useState(false);
     const [updating, setUpdating] = useState(false);
-
 
     // serving_unit is used for logged food items, householdServingFullText, is used for search items
     let options = [updatedItem 
@@ -68,6 +67,8 @@ export default function FoodItemDetails({
                 {
                     meal_type: meal_type.toLocaleLowerCase(),
                     date: formatDate(date),
+                    meal_id: meal_id,
+                    log_id: log_id,
                     fdc_id: String(item.fdcId),                         // When a logged item passed use fdc_id, when a search item use fdcId
                     food_name: brandName ? `${brandName} ${item.description}` : item.description,   // Properly format food name to display brandName and food name if possible
                     brand_owner: item.brandOwner,
@@ -95,8 +96,8 @@ export default function FoodItemDetails({
             const newItem: MealItem = {
                 meal_item_id: res.data.data.meal_item_id,
                 fdc_id: item.fdcId,
+                meal_id: meal_id,
                 food_name: brandName ? `${brandName} ${item.description}` : item.description,
-
                 brand_owner: item.brandOwner,
                 serving_unit: new_serving_type,
                 serving_size: item.servingSize,
