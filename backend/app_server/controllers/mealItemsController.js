@@ -13,7 +13,6 @@ const mealItemsController = {
         const { meal_id, log_id, meal_type, fdc_id, date, brand_owner, serving_size, food_name, 
                 serving_amount, serving_unit, household_serving, macros} = req.body;
 
-
         // Verify all body elements present and valid types
         if(
             (meal_id && typeof meal_id !== 'string') || (log_id && typeof log_id !== 'string') || (meal_type && typeof meal_type !== 'string') 

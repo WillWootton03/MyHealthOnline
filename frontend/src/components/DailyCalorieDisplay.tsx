@@ -14,6 +14,7 @@ type DailyCalorieDisplayProps = {
 export type MealItem = {
     meal_item_id: string;
     fdc_id: string;
+    meal_id?: string,
     brand_owner?: string;
     food_name: string;
     household_serving: string;
