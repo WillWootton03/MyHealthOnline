@@ -449,17 +449,27 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                             </button>
                         </div>
                         {/* Use food search for specific meal type */}
-                        {openMealType === mealType && (
-                            <FoodSearch 
-                                meal_id={mealData?.find(m => m.meal_type === mealType.toLowerCase())?.meal_id}
-                                date={date}
-                                log_id={log_id}
-                                meal_type={mealType}
-                                calsConsumed={calsConsumed}
-                                setCalsConsumed={setCalsConsumed}
-                                onAddMealItem={addMealItem}
-                            />
-                        )}
+                        <AnimatePresence mode='wait'>
+                            {openMealType === mealType && (
+                                <motion.div
+                                    initial={{ height: 0 }}
+                                    animate={{ height: "auto" }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="px-2 py-4 rounded-xl border border-gray-200/80 bg-[#e8eaeb]"
+                                >
+                                <FoodSearch 
+                                    meal_id={mealData?.find(m => m.meal_type === mealType.toLowerCase())?.meal_id}
+                                    date={date}
+                                    log_id={log_id}
+                                    meal_type={mealType}
+                                    calsConsumed={calsConsumed}
+                                    setCalsConsumed={setCalsConsumed}
+                                    onAddMealItem={addMealItem}
+                                />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                         {/* Add all logged food items to site with proper meal type */}
                         <div 
                         className={`w-full h-fit flex flex-col gap-y-1

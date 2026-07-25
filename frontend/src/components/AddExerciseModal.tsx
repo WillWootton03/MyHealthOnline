@@ -111,44 +111,25 @@ export default function AddExerciseModal({
         }
     }
 
-    const handleDisplayNewExercise = (dir: number ) => {
-        setDirection(dir);
-        key = 1;
-        setDisplayNewExercise(false);
-    }
-
-    const [direction, setDirection] = useState(1);
-    const animationVariants = {
-        enter: (direction: number) => ({
-            y: direction > 0 ? 20 : -20,
-            opacity: 0,
-        }),
-        center : {
-            y: 0,
-            opacity: 1,
-        },
-        exit: (direction: number) => ({
-            y: direction > 0 ? -20 : 20,
-            opacity: 0,
-        }),
-    };
-
-    let key = 0;
     return (
-        <AnimatePresence mode="wait" custom={direction}>
             <motion.div 
-                key={key}
-                custom={direction}
-                variants={animationVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.8 }}
+                initial={{y: 10,opacity: 0}}
+                animate={{y: 0, opacity: 1,}}
+                exit={{y: -10, opacity: 0,}}
+                transition={{ duration: 0.5 }}
                 className="px-1 md:px-10 lg:px-40 xl:px-60 2xl:px-80 py-4 flex min-h-[80vh] items-center justify-center"
             >
-                {displayNewCustomExercise ? 
+                <AnimatePresence mode="wait">
+                {displayNewCustomExercise ?
                 (
-                    <div className="bg-white items-center justify-center w-full text-center relative drop-shadow-lg rounded-lg border border-black/10">
+                    <motion.div 
+                        key="custom-exercise"
+                        initial={{opacity:0}}
+                        animate={{opacity:1}}
+                        exit={{opacity:0}}
+                        transition={{duration:0.2}}
+                        className="bg-white items-center justify-center w-full text-center relative drop-shadow-lg rounded-lg border border-black/10"
+                    >
                         <button 
                             onClick={() => setDisplayNewCustomExercise(false)}
                             className="absolute top-2 right-2 button-danger p-1 rounded-xl "
@@ -207,11 +188,18 @@ export default function AddExerciseModal({
                                 Submit
                             </button>
                         </form>
-                    </div>
+                    </motion.div>
                 ) : (
-                <div className="flex flex-col z-10 px-1 py-5 md:px-5 shadow-md items-center bg-white relative">
+                <motion.div 
+                    key="exercise-list"
+                    initial={{opacity:0}}
+                    animate={{opacity:1}}
+                    exit={{opacity:0}}
+                    transition={{duration:0.2}}
+                    className="flex flex-col z-10 px-1 py-5 md:px-5 shadow-md items-center bg-white relative"
+                >
                     <button 
-                        onClick={() => handleDisplayNewExercise(-1)}
+                        onClick={() => setDisplayNewExercise(false)}
                         className="absolute top-1 right-2 button-danger p-1 rounded-xl"
                     >
                         <X />
@@ -237,7 +225,7 @@ export default function AddExerciseModal({
                             <span className="font-bold tracking-wider py-2 text-xl text-blue-600/60">Available Exercises</span>
                             <div className="flex flex-col gap-y-2 md:flex-row md:gap-x-4 items-center py-2 w-full">
                                 <button 
-                                    onClick={() => setDisplayNewCustomExercise(prev => !prev)}
+                                    onClick={() => setDisplayNewCustomExercise(true)}
                                     className="px-4 py-2 rounded-lg button-confirm"
                                 >
                                     New
@@ -304,8 +292,9 @@ export default function AddExerciseModal({
                             </div>
                     </div>
                     )}
-                </div>
+                </motion.div>
                 )}
+                </AnimatePresence>
                 { showExerciseDetails ? (
                     <div 
                         onClick={() => setShowExerciseDetails(false)}
@@ -319,6 +308,5 @@ export default function AddExerciseModal({
                     </div>
                 ) : ( <></>)}
             </motion.div>
-        </AnimatePresence>
     );
 }

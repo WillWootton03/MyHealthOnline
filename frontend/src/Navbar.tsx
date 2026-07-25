@@ -36,7 +36,7 @@ export default function Navbar() {
 
         {/* Page Navigation */}
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-full bg-color-primary flex items-center justify-center">
+          <div className="w-7 h-7 rounded-full color-primary flex items-center justify-center">
             <Heart className="w-3.5 h-3.5 text-white" fill="white" />
           </div>
           <a
@@ -51,8 +51,8 @@ export default function Navbar() {
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setMenuOpen(v => !v)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover-light-bg-color transition-colors hover:" >
-              <div className="w-7 h-7 rounded-full bg-color-primary flex items-center justify-center">
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-[#e0ebfc]/40" >
+              <div className="w-7 h-7 rounded-full color-primary flex items-center justify-center">
                 <span className="text-white text-xs font-semibold">
                   {
                     !user?.name 

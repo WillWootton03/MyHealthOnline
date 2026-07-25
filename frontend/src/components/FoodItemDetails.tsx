@@ -2,7 +2,10 @@ import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import NutrientDetails from "./NutrientDetails";
 import axios from "axios";
 import type { MealData, MealItem } from "./DailyCalorieDisplay";
+import { AnimatePresence, motion } from "motion/react";
 import { pluralCheck, titleCase, formatDate } from '@shared/functions/formatting';
+
+
 type FoodItemDetailsProps = {
     updatedItem: boolean;
     date: Date;
@@ -164,7 +167,7 @@ export default function FoodItemDetails({
 
     return (
         // DETAILS SECTION
-        <div className="flex-col gap-y-2 p-2 justify-items-center h-fit w-full border border-gray-200 mt-2 rounded-xl shadow-md">
+        <>
             {/* HEADER */}
             <div className="flex flex-col gap-y-2 items-center">
                 <a 
@@ -304,6 +307,6 @@ export default function FoodItemDetails({
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }

@@ -24,7 +24,7 @@ export default function VerifyEmail() {
     }, []);
 
     return (
-        <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden page-bg-light">
+        <>
             {/* Card */}
             <div className="relative z-10 w-full max-w-sm mx-4 bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 shadow[0_8px_40px_rgba(0,0,0,0.08)
                             px-8 py-10 drop-shadow-2xl justify-items-center">
@@ -40,7 +40,7 @@ export default function VerifyEmail() {
                     </>
                 )}
             </div>
-        </div>
+        </>
 
     )
 }

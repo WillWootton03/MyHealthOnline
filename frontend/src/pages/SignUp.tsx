@@ -6,6 +6,8 @@ import BodyDetails from "../components/BodyDetails";
 import axios from 'axios';
 import FormField from "../components/FormField";
 
+import { motion } from "motion/react";
+import WebBackground from "../components/WebBackground";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -78,17 +80,26 @@ export default function Login() {
   };
 
   return (
-      <div
-          className="min-h-screen w-full flex items-center justify-center relative overflow-hidden page-bg-light"
-      >
+    <WebBackground>
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x:0 }}
+      exit={{ opacity:0, x: 20 }}
+      transition={{ duration: 0.4 }}
+    >
         {/* Card */}
-        <div className="relative z-10 w-full max-w-sm mx-4 bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 shadow[0_8px_40px_rgba(0,0,0,0.08)]
-                        px-8 py-10 drop-shadow-2xl">
+        <div 
+          className="relative z-10 w-100 mx-4 bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 shadow[0_8px_40px_rgba(0,0,0,0.08)]
+                        px-10 py-10 drop-shadow-2xl"
+        >
           {/* Logo */}
           <div className="flex flex-col items-center mb-8">
-            <div className="w-11 h-11 rounded-full bg-color-primary flex items-center justify-center mb-4">
+            <button
+              onClick={() => navigate('/')}
+              className="w-11 h-11 rounded-full bg-color-primary flex items-center justify-center mb-4"
+            >
               <Heart className="w-5 h-5 text-white fill='white" />
-            </div>
+            </button>
             {/* AppTitle */}
             <h1 className="text-black text-2xl font-medium">
             My Health Online
@@ -210,6 +221,7 @@ export default function Login() {
           </p>
           )}
         </div>
-      </div>
+      </motion.div>
+    </WebBackground>
   );
 }

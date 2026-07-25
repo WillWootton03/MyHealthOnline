@@ -4,7 +4,7 @@ import { useState } from "react";
 import AddExerciseModal from "../components/AddExerciseModal";
 import { useWorkout  } from "../context/WorkoutsContext";
 import { Plus, X } from "lucide-react";
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 
 
 export default function WorkoutPage() {
@@ -27,8 +27,8 @@ export default function WorkoutPage() {
                 animate={{ opacity: 1,  y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
-                className="min-h-screen w-full flex flex-col gap-y-5 page-bg-light"
             >
+                <AnimatePresence mode='wait'>
                 {/* Main workout page displayed if not adding exercise */}
                 {!displayNewExercise ? (
                 <>
@@ -69,11 +69,13 @@ export default function WorkoutPage() {
                         </div>
                     </>
                 ) : 
-                <AddExerciseModal 
+                    <AddExerciseModal 
+                        key='add-exercise'
                         setDisplayNewExercise={(val: boolean) => setDisplayNewExercise(val)}
                         addExercises={(val) => addExercises(val)}
-                    /> 
+                        /> 
                 }
+            </AnimatePresence>
             </motion.div>
     );
 }

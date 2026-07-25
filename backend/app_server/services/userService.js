@@ -118,6 +118,8 @@ const userService = {
                         <a href="${process.env.FRONTEND_URL}/app/verifyEmail?token=${token}"> Verify Email </a>                
                     `,
                 });
+
+            return true;
             } catch (err){
                 logger.error(`Failed to send create verification mail : ${err}`);
                 throw err;
