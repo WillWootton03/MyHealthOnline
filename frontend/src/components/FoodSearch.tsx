@@ -102,8 +102,8 @@ export default function FoodSearch({
                                     text-black placeholder-black/25"
                     />
                     <button 
-                        className="flex-2 sm:flex-1 h-full bg-color-primary px-2 py-2 rounded-xl text-white font-bold hover-bg-color-primary hover:cursor-pointer
-                                    active:scale-[0.99] transition-all duration-150 disabled:opacity-60 items-center justify-center shadow-md border-b border-black/20"
+                        className="flex-2 sm:flex-1 h-full  px-2 py-2 rounded-xl font-bold button-primary
+                                    active:scale-[0.99] disabled:opacity-60 items-center justify-center shadow-md border-b border-black/20"
                         disabled={searching}
                         type="submit"
                     >

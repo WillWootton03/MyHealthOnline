@@ -36,7 +36,7 @@ export default function Navbar() {
 
         {/* Page Navigation */}
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-full bg-[#2d557a] flex items-center justify-center">
+          <div className="w-7 h-7 rounded-full bg-color-primary flex items-center justify-center">
             <Heart className="w-3.5 h-3.5 text-white" fill="white" />
           </div>
           <a

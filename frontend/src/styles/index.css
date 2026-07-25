@@ -35,6 +35,39 @@
         color: #234a7c
     }
 
+    .button-primary {
+        background-color: color-mix(in oklab, var(--color-blue-500) /* oklch(62.3% 0.214 259.815) */ 40%, transparent);
+        color: color-mix(in oklab, var(--color-blue-500) /* oklch(62.3% 0.214 259.815) */ 80%, transparent);
+        transition: background-color 100ms ease, color 100ms ease;
+    }
+
+    .button-primary:hover {
+        background-color: var(--color-blue-500) /* oklch(62.3% 0.214 259.815) */;
+        color: white;
+    }
+
+    .button-danger {
+        background-color: color-mix(in oklab, var(--color-red-500) 50%, transparent);
+        color: color-mix(in oklab, var(--color-red-500) /* oklch(62.3% 0.214 259.815) */ 90%, transparent);
+        transition: background-color 100ms ease, color 100ms ease;
+    }
+
+    .button-danger:hover {
+        background-color: var(--color-red-500) /* oklch(62.3% 0.214 259.815) */;
+        color: white;
+    }
+
+    .button-confirm {
+        background-color: color-mix(in oklab, var(--color-green-500) 40%, transparent);
+        color: color-mix(in oklab, var(--color-green-700) /* oklch(62.3% 0.214 259.815) */ 80%, transparent);
+        transition: background-color 100ms ease, color 100ms ease;
+    }
+
+    .button-confirm:hover {
+        background-color: var(--color-green-600) /* oklch(62.3% 0.214 259.815) */;
+        color: white;
+    }
+
     /* no-spinner user to stop input increments for number */
     .no-spinner::-webkit-inner-spin-button,
     .no-spinner::-webkit-outer-spin-button {

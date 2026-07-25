@@ -46,8 +46,10 @@ export default function FoodItemDetails({
 
     // If household serving item is already at 1 remove extra 1 household item
     if (options.at(0)?.at(0) === '1') {
-        options = options.filter((opt) =>  opt !== '1 household');
+        options = options.slice(1);
     }
+
+    console.log(log_id);
 
     async function addItem() {
         const token = localStorage.getItem('token');

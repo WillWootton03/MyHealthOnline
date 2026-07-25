@@ -57,7 +57,7 @@ export default function WorkoutPageNav({
                 {/* Workout Progress */}
                 <div className="flex flex-col md:flex-row gap-y-2 gap-x-8">
                     <button 
-                        className="flex items-center gap-x-1 md:gap-x-2 px-3 py-1 text-sm md:text-lg bg-green-500/40 rounded-xl text-green-700/80 font-semibold hover:bg-green-600 hover:text-white"
+                        className="flex items-center gap-x-1 md:gap-x-2 px-3 py-1 text-sm md:text-lg rounded-xl font-semibold button-confirm"
                         onClick={() => completeWorkout()}
                     >
                         <Check strokeWidth={2.5} width={22} />

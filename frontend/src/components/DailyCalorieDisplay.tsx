@@ -340,7 +340,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                 </button>
             </div>
             {/* HEADER */}
-            <div className="px-6 pt-5 pb-4 border-b light-bg-color">
+            <div className="px-6 pt-5 pb-4 rounded">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-base font-semibold text-black">
                         Calories
@@ -364,7 +364,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                 </div>
 
                 {/* Progress Bar */}
-                <div className="h-2.5 light-bg-color rounded-full overflow-hidden">
+                <div className="h-2.5 bg-gray-400/20 rounded-full overflow-hidden">
                     <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{
@@ -382,7 +382,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
             {/* Begin Workout Button */}
             <div className="w-full py-3 px-3">
                 <button 
-                    className="px-3 py-2 rounded-xl bg-color-primary font-semibold hover:bg-blue-500 text-white transition-colors duration-100"
+                    className="px-3 py-2 rounded-xl font-semibold button-primary"
                     onClick={() => navigate(`workout/${log_id}`)}
                 >
                     Start Workout
@@ -407,7 +407,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                             <button 
                                 className={`px-3 py-2 rounded-xl text-white font-semibold hover:
                                     ${
-                                        openMealType === mealType ? 'bg-red-700 hover:bg-red-800' : 'bg-color-primary hover-bg-color-primary' 
+                                        openMealType === mealType ? 'button-danger' : 'button-primary' 
                                     }   
                                 `}
                                 onClick={() => setOpenMealType(openMealType === mealType ? null : mealType)}

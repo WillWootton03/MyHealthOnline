@@ -42,8 +42,8 @@ export default function WorkoutPage() {
                             ) : <></> }
                             <div className="flex flex-col md:flex-row gap-x-2 gap-y-2">
                                 <button 
-                                    className="bg-blue-500/40 text-blue-500/80 text-lg w-50 py-1 font-semibold hover:bg-blue-500 
-                                        hover:text-white rounded-lg flex items-center justify-center gap-x-1"
+                                    className="button-primary text-lg w-50 py-1 font-semibold
+                                         rounded-lg flex items-center justify-center gap-x-1"
                                     disabled={loading}
                                     onClick={(e) => showNewExerciseModal(e)}
                                 >
