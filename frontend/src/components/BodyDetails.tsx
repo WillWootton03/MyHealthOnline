@@ -279,26 +279,35 @@ export default function BodyDetails () {
                     placeholder="Sedentary (No Excersize. Little movement)"
                     required
                 />
-
-            {/* Submit */}
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full mt-1 py-3.5 bg-color-primary text-white text-sm font-medium rounded-lg hover-bg-color-primary active:scale-[0.99] 
-                  transition-all duration-150 disabled:opacity-60 flex items-center justify-center gap-2 hover:"
-                >
-                  {submitting ? (
-                    <>
-                      <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth='3' />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                      </svg>
-                      Submiting Details...
-                    </>
-                  ) : (
-                    "Submit"
-                  )}
-                </button>
+            <div className="flex flex-row gap-x-3">
+                {/* Cancel */}
+                    <button
+                        type="button"
+                        onClick={() => navigate('/app')}
+                        className="w-full button-traditional-danger rounded-xl flex-1"
+                    >
+                        Cancel
+                    </button>
+                {/* Submit */}
+                    <button
+                    type="submit"
+                    disabled={submitting}
+                    className="w-full mt-1 py-3.5 button-traditional text-sm font-medium rounded-lg 
+                     disabled:opacity-60 flex items-center justify-center flex-2"
+                    >
+                    {submitting ? (
+                        <>
+                        <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth='3' />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                        </svg>
+                        Submiting Details...
+                        </>
+                    ) : (
+                        "Submit"
+                    )}
+                    </button>
+                </div>
         </form>
     );
 }

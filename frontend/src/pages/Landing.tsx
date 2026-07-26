@@ -47,7 +47,7 @@ export default function Landing() {
     }, [])
 
     return (
-        <div className='min-h-screen page-bg-light text-black'>
+        <>
             {/* Hero */}
             <section className='max-w-5xl mx-auto px-6 pt-20 pb-16 text-center'>
                 <div className='inline-flex items-center gap-2 page-background-light border border-[#d0daf0] text-color-primary text-xs font-medium px-3 py-1.5 rounded-full mb-8'>
@@ -197,7 +197,7 @@ export default function Landing() {
                     </Link>
                 </div>
             </section>
-        </div>
+        </>
         
     )
 }

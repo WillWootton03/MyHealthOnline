@@ -2,6 +2,7 @@ import axios from "axios";
 import { useDebugValue, useEffect, useState, type EventHandler } from "react";
 import SearchExercise from "./SearchExercise";
 import { Search, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 
 import { type ExerciseCategory, type ExerciseData, ExerciseCategories, useWorkout, type ExerciseEquipment, ExerciseEquipments } from "../context/WorkoutsContext";
 import SearchExerciseDetailsModal from "./SearchExerciseDetailsModal";
@@ -110,15 +111,28 @@ export default function AddExerciseModal({
         }
     }
 
-
     return (
-            <div className="px-1 md:px-10 lg:px-40 xl:px-60 2xl:px-80 py-4 flex min-h-[80vh] items-center justify-center">
-                {displayNewCustomExercise ? 
+            <motion.div 
+                initial={{y: 10,opacity: 0}}
+                animate={{y: 0, opacity: 1,}}
+                exit={{y: -10, opacity: 0,}}
+                transition={{ duration: 0.5 }}
+                className="px-1 md:px-10 lg:px-40 xl:px-60 2xl:px-80 py-4 flex min-h-[80vh] items-center justify-center"
+            >
+                <AnimatePresence mode="wait">
+                {displayNewCustomExercise ?
                 (
-                    <div className="bg-white items-center justify-center w-full text-center relative drop-shadow-lg rounded-lg border border-black/10">
+                    <motion.div 
+                        key="custom-exercise"
+                        initial={{opacity:0}}
+                        animate={{opacity:1}}
+                        exit={{opacity:0}}
+                        transition={{duration:0.2}}
+                        className="bg-white items-center justify-center w-full text-center relative drop-shadow-lg rounded-lg border border-black/10"
+                    >
                         <button 
                             onClick={() => setDisplayNewCustomExercise(false)}
-                            className="absolute top-2 right-2 bg-red-400/80 p-1 rounded-xl text-white hover:text-red-500 "
+                            className="absolute top-2 right-2 button-danger p-1 rounded-xl "
                         >
                         <X />
                     </button>
@@ -169,17 +183,24 @@ export default function AddExerciseModal({
                             />
                             <button 
                                 type="submit"
-                                className="px-4 py-1 bg-green-600/60 text-white font-semibold text-lg hover:bg-green-600 hover:text-green-800 rounded-lg"
+                                className="px-4 py-1 button-confirm text-lg  rounded-lg"
                             >
                                 Submit
                             </button>
                         </form>
-                    </div>
+                    </motion.div>
                 ) : (
-                <div className="flex flex-col z-10 px-1 py-5 md:px-5 shadow-md items-center bg-white relative">
+                <motion.div 
+                    key="exercise-list"
+                    initial={{opacity:0}}
+                    animate={{opacity:1}}
+                    exit={{opacity:0}}
+                    transition={{duration:0.2}}
+                    className="flex flex-col z-10 px-1 py-5 md:px-5 shadow-md items-center bg-white relative"
+                >
                     <button 
                         onClick={() => setDisplayNewExercise(false)}
-                        className="absolute top-1 right-2 bg-red-400/80 p-1 rounded-xl text-white hover:text-red-500 "
+                        className="absolute top-1 right-2 button-danger p-1 rounded-xl"
                     >
                         <X />
                     </button>
@@ -204,8 +225,8 @@ export default function AddExerciseModal({
                             <span className="font-bold tracking-wider py-2 text-xl text-blue-600/60">Available Exercises</span>
                             <div className="flex flex-col gap-y-2 md:flex-row md:gap-x-4 items-center py-2 w-full">
                                 <button 
-                                    onClick={() => setDisplayNewCustomExercise(prev => !prev)}
-                                    className="px-4 py-2 rounded-lg bg-purple-600/50 font-semibold text-white hover:bg-purple-600 hover:text-purple-900 transition-colors duration-100"
+                                    onClick={() => setDisplayNewCustomExercise(true)}
+                                    className="px-4 py-2 rounded-lg button-confirm"
                                 >
                                     New
                                 </button>
@@ -231,15 +252,15 @@ export default function AddExerciseModal({
 
                                 <div className="flex gap-x-2">
                                     <button 
-                                        className={`${selectedExercises.length > 0 ? 'bg-blue-400/70 hover:bg-blue-500/70 ' : 'bg-gray-400 cursor-default'} 
-                                                    rounded-xl py-2 px-4 text-white font-semibold `}
+                                        className={`${selectedExercises.length > 0 ? 'button-primary' : 'button-disabled'} 
+                                                    rounded-xl py-2 px-4`}
                                         disabled={selectedExercises.length <= 0}
                                         onClick={() => addExercisesHandler(selectedExercises)}
                                         >
                                         Add
                                     </button>
                                     <button 
-                                        className={`${selectedExercises.length > 1 ? 'bg-green-500/70 hover:bg-green-600/70' : 'bg-gray-400 cursor-default'}  
+                                        className={`${selectedExercises.length > 1 ? 'button-secondary' : 'button-disabled'}  
                                                         rounded-xl py-2 px-4 text-white font-semibold`}
                                         disabled={selectedExercises.length <= 1}
                                         /* TODO : Add superset functionality */
@@ -271,8 +292,9 @@ export default function AddExerciseModal({
                             </div>
                     </div>
                     )}
-                </div>
+                </motion.div>
                 )}
+                </AnimatePresence>
                 { showExerciseDetails ? (
                     <div 
                         onClick={() => setShowExerciseDetails(false)}
@@ -285,6 +307,6 @@ export default function AddExerciseModal({
                         />
                     </div>
                 ) : ( <></>)}
-            </div>
+            </motion.div>
     );
 }

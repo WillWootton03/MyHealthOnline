@@ -7,11 +7,19 @@
         background-color: #f0f6ff;
     }
 
+    .color-primary {
+        background-color: #65a5e0;
+    }
+
+    .color-secondary {
+        background-color: color-mix(in oklab, var(--color-purple-500) /* oklch(62.3% 0.214 259.815) */);
+    }
+
     .bg-color-primary {
         background-color: #65a5e0
     }
 
-    :hover.hover-bg-color-primary {
+    .bg-color-primary:hover {
         background-color: #355988
     }
 
@@ -19,7 +27,7 @@
         background-color: #e5efff;
     }
 
-    :hover.hover-light-bg-color {
+    .button-confirm:hover {
         background-color: #e8f0fb;
     }
 
@@ -31,8 +39,102 @@
         color: #4d7cba
     }
 
-    :hover.hover-text-color-primary {
+    .text-color-primary:hover {
         color: #234a7c
+    }
+
+    .button-primary {
+        background-color: color-mix(in oklab, var(--color-blue-500) /* oklch(62.3% 0.214 259.815) */ 40%, transparent);
+        color: color-mix(in oklab, var(--color-blue-500) /* oklch(62.3% 0.214 259.815) */ 80%, transparent);
+        font-weight: 600;
+        transition: background-color 100ms ease, color 100ms ease, transform 100ms ease;
+    }
+
+    .button-primary:hover {
+        background-color: var(--color-blue-500) /* oklch(62.3% 0.214 259.815) */;
+        color: white;
+    }
+
+    .button-primary:active {
+        transform: scale(0.99);
+    }
+
+    .button-traditional {
+        background-color: #65a5e0;
+        color: white;
+        font-weight: 600;
+        transition: background-color 100ms ease, color 100ms ease, transform 100ms ease;
+    }
+
+    .button-traditional:hover {
+        background-color: #355988;
+    }
+
+    .button-traditional:active {
+        transform: scale(0.99);
+    }
+
+    .button-traditional-danger {
+        background-color: #fa3535;
+        color: white;
+        font-weight: 600;
+        transition: background-color 100ms ease, color 100ms ease, transform 100ms ease;
+    }
+
+    .button-traditional-danger:hover {
+        background-color: #7a1b1b;
+    }
+
+    .button-traditional-danger:active {
+        transform: scale(0.99);
+    }
+
+    .button-secondary {
+        background-color: color-mix(in oklab, var(--color-purple-500) /* oklch(62.3% 0.214 259.815) */ 40%, transparent);
+        color: color-mix(in oklab, var(--color-purple-500) /* oklch(62.3% 0.214 259.815) */ 80%, transparent);
+        font-weight: 600;
+        transition: background-color 100ms ease, color 100ms ease;
+    }
+
+    .button-secondary:hover {
+        background-color: var(--color-purple-500) /* oklch(62.3% 0.214 259.815) */;
+        color: white;
+    }
+
+    .button-disabled {
+        background-color: color-mix(in oklab, var(--color-gray-400) 100%, transparent);
+        color: color-mix(in oklab,  var(--color-white)  100%, transparent);
+        font-weight: 600;
+        transition: background-color 100ms ease, color 100ms ease;
+    }
+
+    .button-disabled:hover {
+        cursor: default;
+    }
+
+
+    .button-danger {
+        background-color: color-mix(in oklab, var(--color-red-500) 50%, transparent);
+        color: color-mix(in oklab, var(--color-red-500) /* oklch(62.3% 0.214 259.815) */ 90%, transparent);
+        font-weight: 600;
+        transition: background-color 100ms ease, color 100ms ease;
+    }
+
+    .button-danger:hover {
+        background-color: var(--color-red-500) /* oklch(62.3% 0.214 259.815) */;
+        color: white;
+    }
+
+    .button-confirm {
+        background-color: color-mix(in oklab, var(--color-green-500) 40%, transparent);
+        color: color-mix(in oklab, var(--color-green-700) /* oklch(62.3% 0.214 259.815) */ 80%, transparent);
+        font-weight: 600;
+        transition: background-color 100ms ease, color 100ms ease;
+    }
+
+    .button-confirm:hover {
+        background-color: var(--color-green-600) /* oklch(62.3% 0.214 259.815) */;
+        color: white;
     }
 
     /* no-spinner user to stop input increments for number */

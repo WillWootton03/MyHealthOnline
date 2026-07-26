@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Eye, EyeOff, Heart } from 'lucide-react';
 import { useNavigate } from "react-router";
+import { motion } from "motion/react";
 
 import axios from 'axios';
 import WebBackground from "../components/WebBackground";
@@ -19,9 +20,15 @@ export default function Login() {
     navigate('/signUp');
   }
 
+  const [allFieldsValid, setAllFieldsValid] = useState(false);
+
+  useEffect(() => {
+    if(email && password  ) setAllFieldsValid(true);
+    else setAllFieldsValid(false);
+  }, [email, password]);
+
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
-
 
       try {
         setLoading(true);
@@ -51,14 +58,23 @@ export default function Login() {
 
   return (
         <WebBackground>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x:0 }}
+            exit={{ opacity:0, x: -20 }}
+            transition={{ duration: 0.4 }}
+          >
         {/* Card */}
-        <div className="relative z-10 w-full max-w-sm mx-4 bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 shadow[0_8px_40px_rgba(0,0,0,0.08)
+        <div className="relative z-10 w-100 max-w-sm mx-4 bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 shadow[0_8px_40px_rgba(0,0,0,0.08)
                         px-8 py-10 drop-shadow-2xl">
           {/* Logo */}
           <div className="flex flex-col items-center mb-8">
-            <div className="w-11 h-11 rounded-full bg-[#6faaf7] flex items-center justify-center mb-4">
+            <button 
+              onClick={() => navigate('/')}
+              className="w-11 h-11 rounded-full bg-color-primary flex items-center justify-center mb-4"
+            >
               <Heart className="w-5 h-5 text-white fill='white" />
-            </div>
+            </button>
             {/* AppTitle */}
             <h1 className="text-black text-2xl font-medium">
             My Health Online
@@ -92,9 +108,9 @@ export default function Login() {
             {/* Submit */}
             <button
               type="submit"
-              disabled={loading}
-              className="w-full mt-1 py-3.5 bg-color-primary text-white text-sm font-medium rounded-lg hover-bg-primary active:scale-[0.99] transition-all duration-150
-                        disabled:opacity-60 flex items-center justify-center gap-2 hover:cursor-pointer"
+              disabled={!allFieldsValid}
+              className={`w-full mt-1 py-3.5 ${allFieldsValid ? 'bg-color-primary text-white active:scale-[0.99] transition-all duration-150' : 'button-disabled'} hover:bg-text-sm font-medium rounded-lg 
+                        disabled:opacity-60 flex items-center justify-center gap-2 hover:cursor-pointer`}
             >
               {loading ? (
                 <>
@@ -121,6 +137,7 @@ export default function Login() {
             </button>
           </p>
         </div>
+        </motion.div>
       </WebBackground>
   );
 }

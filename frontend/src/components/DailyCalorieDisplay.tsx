@@ -5,7 +5,7 @@ import LoggedFoodItem from "./LoggedFoodItem";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router";
 import { formatDate } from "@shared/functions/formatting";
-
+import { motion, AnimatePresence } from "motion/react";
 
 type DailyCalorieDisplayProps = {
     children? : ReactNode;
@@ -234,8 +234,11 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
         setCalsConsumed(calsConsumed + calorieDiff);
     };
 
+    const [key, setKey] = useState(0);
     // Set current daily log date to next day
-    const nextDate = async () => {
+    const nextDate = async (dir: number) => {
+        setDirection(dir);
+        setKey(prev => prev+1);
         setDate((prev : Date) => {
             const nextDay = new Date(prev);
             nextDay.setDate(nextDay.getDate() + 1);
@@ -244,7 +247,9 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
     }
 
     // Set current daily log date to prev day
-    const prevDate = async () => {
+    const prevDate = async (dir: number) => {
+        setKey(prev => prev+1);
+        setDirection(dir);
         setDate((prev : Date) => {
             const prevDay = new Date(prev);
             prevDay.setDate(prevDay.getDate() - 1);
@@ -288,9 +293,36 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
 
     const remaining = dailyGoal - calsConsumed;
 
+    // Used to change direction of animation based on wether u go back or forward a day
+    const [direction, setDirection] = useState(1);
+    const animationVariants = {
+        enter: (direction: number) => ({
+            x: direction > 0 ? 100 : -100,
+            opacity: 0,
+        }),
+        center: {
+            x: 0,
+            opacity: 1,
+        },
+        exit: (direction: number) =>  ({    
+           x: direction > 0 ? -100 : 100,
+           opacity: 0,  
+        }),
+    };
+
 
     return(
-        <section className="bg-white/75 backdrop-blur-sm rounded-2xl border border-white/80 shadow-[0_2px_16px_rgba(0,0,0,0.05)] overflow-hidden">
+        <AnimatePresence mode="wait" custom={direction}>
+        <motion.div 
+            key={key}
+            custom={direction}
+            variants={animationVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.3 }}    
+            className="bg-white/75 backdrop-blur-sm rounded-2xl border border-white/80 shadow-[0_2px_16px_rgba(0,0,0,0.05)] overflow-hidden"
+        >
             {loading ? (
                 <div className="flex flex-col gap-y-4 items-center py-80">
                     <div>
@@ -325,25 +357,25 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
             {/* Date Selector */}
             <div className="flex flex-row justify-between px-3 py-3">
                 <button 
-                    className="hover: px-2 py-2 hover:bg-blue-50 rounded-2xl"
-                    onClick={prevDate}
+                    className="px-2 py-2 hover:bg-blue-50 rounded-2xl"
+                    onClick={() => prevDate(-1)}
                 >
                     <ChevronLeft />
                 </button>
-                <div className="font-semibold text-xl text-black/80">
+                <div className="font-semibold text-2xl text-black/80">
                     {formatDate(date)}
                 </div>
                 <button 
-                    className="hover: px-2 py-2 hover:bg-blue-50 rounded-2xl"
-                    onClick={nextDate}
+                    className="px-2 py-2 hover:bg-blue-50 rounded-2xl"
+                    onClick={() => nextDate(1)}
                 >
                     <ChevronRight /> 
                 </button>
             </div>
             {/* HEADER */}
-            <div className="px-6 pt-5 pb-4 border-b light-bg-color">
+            <div className="px-6 pt-5 pb-4 rounded">
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-base font-semibold text-black">
+                    <h2 className="text-xl font-semibold text-black">
                         Calories
                     </h2>
 
@@ -357,15 +389,15 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                         { label: "Remaining", value: (dailyGoal - calsConsumed), unit: 'kcal', color: remaining < 0 ? "#e05252" : "#2a9d5c" },
                     ].map(s => (
                         <div key={s.label} className="light-bg-color rounded-xl px-3 py-3 text-center">
-                            <div className="text-[10px] text-black/40 uppercase tracking-wide mb-1">{s.label}</div>
-                            <div className="text-lg font-semibold" style={{ color: s.color}}>{s.value}</div>
-                            <div className="text-[10px] text-black/35">{s.unit}</div>
+                            <div className="text-[10px] md:text-[14px] text-black/40 uppercase tracking-wide mb-1">{s.label}</div>
+                            <div className="text-xl font-semibold" style={{ color: s.color}}>{s.value}</div>
+                            <div className="text-[10px] md:text-[14px] text-black/35">{s.unit}</div>
                         </div>
                     ))}
                 </div>
 
                 {/* Progress Bar */}
-                <div className="h-2.5 light-bg-color rounded-full overflow-hidden">
+                <div className="h-2.5 bg-gray-400/20 rounded-full overflow-hidden">
                     <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{
@@ -375,27 +407,27 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                     />
                 </div>
                 <div className="flex justify-between mt-1.5">
-                    <span className="text-[10px] text-black/35">0 kcal</span>   
-                    <span className="text-[10px] text-black/35">{Math.round(pct)}% of daily goal</span>
-                    <span className="text-[10px] text-black/35">{dailyGoal.toLocaleString()} kcal</span>
+                    <span className="text-[12px] md:text-[14px] font-semibold text-black/35">0 kcal</span>   
+                    <span className="text-[12px] md:text-[14px] font-semibold text-black/35">{Math.round(pct)}% of daily goal</span>
+                    <span className="text-[12px] md:text-[14px] font-semibold text-black/35">{dailyGoal.toLocaleString()} kcal</span>
                 </div>
             </div>
             {/* Begin Workout Button */}
             <div className="w-full py-3 px-3">
                 <button 
-                    className="px-3 py-2 rounded-xl bg-color-primary font-semibold hover:bg-blue-500 text-white transition-colors duration-100"
+                    className="px-3 py-2 rounded-xl font-semibold button-primary"
                     onClick={() => navigate(`workout/${log_id}`)}
                 >
                     Start Workout
                 </button>
             </div>
-            <div className="px-6 py-4 light-bg-color border-b border-[#eaf1fb]">
+            <div className="px-6 py-4 border-b border-[#eaf1fb]">
                 {/* Display all meal items based on meal_type */}
                 <div className="flex flex-col gap-y-6">
                     {/* Map all meal types and save mealType as a value */}
                     {mealTypes.map((mealType : string) => 
                     <div
-                        className="flex flex-col gap-y-1 p-3 rounded-lg bg-[#f8fbff] shadow-md border-b border-black/20"
+                        className="flex flex-col gap-y-1 p-3 rounded-lg bg-[#f1f1f1] shadow-lg border-b border-black/20"
                     >
                         <div 
                             className="flex flex-row justify-between items-center py-1"
@@ -408,7 +440,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                             <button 
                                 className={`px-3 py-2 rounded-xl text-white font-semibold hover:
                                     ${
-                                        openMealType === mealType ? 'bg-red-700 hover:bg-red-800' : 'bg-color-primary hover-bg-color-primary' 
+                                        openMealType === mealType ? 'button-danger' : 'button-primary' 
                                     }   
                                 `}
                                 onClick={() => setOpenMealType(openMealType === mealType ? null : mealType)}
@@ -417,19 +449,37 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                             </button>
                         </div>
                         {/* Use food search for specific meal type */}
-                        {openMealType === mealType && (
-                            <FoodSearch 
-                                meal_id={mealData?.find(m => m.meal_type === mealType.toLowerCase())?.meal_id}
-                                date={date}
-                                log_id={log_id}
-                                meal_type={mealType}
-                                calsConsumed={calsConsumed}
-                                setCalsConsumed={setCalsConsumed}
-                                onAddMealItem={addMealItem}
-                            />
-                        )}
+                        <AnimatePresence mode='wait'>
+                            {openMealType === mealType && (
+                                <motion.div
+                                    initial={{ height: 0 }}
+                                    animate={{ height: "auto" }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="px-2 py-4 rounded-xl border border-gray-200/80 bg-[#e8eaeb]"
+                                >
+                                <FoodSearch 
+                                    meal_id={mealData?.find(m => m.meal_type === mealType.toLowerCase())?.meal_id}
+                                    date={date}
+                                    log_id={log_id}
+                                    meal_type={mealType}
+                                    calsConsumed={calsConsumed}
+                                    setCalsConsumed={setCalsConsumed}
+                                    onAddMealItem={addMealItem}
+                                />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                         {/* Add all logged food items to site with proper meal type */}
-                        <div className="w-full h-fit flex flex-col gap-y-1">
+                        <div 
+                        className={`w-full h-fit flex flex-col gap-y-1
+                            ${(mealData?.find(m => m.meal_type === mealType.toLowerCase())
+                                ?.items)
+                                    ? 'flex flex-col gap-y-1' 
+                                    : 'hidden'
+                                    
+                            }
+                        `}>
                             {(() => {
                                 const meal = mealData?.find(meal => meal.meal_type === mealType.toLowerCase());
                                 return Object.values(meal?.items ?? {}).map(item => {
@@ -456,6 +506,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
             </div>
         </>
             )}
-        </section>
+        </motion.div>
+    </AnimatePresence>
     )
 }

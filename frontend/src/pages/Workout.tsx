@@ -4,6 +4,7 @@ import { useState } from "react";
 import AddExerciseModal from "../components/AddExerciseModal";
 import { useWorkout  } from "../context/WorkoutsContext";
 import { Plus, X } from "lucide-react";
+import { AnimatePresence, motion } from 'motion/react';
 
 
 export default function WorkoutPage() {
@@ -21,7 +22,13 @@ export default function WorkoutPage() {
 
 
     return (
-            <div className="min-h-screen w-full flex flex-col gap-y-5  page-bg-light">
+            <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1,  y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+            >
+                <AnimatePresence mode='wait'>
                 {/* Main workout page displayed if not adding exercise */}
                 {!displayNewExercise ? (
                 <>
@@ -42,8 +49,8 @@ export default function WorkoutPage() {
                             ) : <></> }
                             <div className="flex flex-col md:flex-row gap-x-2 gap-y-2">
                                 <button 
-                                    className="bg-blue-500/40 text-blue-500/80 text-lg w-50 py-1 font-semibold hover:bg-blue-500 
-                                        hover:text-white rounded-lg flex items-center justify-center gap-x-1"
+                                    className="button-primary text-lg w-50 py-1 font-semibold
+                                         rounded-lg flex items-center justify-center gap-x-1"
                                     disabled={loading}
                                     onClick={(e) => showNewExerciseModal(e)}
                                 >
@@ -62,11 +69,13 @@ export default function WorkoutPage() {
                         </div>
                     </>
                 ) : 
-                <AddExerciseModal 
+                    <AddExerciseModal 
+                        key='add-exercise'
                         setDisplayNewExercise={(val: boolean) => setDisplayNewExercise(val)}
                         addExercises={(val) => addExercises(val)}
-                    /> 
+                        /> 
                 }
-            </div>
+            </AnimatePresence>
+            </motion.div>
     );
 }

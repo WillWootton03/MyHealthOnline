@@ -2,7 +2,10 @@ import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import NutrientDetails from "./NutrientDetails";
 import axios from "axios";
 import type { MealData, MealItem } from "./DailyCalorieDisplay";
+import { AnimatePresence, motion } from "motion/react";
 import { pluralCheck, titleCase, formatDate } from '@shared/functions/formatting';
+
+
 type FoodItemDetailsProps = {
     updatedItem: boolean;
     date: Date;
@@ -45,7 +48,7 @@ export default function FoodItemDetails({
 
     // If household serving item is already at 1 remove extra 1 household item
     if (options.at(0)?.at(0) === '1') {
-        options = options.filter((opt) =>  opt !== '1 household');
+        options = options.slice(1);
     }
 
     async function addItem() {
@@ -164,12 +167,11 @@ export default function FoodItemDetails({
 
     return (
         // DETAILS SECTION
-        <div className="flex-col gap-y-2 justify-items-center h-fit w-full">
-
+        <>
             {/* HEADER */}
             <div className="flex flex-col gap-y-2 items-center">
                 <a 
-                    className="text-xl font-bold text-black/70 hover:text-black hover:"
+                    className="text-xl text-center font-bold text-black/70 hover:text-black hover:"
                     href={`https://fdc.nal.usda.gov/food-details/${updatedItem ? item.fdc_id : item.fdcId}/nutrients`}
                     target="_blank"
                 >
@@ -281,7 +283,7 @@ export default function FoodItemDetails({
                         />
                         {updatedItem ? (
                             <button 
-                                className="px-6 py-3 bg-green-700/80 hover:bg-green-900 hover: text-sm text-white rounded-xl"
+                                className="px-6 py-3 button-confirm text-sm rounded-xl"
                                 onClick={() => updateItem()}
                             >
                                 {!updating ? (
@@ -292,7 +294,7 @@ export default function FoodItemDetails({
                             </button>
                         ) : (
                             <button 
-                                className="px-6 py-3 bg-green-700/80 hover:bg-green-900 hover: text-sm text-white rounded-xl"
+                                className="px-6 py-3 button-confirm text-sm  rounded-xl"
                                 onClick={() => addItem()}
                             >
                                 {!adding ? (
@@ -305,6 +307,6 @@ export default function FoodItemDetails({
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
