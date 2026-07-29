@@ -27,6 +27,11 @@ export default function Navbar() {
     };
 
   }, []);
+
+  const handleProfileMenu = () => {
+    setMenuOpen(false);
+    navigate('profile')
+  }
   
 
   
@@ -104,14 +109,14 @@ export default function Navbar() {
                   <button 
                     className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-black/70 hover:bg-[#f0f5ff] hover:text-black 
                                transition-colors text-left hover:"
-                               >
+                    onClick={handleProfileMenu}     
+                  >
                     <User className="w-4 h-4 text-color-primary" />
                       Profile
                   </button>
                   <button 
                     className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-black/70 hover:bg-[#f0f5ff] hover:text-black 
-                               transition-colors text-left hover:"
-                    onClick={() => navigate('settings')}     
+                               transition-colors text-left"
                     >
                     <Settings className="w-4 h-4 text-color-primary" />
                       Settings

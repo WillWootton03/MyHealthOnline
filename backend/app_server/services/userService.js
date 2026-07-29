@@ -174,7 +174,7 @@ const userService = {
 
     },
 
-    setBodyDetails : async({ user_id, height, weight, age, gender, activity_level, measurement_pref }) => {
+    setBodyDetails : async({ user_id, height, weight, age, gender, activity_level, measurement_pref, calorie_change, timeFrame, weight_goal }) => {
         // Set new height = to height, stays same if metric is measurment pref
         let calc_height = height;
         let calc_weight = weight
@@ -194,6 +194,9 @@ const userService = {
             activity_level, 
             measurement_pref,
             tdee: getTDEE(getBMR(calc_height, calc_weight, age, gender), activity_level),
+            calorie_change, 
+            timeFrame,
+            weight_goal
         });
     },
 

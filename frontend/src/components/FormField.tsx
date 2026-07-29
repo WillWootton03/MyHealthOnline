@@ -1,7 +1,8 @@
 import { ChevronDown, ChevronUp, Eye, EyeOff } from "lucide-react";
 import { useEffect, useState } from "react";
 
-type FieldVariant = "text" | "number" | "select" | 'height' | 'weight' | 'password' | 'logged_password';
+type FieldVariant = "text" | "number" | "select" | 'height' | 'weight' | "dateDuration" | 'password' | 'logged_password';
+
 
 interface FormFieldProps {
     id: string;
@@ -56,8 +57,13 @@ export default function FormField ({
                 </button>
             )}
             </label>
-            {(variant === 'text' || variant === 'password' || variant === 'logged_password') && (
-            <div className="relative">
+            {(variant === 'text' || variant === 'password' || variant === 'logged_password' || variant === "dateDuration") && (
+            <div className={`relative ${variant === "dateDuration" ? "flex gap-x-1" : ""}`}>
+                {variant === "dateDuration" && (
+                    <div className="flex items-center font-semibold">
+                        Months
+                    </div>
+                )}
                 <input 
                     id={id}
                     type={variant === 'password' || variant === 'logged_password' ? showPassword ? 'text' : "password" : type}

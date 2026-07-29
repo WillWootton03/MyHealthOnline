@@ -127,7 +127,7 @@ export default function DailyCalorieDisplay({ children } : DailyCalorieDisplayPr
                     }
                 }
             );
-            setDailyGoal(res.data.data.daily_cals);
+            setDailyGoal(Math.round(res.data.data.daily_cals));
         }catch (err: any) {
             console.error(`Frontend could not get day calories : ${err.response?.data?.message}`);
         }
