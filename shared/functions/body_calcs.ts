@@ -25,3 +25,12 @@ export function getTDEE(bmr : number, activity_level : number) : number {
     }
     return Math.round(bmr);
 }
+
+// Calculates calories needed to go from 1 weight to another based on timeframe given in days
+// CALCULATION : 1 pound = 3500 calories
+// CALCULATION : 1 kg = 7700 calories
+export function getCalorieChange(currWeight: number, goalWeight: number, timeFrame: number, measurement: string) : number {
+    const weightToGoal = goalWeight - currWeight;
+    const totCals = weightToGoal * (measurement === 'imperial' ? 3500 : 7700);
+    return totCals / timeFrame;
+}

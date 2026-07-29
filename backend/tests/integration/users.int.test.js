@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const { pool } = require('../../app_server/db/db_connection');
 const { createTestUser, deleteTestUser } = require('../helpers/testUser');
+const { getCalorieChange } = require('../../../shared/functions/body_calcs');
 
 
 let test_user_id = null;
@@ -73,7 +74,10 @@ describe('Use valid values for routes', () => {
             age: 21,
             gender: 'male',
             measurement_pref: 'metric',
-            activity_level: 1
+            activity_level: 1,
+            calorie_change: getCalorieChange(90, 100, 360, 'metric'),
+            weight_goal: 100,
+            timeFrame: 360, 
         };
         const res = await request(app)
             .put('/api/users/body_details')
@@ -93,7 +97,10 @@ describe('Use valid values for routes', () => {
             age: 21,
             gender: 'male',
             measurement_pref: 'imperial',
-            activity_level: 1
+            activity_level: 1,
+            calorie_change: getCalorieChange(198, 180, 360, 'imperial'),
+            weight_goal: 180,
+            timeFrame: 360, 
         };
         const res = await request(app)
             .put('/api/users/body_details')

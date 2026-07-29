@@ -60,17 +60,17 @@ const userRepo = {
         activity_level (number) : a number to hold activity level based on levels between 1-5 
         tdee (number) : the number of calories estimated to help this user maintain their body weight 
     */
-    setBodyDetails : async({ user_id, height, weight, age, gender, activity_level, measurement_pref, tdee }) => {
+    setBodyDetails : async({ user_id, height, weight, age, gender, activity_level, measurement_pref, tdee, calorie_change, timeFrame, weight_goal }) => {
 
         const query = `
             UPDATE users
-            SET height = $1, weight = $2, age = $3, gender = $4, activity_level = $5, measurement_pref = $6, tdee = $7
-            WHERE user_id = $8
+            SET height = $1, weight = $2, age = $3, gender = $4, activity_level = $5, measurement_pref = $6, tdee = $7, calorie_change = $8, time_frame = $9, weight_goal = $10 
+            WHERE user_id = $11
             RETURNING tdee
             `;
 
         try {
-            const res = await pool.query(query, [height, weight, age, gender, activity_level, measurement_pref, tdee, user_id]);
+            const res = await pool.query(query, [height, weight, age, gender, activity_level, measurement_pref, tdee, calorie_change, timeFrame, weight_goal, user_id]);
 
             return res.rows[0] ?? null;
         } catch (err) {
@@ -136,7 +136,7 @@ const userRepo = {
     getUserBodyDetails : async ({ user_id }) => {
         try {
             const query = `
-            SELECT height, weight, age, gender, activity_level, measurement_pref, tdee
+            SELECT height, weight, age, gender, activity_level, measurement_pref, tdee, weight_goal, time_frame
             FROM users u
             WHERE u.user_id = $1
             `;

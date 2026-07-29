@@ -309,14 +309,16 @@ const userController = {
         const { user_id } = req.user;
 
         try {
-            const { height, weight, age, gender, activity_level, measurement_pref } = req.body;
+            const { height, weight, age, gender, activity_level, measurement_pref, calorie_change, timeFrame, weight_goal } = req.body;
+
+            console.log(typeof weight_goal);
 
             // Verify at least one new value present, and if present is the right input type 
             if(
-                (!height && !weight && !age && !gender && !activity_level && !measurement_pref) ||
-                (height && typeof height !== 'string') || (weight && typeof weight !== 'number') 
-                || (age && typeof age !== 'number') || (gender && typeof gender !== 'string') || (activity_level && typeof activity_level !== 'number')
-                || (measurement_pref && typeof measurement_pref !== 'string')
+                (typeof height !== 'string') || (typeof weight !== 'number') 
+                || (typeof age !== 'number') || (typeof gender !== 'string') || (typeof activity_level !== 'number')
+                || (typeof measurement_pref !== 'string') || typeof calorie_change !== 'number' || typeof weight_goal !== 'number' 
+                || typeof timeFrame !== 'number'
         ) {
             logger.error('FAILED setBodyDetails : invalid field inputs for body details');
             return sendError(
@@ -326,7 +328,7 @@ const userController = {
             );
         }
 
-            const result = await userService.setBodyDetails({ user_id, height, weight, age, gender, activity_level, measurement_pref});
+            const result = await userService.setBodyDetails({ user_id, height, weight, age, gender, activity_level, measurement_pref, calorie_change, timeFrame, weight_goal});
 
             if (!result) {
                 logger.error('FAILED setBodyDetails : failed to update user body details');
